@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * Version details.
  *
  * @package    block_userquiz_monitor
  * @category   blocks
@@ -26,11 +26,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2014031401;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2014050800;        // Requires this Moodle version (2.4)
-$plugin->component = 'block_userquiz_monitor'; // Full name of the plugin (used for diagnostics)
+$plugin->version   = 2014031401; // The current plugin version (Date: YYYYMMDDXX).
+$plugin->requires  = 2014110400; // Requires this Moodle version.
+$plugin->component = 'block_userquiz_monitor'; // Full name of the plugin (used for diagnostics).
 $plugin->maturity = MATURITY_RC;
-$plugin->release = "2.7.0 (Build 2014031400)";
+$plugin->release = "2.8.0 (Build 2014031400)";
 
 // Non moodle attributes.
-$plugin->codeincrement = '2.7.0000';
+$plugin->codeincrement = '2.8.0000';
