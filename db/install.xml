@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="blocks/userquiz_monitor/db" VERSION="20110421" COMMENT="XMLDB file for Moodle blocks/userquiz_monitor"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="userquiz_monitor_prefs" COMMENT="Default comment for userquiz_monitor, please edit me" NEXT="userquiz_monitor_cat_stats">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="blockid"/>
+        <FIELD NAME="blockid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="blockid" NEXT="resultsdepth"/>
+        <FIELD NAME="resultsdepth" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="number of weeks of back analysis" PREVIOUS="userid" NEXT="examsdepth"/>
+        <FIELD NAME="examsdepth" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="number of weeks of back analysis" PREVIOUS="resultsdepth"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="index_blockid" UNIQUE="false" FIELDS="blockid" NEXT="index_userid"/>
+        <INDEX NAME="index_userid" UNIQUE="false" FIELDS="userid" PREVIOUS="index_blockid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="userquiz_monitor_cat_stats" COMMENT="Stores stats for categories" PREVIOUS="userquiz_monitor_prefs" NEXT="userquiz_monitor_user_stats">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="userquiz"/>
+        <FIELD NAME="userquiz" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="id of block instance" PREVIOUS="id" NEXT="categoryid"/>
+        <FIELD NAME="categoryid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Question category id" PREVIOUS="userquiz" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="User id" PREVIOUS="categoryid" NEXT="attemptid"/>
+        <FIELD NAME="attemptid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Attempt id" PREVIOUS="userid" NEXT="qcount"/>
+        <FIELD NAME="qcount" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Number of queried questions" PREVIOUS="attemptid" NEXT="acount"/>
+        <FIELD NAME="acount" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Question serie 1 count" PREVIOUS="qcount" NEXT="ccount"/>
+        <FIELD NAME="ccount" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Questions serie 2 count" PREVIOUS="acount" NEXT="amatched"/>
+        <FIELD NAME="amatched" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Matched questions A serie" PREVIOUS="ccount" NEXT="cmatched"/>
+        <FIELD NAME="cmatched" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Matched questions serie 2" PREVIOUS="amatched"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="index_userquiz" UNIQUE="false" FIELDS="userquiz" NEXT="index_categoryid"/>
+        <INDEX NAME="index_categoryid" UNIQUE="false" FIELDS="categoryid" PREVIOUS="index_userquiz" NEXT="index_userid"/>
+        <INDEX NAME="index_userid" UNIQUE="false" FIELDS="userid" PREVIOUS="index_categoryid" NEXT="index_attemptid"/>
+        <INDEX NAME="index_attemptid" UNIQUE="false" FIELDS="attemptid" PREVIOUS="index_userid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="userquiz_monitor_user_stats" COMMENT="Default comment for the table, please edit me" PREVIOUS="userquiz_monitor_cat_stats" NEXT="userquiz_monitor_coverage">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="blockid"/>
+        <FIELD NAME="blockid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="blockid" NEXT="attemptid"/>
+        <FIELD NAME="attemptid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="if 0, global result" PREVIOUS="userid" NEXT="coverageseen"/>
+        <FIELD NAME="coverageseen" TYPE="number" LENGTH="6" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" DECIMALS="2" PREVIOUS="attemptid" NEXT="coveragematched"/>
+        <FIELD NAME="coveragematched" TYPE="number" LENGTH="6" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" DECIMALS="2" PREVIOUS="coverageseen"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="index_userid" UNIQUE="false" FIELDS="userid" NEXT="index_attemptid"/>
+        <INDEX NAME="index_attemptid" UNIQUE="false" FIELDS="attemptid" PREVIOUS="index_userid" NEXT="index_blockid"/>
+        <INDEX NAME="index_blockid" UNIQUE="false" FIELDS="blockid" PREVIOUS="index_attemptid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="userquiz_monitor_coverage" COMMENT="Default comment for the table, please edit me" PREVIOUS="userquiz_monitor_user_stats">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="blockid"/>
+        <FIELD NAME="blockid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="blockid" NEXT="questionid"/>
+        <FIELD NAME="questionid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="userid" NEXT="usecount"/>
+        <FIELD NAME="usecount" TYPE="int" LENGTH="6" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="questionid" NEXT="matchcount"/>
+        <FIELD NAME="matchcount" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="usecount"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="index_userid" UNIQUE="false" FIELDS="userid" NEXT="index_questionid"/>
+        <INDEX NAME="index_questionid" UNIQUE="false" FIELDS="questionid" PREVIOUS="index_userid" NEXT="index_blockid"/>
+        <INDEX NAME="index_blockid" UNIQUE="false" FIELDS="blockid" PREVIOUS="index_questionid"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>
