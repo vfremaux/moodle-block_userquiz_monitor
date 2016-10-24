@@ -31,7 +31,6 @@ require_once($CFG->dirroot.'/blocks/userquiz_monitor/generators/progress_bar.php
  * Format the data to feed the generator histogram graph
  * this can display category progress among attempts
  */
-
 function calcul_hist($categoryid, &$counters) {
 
     $datas = null;
@@ -63,7 +62,7 @@ function calcul_hist($categoryid, &$counters) {
  * On changes of the current selection, update the question amount choice list
  */
 function update_selector($courseid, $catidslist, $mode, $rootcat, $quizzeslist = '') {
-    global $CFG, $DB, $PAGE;
+    global $DB, $PAGE;
 
     $response = '';
     $options = '';
@@ -174,7 +173,7 @@ function update_selector($courseid, $catidslist, $mode, $rootcat, $quizzeslist =
  * if 'graded' get all non 0 graded records, if numeric, get records with such grade, get all if not defined
  */
 function get_all_user_records($attemptuniqueid, $userid, $grade = null, $asrecordset = false) {
-    global $CFG, $DB;
+    global $DB;
 
     $gradeclause = '';
     if ($grade === 'answered') {
@@ -220,55 +219,12 @@ function userquizmonitor_count_available_attempts($userid, $quizid) {
         quiz = ?
     ";
     $usedattempts = $DB->get_records_select('quiz_attempts', $select, array($userid, $quizid));
-    $availableattempts = $DB->get_field('qa_usernumattempts_limits', 'maxattempts', array('userid' => $userid, 'quizid' => $quizid));
+    $params = array('userid' => $userid, 'quizid' => $quizid);
+    $availableattempts = $DB->get_field('qa_usernumattempts_limits', 'maxattempts', $params);
 
-    $userattemptscount = (is_array($usedattempts)) ? count($usedattempts) : 0 ;
+    $userattemptscount = (is_array($usedattempts)) ? count($usedattempts) : 0;
     return $availableattempts - $userattemptscount;
 }
-
-/**
- * Question types are given by the default grade.
- * If defaultmark is 1000 C type, if 1 A type
- * Obsolete
- */
-/*
-function amf_get_category_qtypes($catid, $fromparent = false) {
-    global $CFG, $DB;
-
-    // For each category, get questions's types.
-    if ($fromparent) {
-        $sql = "
-            SELECT
-                distinct(defaultmark)
-            FROM
-                {question} q,
-                {question_categories} c
-            WHERE
-                q.category = c.id AND
-                c.parent = ? AND
-                q.qtype != 'random' AND
-                q.qtype != 'randomconstrained'
-            ORDER BY
-                defaultmark
-        ";
-    } else {
-        $sql = "
-            SELECT
-                distinct(defaultmark)
-            FROM
-                {question}
-            WHERE
-                category = ? AND
-                qtype != 'random' AND
-                qtype != 'randomconstrained'
-            ORDER BY
-                defaultmark
-        ";
-    }
-    $qtypes = $DB->get_records_sql($sql, array($catid));
-    return $qtypes;
-}
-*/
 
 function userquiz_monitor_get_cattreeids($catid, &$catids) {
     global $DB;

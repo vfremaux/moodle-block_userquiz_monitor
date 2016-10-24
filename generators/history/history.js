@@ -1,3 +1,8 @@
+/*
+ *
+ */
+// jshint ubused:false undef:false
+
 BrowserHistoryUtils = {
     addEvent: function(elm, evType, fn, useCapture) {
         useCapture = useCapture || false;

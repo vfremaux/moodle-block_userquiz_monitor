@@ -39,7 +39,7 @@ class block_userquiz_monitor extends block_base {
             $this->config->rateAserie = 85;
         }
 
-        if (empty($this->config->rateCserie)){
+        if (empty($this->config->rateCserie)) {
             $this->config->rateCserie = 75;
         }
 
@@ -55,11 +55,8 @@ class block_userquiz_monitor extends block_base {
     public function instance_allow_config() {
         return true;
     }
-    
+
     public function get_content() {
-        global $USER, $CFG;
-        $wwwroot = '';
-        $signup = '';
 
         if ($this->content !== null) {
             return $this->content;
@@ -134,8 +131,6 @@ class block_userquiz_monitor extends block_base {
             $training .= $renderer->filter_state('training', $this->instance->id);
             $training .= '</td></tr></table>';
 
-            // $training .= get_string('testinstructions', 'block_userquiz_monitor');
-
             if ((! empty($this->config->rootcategory)) && (! empty($this->config->trainingquizzes))) {
                 get_monitortest($COURSE->id, $training, $this);
             } else {
@@ -188,7 +183,7 @@ class block_userquiz_monitor extends block_base {
                 }
             }
 
-            $response.= $examination;
+            $response .= $examination;
         }
 
         if ($selectedview == 'preferences') {

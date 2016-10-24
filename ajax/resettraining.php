@@ -1,4 +1,4 @@
- <?php
+<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -79,7 +79,7 @@ if ($userid && !empty($quizzeslist)) {
         }
 
         if ($bexecdelete1 == true) {
-            $bexecdelete2 = $DB->execute($sqldeleteuserquizattempts, $params) ;
+            $bexecdelete2 = $DB->execute($sqldeleteuserquizattempts, $params);
         }
 
         if ($bexecdelete1 == true && $bexecdelete2 == true) {

@@ -120,7 +120,7 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
 
     }
 
-    function set_data($defaults, &$files = null) {
+    public function set_data($defaults, &$files = null) {
 
         if (!empty($this->block->config) && is_object($this->block->config)) {
             $text = '';
@@ -158,7 +158,7 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
         unset($this->block->config->examinstructions);
         parent::set_data($defaults, $files);
         // Restore text.
-        if (!isset($this->block->config)){
+        if (!isset($this->block->config)) {
             $this->block->config = new StdClass();
         }
         $this->block->config->examinstructions = $text;

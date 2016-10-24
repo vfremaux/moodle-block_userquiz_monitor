@@ -23,6 +23,7 @@
  * @copyright   Valery Fremaux <valery.fremaux@gmail.com> (MyLearningFactory.com)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+defined('MOODLE_INTERNAL') || die();
 
 class block_userquiz_monitor_renderer extends plugin_renderer_base {
 
@@ -275,7 +276,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         }
 
         $str .= '<td valign="top" style="width:70%; padding:5px;">';
-        $str .= '<h1>'.$totalexamstr.' '.$OUTPUT->help_icon('totalexam', 'block_userquiz_monitor', true).'</h1>';
+        $str .= '<h1>'.$totalexamstr.' '.$OUTPUT->help_icon('totalexam', 'block_userquiz_monitor', false).'</h1>';
         $str .= '<div class="trans100">';
         $str .= '<p>'.$commenthist.' '.$accessorieslink.'<p>';
         $str .= '<p>'.$total.'<p>'; 
@@ -414,7 +415,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
      *
      */
     function subcategories($courseid, $rootcategory, $categoryid, $quizzeslist, $positionheight, $mode, &$block) {
-        global $USER, $CFG, $DB, $OUTPUT;
+        global $USER, $DB, $OUTPUT;
 
         $blockid = $block->instance->id;
 
@@ -731,11 +732,9 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
     }
 
     function filter_state($domain, $blockid) {
-        global $USER, $CFG, $COURSE, $DB, $OUTPUT;
+        global $USER, $COURSE, $DB, $OUTPUT;
 
         $lang = substr(current_language(), 0, 2);
-
-        $context = context_course::instance($COURSE->id);
 
         $sql = "
             SELECT
@@ -824,9 +823,6 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         }
         if (!empty($theblock->config->examenabled)) {
             $examtab = get_string('menuexamination', 'block_userquiz_monitor');
-            if (!empty($theblock->config->examtab)) {
-                $examtab = $theblock->config->examtab;
-            }
             $taburl = new moodle_url('/course/view.php', array('id' => $COURSE->id, 'selectedview' => 'examination'));
             $rows[0][] = new tabobject('examination', $taburl, $examtab);
         }
@@ -843,7 +839,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
      * @param int $rootcategory
      * @param string $list of involved quizzes
      */
-    public function total($components, $data, $rootcategory, $quizzeslist) {
+    public function total($components, $data, $quizzeslist) {
         global $USER, $OUTPUT, $COURSE;
 
         $commenthist = get_string('commenthist', 'block_userquiz_monitor');

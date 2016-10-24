@@ -1,4 +1,4 @@
- <?php
+<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -44,16 +44,16 @@ $blockid = required_param('blockid', PARAM_INT);
 if (!$instance = $DB->get_record('block_instances', array('id' => $blockid))) {
     print_error('badblockinstance', 'block_contact_form');
 }
-$theBlock = block_instance('userquiz_monitor', $instance);
+$theblock = block_instance('userquiz_monitor', $instance);
 
 $renderer = $PAGE->get_renderer('block_userquiz_monitor');
-$renderer->set_block($theBlock);
+$renderer->set_block($theblock);
 
 if ($mode == 'training') {
     $rootcategory = required_param('rootcategory', PARAM_INT);
-    $response .= $renderer->subcategories($courseid, $rootcategory, $categoryid, $quizid, $positionheight, $mode, $theBlock);
+    $response .= $renderer->subcategories($courseid, $rootcategory, $categoryid, $quizid, $positionheight, $mode, $theblock);
 } else {
-    $response .= $renderer->subcategories($courseid, null, $categoryid, $quizid, $positionheight, $mode, $theBlock);
+    $response .= $renderer->subcategories($courseid, null, $categoryid, $quizid, $positionheight, $mode, $theblock);
 }
 
 echo($response);

@@ -23,8 +23,8 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
-function get_schedule($thebock) {
-    global $CFG, $COURSE, $PAGE;
+function get_schedule($theblock) {
+    global $COURSE, $PAGE;
 
     if (!empty($theblocks->config->rootcategory)) {
         $PAGE->requires->js('/blocks/userquiz_monitor/js/block_js.js');

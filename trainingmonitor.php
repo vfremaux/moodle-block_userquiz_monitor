@@ -36,7 +36,7 @@ require_once($CFG->dirroot.'/blocks/userquiz_monitor/locallib.php');
  * @param object ref $block the userquiz_monitor instance
  */
 function get_monitortest($courseid, &$response, &$block) {
-    global $USER, $CFG, $DB, $PAGE, $OUTPUT;
+    global $USER, $DB, $PAGE, $OUTPUT;
 
     $renderer = $PAGE->get_renderer('block_userquiz_monitor');
 
@@ -56,37 +56,7 @@ function get_monitortest($courseid, &$response, &$block) {
         return;
     }
 
-    $params = array('parent' => $rootcategory);
-    if (!$rootcats = $DB->get_records('question_categories', $params, 'sortorder, id', 'id,name')) {
-        $notif = get_string('configwarningemptycats', 'block_userquiz_monitor');
-        $response.= $OUTPUT->notification($notif, 'notifyproblem');
-        return;
-    }
-
-    foreach ($rootcats as $catid => $cat) {
-
-        $rootcats[$catid]->cptA = 0; // Number of question type A.
-        $rootcats[$catid]->cptC = 0; // Number of question type C.
-        $rootcats[$catid]->cpt = 0; // Number of question type A or C.
-        $rootcats[$catid]->goodA = 0; // Number of matched questions type A.
-        $rootcats[$catid]->goodC = 0; // Number of matched questions type C.
-        $rootcats[$catid]->good = 0; // Number of matched questions type A or C.
-        $rootcats[$catid]->ratioA = 0; // Ratio type A.
-        $rootcats[$catid]->ratioC = 0; // Ratio type C.
-        $rootcats[$catid]->ratio = 0;
-        $rootcats[$catid]->questiontypes = array();
-
-        $catidarr = array($catid);
-        $cattreelist = userquiz_monitor_get_cattreeids($cat->id, $catidarr);
-        $cattreelist = implode("','", $catidarr);
-
-        if ($DB->record_exists_select('question', " category IN ('$cattreelist') AND defaultmark = 1000 ", array())) {
-            $rootcats[$catid]->questiontypes['C'] = 1;
-        }
-        if ($DB->record_exists_select('question', " category IN ('$cattreelist') AND defaultmark = 1 ", array())) {
-            $rootcats[$catid]->questiontypes['A'] = 1;
-        }
-    }
+    $response .= block_userquiz_monitor_init_rootcats($rootcategory, $rootcats);
 
     foreach ($quizzesids as $quiz) {
         $quizzeslist[] = $quiz;
@@ -97,109 +67,7 @@ function get_monitortest($courseid, &$response, &$block) {
 
     $userattempts = block_userquiz_monitor_get_user_attempts($blockid, $quizzesids);
 
-    // Get user attempts.
-    if (!$userattempts) {
-        $errormsg = get_string('error2', 'block_userquiz_monitor');
-    }
-
-    $i = 0;
-
-    if (!empty($userattempts)) {
-        foreach ($userattempts as $userattempt) {
-            if ($allstates = get_all_user_records($userattempt->uniqueid, $USER->id, null, true)) {
-
-                if ($allstates->valid()) {
-                    foreach ($allstates as $state) {
-
-                        // Get question informations.
-                        $question = $DB->get_record_select('question', " id = ? ", array($state->question), 'id, defaultmark, category');
-
-                        $parent = $DB->get_field('question_categories', 'parent', array('id' => $question->category));
-
-                        if (!$parent) {
-                            continue; // Fix lost states.
-                        }
-
-                        while (!in_array($parent, array_keys($rootcats)) && $parent != 0) {
-                            $parent = $DB->get_field('question_categories', 'parent', array('id' => $parent));
-                        }
-
-                        if (!isset($attempts[$state->uaid][$question->category])) {
-                            $attempts[$state->uaid][$question->category] = new StdClass;
-                        }
-
-                        if (!isset($attempts[$state->uaid][$parent])) {
-                            $attempts[$state->uaid][$parent] = new StdClass;
-                        }
-
-                        if (!isset($attempts[$state->uaid][$rootcategory])) {
-                            $attempts[$state->uaid][$rootcategory] = new StdClass();
-                        }
-
-                        $attempts[$state->uaid][$question->category]->timefinish = $userattempt->timefinish;
-                        $attempts[$state->uaid][$parent]->timefinish = $userattempt->timefinish;
-                        $attempts[$state->uaid][$rootcategory]->timefinish = $userattempt->timefinish;
-
-                        @$rootcats[$parent]->cpt++;
-
-                        $attempts[$state->uaid][$question->category]->cpt = @$attempts[$state->uaid][$question->category]->cpt + 1;
-                        $attempts[$state->uaid][$parent]->cpt = @$attempts[$state->uaid][$parent]->cpt + 1;
-                        $attempts[$state->uaid][$rootcategory]->cpt = @$attempts[$state->uaid][$rootcategory]->cpt + 1;
-
-                        $overall->cpt++;
-
-                        if ($question->defaultmark == '1000') {
-                            $rootcats[$parent]->cptC++;
-                            $attempts[$state->uaid][$question->category]->cptC = @$attempts[$state->uaid][$question->category]->cptC + 1;
-                            $attempts[$state->uaid][$parent]->cptC = @$attempts[$state->uaid][$parent]->cptC + 1;
-                            $attempts[$state->uaid][$rootcategory]->cptC = @$attempts[$state->uaid][$rootcategory]->cptC + 1;
-                            $overall->cptC++;
-                            if ($state->grade > 0) {
-                                $rootcats[$parent]->goodC++;
-                                $attempts[$state->uaid][$question->category]->goodC = @$attempts[$state->uaid][$question->category]->goodC + 1;
-                                $attempts[$state->uaid][$parent]->goodC = @$attempts[$state->uaid][$parent]->goodC + 1;
-                                $attempts[$state->uaid][$rootcategory]->goodC = @$attempts[$state->uaid][$rootcategory]->goodC + 1;
-                                $overall->goodC++;
-                            }
-                        } else {
-                            $rootcats[$parent]->cptA++;
-                            $attempts[$state->uaid][$question->category]->cptA = @$attempts[$state->uaid][$question->category]->cptA + 1;
-                            $attempts[$state->uaid][$parent]->cptA = @$attempts[$state->uaid][$parent]->cptA + 1;
-                            $attempts[$state->uaid][$rootcategory]->cptA = @$attempts[$state->uaid][$rootcategory]->cptA + 1;
-                            $overall->cptA++;
-                            if ($state->grade > 0) {
-                                $rootcats[$parent]->goodA++;
-                                $attempts[$state->uaid][$question->category]->goodA = @$attempts[$state->uaid][$question->category]->goodA + 1;
-                                $attempts[$state->uaid][$parent]->goodA = @$attempts[$state->uaid][$parent]->goodA + 1;
-                                $attempts[$state->uaid][$rootcategory]->goodA = @$attempts[$state->uaid][$rootcategory]->goodA + 1;
-                                $overall->goodA++;
-                            }
-                        }
-                        if ($state->grade > 0) {
-                            $rootcats[$parent]->good++;
-                            $attempts[$state->uaid][$question->category]->good = @$attempts[$state->uaid][$question->category]->good + 1;
-                            $attempts[$state->uaid][$parent]->good = @$attempts[$state->uaid][$parent]->good + 1;
-                            $attempts[$state->uaid][$rootcategory]->good = @$attempts[$state->uaid][$rootcategory]->good + 1;
-                            $overall->good++;
-                        }
-                        $i++;
-                    }
-                }
-                $allstates->close();
-
-            } else {
-                $errormsg = get_string('error2', 'block_userquiz_monitor');
-            }
-        }
-    }
-
-    // Build the stucture of the reporting.
-
-    // Post compute ratios.
-
-    $overall->ratioA = ($overall->cptA == 0) ? 0 : round(($overall->goodA / $overall->cptA )*100);
-    $overall->ratioC = ($overall->cptC == 0) ? 0 : round(($overall->goodC / $overall->cptC )*100);
-    $overall->ratio = ($overall->cpt == 0) ? 0 : round(($overall->good / $overall->cpt )*100);
+    $errormsg = block_userquiz_monitor_compute_all_results($userattempts, $rootcategory, $rootcats, $attempts, $overall);
 
     $maxratio = 0;
     foreach (array_keys($rootcats) as $catid) {
@@ -269,7 +137,7 @@ function get_monitortest($courseid, &$response, &$block) {
                   'cptC' => $overall->cptC);
 
     $total = '<div id="divtotal" style="width:100%;">';
-    $total .= $renderer->total($components, $data, $rootcategory, $quizzeslist);
+    $total .= $renderer->total($components, $data, $quizzeslist);
     $total .= '</div>';
 
     $selector = update_selector($courseid, null, 'mode0', $rootcategory, $quizzeslist);
@@ -323,7 +191,7 @@ function get_monitortest($courseid, &$response, &$block) {
             $pixurl = new pix_icon('graph', $label, 'block_userquiz_monitor', array('class' => 'userquiz-cmd-icon'));
             $cat->accessorieslink = $OUTPUT->action_link($popuplink, '', $action, array(), $pixurl);
         } else {
-            $cat->accessorieslink =    '<img width="38" height="20" title="'.get_string('hist', 'block_userquiz_monitor').'" src="'.$OUTPUT->pix_url('graph', 'block_userquiz_monitor').'"/>';
+            $cat->accessorieslink = '<img width="38" height="20" title="'.get_string('hist', 'block_userquiz_monitor').'" src="'.$OUTPUT->pix_url('graph', 'block_userquiz_monitor').'"/>';
         }
 
         $data = array ( 

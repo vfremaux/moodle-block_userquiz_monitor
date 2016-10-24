@@ -105,3 +105,171 @@ function block_userquiz_monitor_init_overall() {
 
     return $overall;
 }
+
+function block_userquiz_monitor_init_rootcats($rootcategory, &$rootcats) {
+    global $DB;
+
+    if (!$rootcats = $DB->get_records('question_categories', array('parent' => $rootcategory), 'sortorder, id', 'id,name')) {
+        return get_string('configwarningmonitor', 'block_userquiz_monitor');
+    }
+
+    foreach ($rootcats as $catid => $cat) {
+
+        $rootcats[$catid]->cptA = 0; // Number of question type A.
+        $rootcats[$catid]->cptC = 0; // Number of question type C.
+        $rootcats[$catid]->cpt = 0; // Number of question type A or C.
+        $rootcats[$catid]->goodA = 0; // Number of matched questions type A.
+        $rootcats[$catid]->goodC = 0; // Number of matched questions type C.
+        $rootcats[$catid]->good = 0; // Number of matched questions type A or C.
+        $rootcats[$catid]->ratioA = 0; // Ratio type A.
+        $rootcats[$catid]->ratioC = 0; // Ratio type C.
+        $rootcats[$catid]->ratio = 0;
+        $rootcats[$catid]->questiontypes = array();
+
+        $catidarr = array($cat->id);
+        $cattreelist = userquiz_monitor_get_cattreeids($cat->id, $catidarr);
+        $cattreelist = implode("','", $catidarr);
+
+        $select = " category IN ('$cattreelist') AND defaultmark = 1000 ";
+        if ($DB->record_exists_select('question', $select, array())) {
+            $rootcats[$catid]->questiontypes['C'] = 1;
+        }
+        $select = " category IN ('$cattreelist') AND defaultmark = 1 ";
+        if ($DB->record_exists_select('question', $select, array())) {
+            $rootcats[$catid]->questiontypes['A'] = 1;
+        }
+    }
+    return;
+}
+
+function block_userquiz_monitor_get_exam_attempts($quizid) {
+    global $DB, $USER;
+
+    // Get user's attempts list.
+    $sql  = "
+        SELECT
+            distinct(ua.id),
+            ua.uniqueid,
+            ua.timefinish
+        FROM
+            {quiz_attempts} ua
+        WHERE
+            ua.userid = ? AND
+            ua.timefinish <> 0 AND
+            ua.quiz = ?
+        ORDER BY
+            ua.timefinish ASC
+    ";
+    return $DB->get_records_sql($sql, array($USER->id, $quizid));
+}
+
+function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategory, &$rootcats, &$attempts, &$overall) {
+    global $USER, $DB;
+
+    $errormsg = false;
+    $rootcatkeys = array_keys($rootcats);
+
+    if (!empty($userattempts)) {
+        foreach ($userattempts as $ua) {
+            if ($allstates = get_all_user_records($ua->uniqueid, $USER->id, null, true)) {
+
+                if ($allstates->valid()) {
+                    foreach ($allstates as $state) {
+
+                        // Get question informations.
+                        $question = $DB->get_record_select('question', " id = ? ", array($state->question), 'id, defaultmark, category');
+                        $parent = $DB->get_field('question_categories', 'parent', array('id' => $question->category));
+
+                        if (!$parent) {
+                            // Fix lost states.
+                            continue;
+                        }
+
+                        if (!in_array($parent, $rootcatkeys)) {
+                            // discard  all results that fall outside the revision tree.
+                            $errormsg = get_string('errorquestionoutsidescope', 'block_userquiz_monitor');
+                            continue;
+                        }
+
+                        while (!in_array($parent, array_keys($rootcats)) && $parent != 0) {
+                            $parent = $DB->get_field('question_categories', 'parent', array('id' => $parent));
+                        }
+
+                        if (!isset($attempts[$state->uaid][$question->category])) {
+                            $attempts[$state->uaid][$question->category] = new StdClass;
+                        }
+
+                        if (!isset($attempts[$state->uaid][$parent])) {
+                            $attempts[$state->uaid][$parent] = new StdClass;
+                        }
+
+                        if (!isset($attempts[$state->uaid][$rootcategory])) {
+                            $attempts[$state->uaid][$rootcategory] = new StdClass();
+                        }
+
+                        $attempts[$state->uaid][$question->category]->timefinish = $ua->timefinish;
+                        $attempts[$state->uaid][$parent]->timefinish = $ua->timefinish;
+                        $attempts[$state->uaid][$rootcategory]->timefinish = $ua->timefinish;
+
+                        @$rootcats[$parent]->cpt++;
+
+                        @$attempts[$state->uaid][$question->category]->cpt++;
+                        @$attempts[$state->uaid][$parent]->cpt++;
+                        @$attempts[$state->uaid][$rootcategory]->cpt++;
+
+                        $overall->cpt++;
+
+                        if ($question->defaultmark == '1000') {
+                            $rootcats[$parent]->cptC++;
+                            @$attempts[$state->uaid][$question->category]->cptC++;
+                            @$attempts[$state->uaid][$parent]->cptC++;
+                            @$attempts[$state->uaid][$rootcategory]->cptC++;
+                            $overall->cptC++;
+                            if ($state->grade > 0) {
+                                $rootcats[$parent]->goodC++;
+                                @$attempts[$state->uaid][$question->category]->goodC++;
+                                @$attempts[$state->uaid][$parent]->goodC++;
+                                @$attempts[$state->uaid][$rootcategory]->goodC++;
+                                $overall->goodC++;
+                            }
+                        } else {
+                            $rootcats[$parent]->cptA++;
+                            @$attempts[$state->uaid][$question->category]->cptA++;
+                            @$attempts[$state->uaid][$parent]->cptA++;
+                            @$attempts[$state->uaid][$rootcategory]->cptA++;
+                            $overall->cptA++;
+                            if ($state->grade > 0) {
+                                $rootcats[$parent]->goodA++;
+                                @$attempts[$state->uaid][$question->category]->goodA++;
+                                @$attempts[$state->uaid][$parent]->goodA++;
+                                @$attempts[$state->uaid][$rootcategory]->goodA++;
+                                $overall->goodA++;
+                            }
+                        }
+                        if ($state->grade > 0) {
+                            $rootcats[$parent]->good++;
+                            @$attempts[$state->uaid][$question->category]->good++;
+                            @$attempts[$state->uaid][$parent]->good++;
+                            @$attempts[$state->uaid][$rootcategory]->good++;
+                            $overall->good++;
+                        }
+                    }
+                }
+                $allstates->close();
+
+            } else {
+                $errormsg = get_string('error2', 'block_userquiz_monitor');
+            }
+        }
+    }
+
+    // Build the stucture of the reporting.
+
+    // Post compute ratios.
+
+    $overall->ratioA = ($overall->cptA == 0) ? 0 : round(($overall->goodA / $overall->cptA )*100);
+    $overall->ratioC = ($overall->cptC == 0) ? 0 : round(($overall->goodC / $overall->cptC )*100);
+    $overall->ratio = ($overall->cpt == 0) ? 0 : round(($overall->good / $overall->cpt )*100);
+
+    return $errormsg;
+}

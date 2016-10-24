@@ -21,7 +21,6 @@
  * @copyright   Valery Fremaux <valery.fremaux@gmail.com> (MyLearningFactory.com)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir.'/formslib.php');
@@ -36,7 +35,7 @@ class PreferenceForm extends moodleform {
     }
 
     public function definition() {
-        global $COURSE, $CFG, $DB;
+        global $COURSE, $DB;
 
         $instance = $DB->get_record('block_instances', array('id' => $this->blockid));
         $theBlock = block_instance('userquiz_monitor', $instance);
