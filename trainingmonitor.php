@@ -115,7 +115,7 @@ function get_monitortest($courseid, &$response, &$block) {
         'stop' => $block->config->rateAserie,
         'successrate' => $overall->ratioA,
     );
-    $components['progressbarA'] = $renderer->progress_bar_html_gd($rootcategory, $graphparams);
+    $components['progressbarA'] = $renderer->progress_bar_html_jqw($rootcategory, $graphparams);
 
     if (!empty($block->config->dualserie)) {
         $graphparams = array ( 
@@ -127,7 +127,7 @@ function get_monitortest($courseid, &$response, &$block) {
             'stop' => $block->config->rateCserie,
             'successrate' => $overall->ratioC,
         );
-        $components['progressbarC'] = $renderer->progress_bar_html_gd($rootcategory, $graphparams);
+        $components['progressbarC'] = $renderer->progress_bar_html_jqw($rootcategory, $graphparams);
     }
 
     $data = array('dualserie' => $block->config->dualserie,
@@ -150,7 +150,8 @@ function get_monitortest($courseid, &$response, &$block) {
         $response .= $renderer->errorline($errormsg);
     }
 
-    $response .= '<tr valign="top"><td style="width:50%; padding:5px;">';
+    $response .= '<tr valign="top">';
+    $response .= '<td style="width:50%; padding:5px;">';
 
     $cpt = 0;
     $scale = '';
@@ -203,7 +204,7 @@ function get_monitortest($courseid, &$response, &$block) {
             'stop' => $block->config->rateAserie,
             'successrate' => $cat->ratioA,
         );
-        $cat->progressbarA = $renderer->progress_bar_html_gd($cat->id, $data);
+        $cat->progressbarA = $renderer->progress_bar_html_jqw($cat->id, $data);
 
         if ($block->config->dualserie) {
             $data = array ( 
@@ -215,7 +216,7 @@ function get_monitortest($courseid, &$response, &$block) {
                 'stop' => $block->config->rateCserie,
                 'successrate' => $cat->ratioC,
             );
-            $cat->progressbarC = $renderer->progress_bar_html_gd($cat->id, $data);
+            $cat->progressbarC = $renderer->progress_bar_html_jqw($cat->id, $data);
         }
 
         $cat->jshandler1 = 'updateselectorpl(\''.$courseid.'\',\''.$rootcategory.'\', idcategoriespl , \'cbpl\', \'none\', \''.$quizzesliststring.'\')';
@@ -225,30 +226,21 @@ function get_monitortest($courseid, &$response, &$block) {
         $cpt++;
     }
 
-    $catdetailstr = get_string('categorydetail', 'block_userquiz_monitor', @$block->config->trainingprogramname);
     $notenum = 1;
     if ($block->config->dualserie) {
         $response .= '<span class="smallnotes">'.get_string('columnnotesdual', 'block_userquiz_monitor', $notenum).'</span>';
         $notenum++;
     }
     $response .= '<span class="smallnotes">'.get_string('columnnotesratio', 'block_userquiz_monitor', $notenum).'</span>';
-    $response.= '</td>
-                 <td style="width:50%; padding:5px;">
-                    <div>
-                        <table class="tablemonitorcategorycontainer">
-                            <tr height="17">
-                                <td><h1>'.$catdetailstr.'</h1></td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div id="partright"></div>
-                 </td>
-            </tr>
-        </table>
-        </form>
-   ';
+    $response .= '</td>';
+    $response .= '<td style="width:50%; padding:5px;">';
+    $response .= $renderer->subcat_container();
+    $response .= '</td>';
+    $response .= '</tr>';
+    $response .= '</table>';
+    $response .= '</form>';
 
-    // Init elements on the page
+    // Init elements on the page.
     $response.= '<script type="text/javascript"> initelements();</script>';
 }
 

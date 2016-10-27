@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>generators/external</location>
+    <name>Extra code</name>
+    <license>Macromedia</license>
+    <version>1.6</version>
+    <licenseversion>2005</licenseversion>
+  </library>
+</libraries>

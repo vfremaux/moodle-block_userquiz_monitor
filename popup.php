@@ -47,7 +47,7 @@ if ($mode == 'displayhist') {
     $attempts = json_decode($param, true) ;
 
     if (empty($attempts)) {
-        echo(get_string('nohistory', 'block_userquiz_monitor'));
+        echo(get_string('nohist', 'block_userquiz_monitor'));
     } else {
         $cpt = 0;
         foreach ($attempts as $attempt) {

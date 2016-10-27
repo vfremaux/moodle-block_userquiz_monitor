@@ -343,3 +343,9 @@ img.userquiz-monitor-questiontype {
     width:19px;
     height:20px; 
 }
+
+td.userquiz-cat-progress > div,
+td.progressbar > div {
+    margin-bottom:30px;
+    margin-top:30px;
+}

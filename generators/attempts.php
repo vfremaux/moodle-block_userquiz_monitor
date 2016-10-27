@@ -3,7 +3,7 @@
 function call_attempts($test_data, $data ) {
     global $CFG;
 
-    $response = '<script src="'.$CFG->wwwroot.'/blocks/userquiz_monitor/generators/AC_OETags.js" language="javascript"></script>';
+    $response = '<script src="'.$CFG->wwwroot.'/blocks/userquiz_monitor/generators/external/AC_OETags.js" language="javascript"></script>';
     $response.= '<script src="'.$CFG->wwwroot.'/blocks/userquiz_monitor/generators/history/history.js" language="javascript"></script>';
     
     $response.= '<script language="JavaScript" type="text/javascript">';

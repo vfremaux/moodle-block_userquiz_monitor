@@ -73,9 +73,12 @@ function get_monitorexam($courseid, &$response, &$block) {
 
     $maxratio = 0;
     foreach (array_keys($rootcats) as $catid) {
-        $rootcats[$catid]->ratioC = (@$rootcats[$catid]->cptC == 0) ? 0 : round(($rootcats[$catid]->goodC / $rootcats[$catid]->cptC ) * 100);
-        $rootcats[$catid]->ratioA = (@$rootcats[$catid]->cptA == 0) ? 0 : round(($rootcats[$catid]->goodA / $rootcats[$catid]->cptA ) * 100);
-        $rootcats[$catid]->ratio = (@$rootcats[$catid]->cpt == 0) ? 0 : round(($rootcats[$catid]->good / $rootcats[$catid]->cpt ) * 100);
+        $ratioc = round(($rootcats[$catid]->goodC / $rootcats[$catid]->cptC );
+        $rootcats[$catid]->ratioC = (@$rootcats[$catid]->cptC == 0) ? 0 : $ratioc * 100);
+        $ratioa = round(($rootcats[$catid]->goodA / $rootcats[$catid]->cptA);
+        $rootcats[$catid]->ratioA = (@$rootcats[$catid]->cptA == 0) ? 0 : $ratioa * 100);
+        $ratio = round(($rootcats[$catid]->good / $rootcats[$catid]->cpt);
+        $rootcats[$catid]->ratio = (@$rootcats[$catid]->cpt == 0) ? 0 : $ratio * 100);
         if ($maxratio < $rootcats[$catid]->ratio) {
             $maxratio = $rootcats[$catid]->ratio;
         }
@@ -102,10 +105,10 @@ function get_monitorexam($courseid, &$response, &$block) {
                 $percentscorec = round(($scoreset->goodC / $scoreset->cptC) * 100);
 
                 if ($percentscorea >= 85 && $percentscorec >= 75) {
-                    $attemptdate =  date('j/m/Y', $userattempt->timefinish);
+                    $attemptdate = date('j/m/Y', $userattempt->timefinish);
                     $results[] = array( "date" => $attemptdate, "success" => true);
                 } else {
-                    $attemptdate =  date('j/m/Y', $userattempt->timefinish);
+                    $attemptdate = date('j/m/Y', $userattempt->timefinish);
                     $results[] = array( 'date' => $attemptdate, 'success' => false);
                 }
             }
@@ -119,7 +122,7 @@ function get_monitorexam($courseid, &$response, &$block) {
             'boxwidth' => 400,
             'maxattempts' => $userattemptnum,
             'results' => $results,
-        ) ;
+        );
 
         $testdata = urlencode(json_encode($data));
         $attemptsgraph = $renderer->attempts($data);
