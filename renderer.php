@@ -859,9 +859,9 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
             $dates = new StdClass;
             if ($prefs = $DB->get_record('userquiz_monitor_prefs', array('userid' => $USER->id, 'blockid' => $blockid))) {
                 if (@$prefs->resultsdepth == 0) {
-                    $dates->from = $absolutestart;
+                    $dates->from = userdate($absolutestart);
                 } else {
-                    $dates->from = max(time() - @$prefs->resultsdepth * 7 * DAYSECS, $absolutestart));
+                    $dates->from = userdate(max(time() - @$prefs->resultsdepth * 7 * DAYSECS, $absolutestart));
                 }
                 $dates->to = userdate(time());
                 $filterinfo = get_string('filterinfo', 'block_userquiz_monitor', $dates);

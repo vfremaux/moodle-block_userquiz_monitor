@@ -33,7 +33,7 @@ class block_userquiz_monitor_build_renderer extends plugin_base_renderer {
 
     protected $settings;
 
-    public set_course($course, $block) {
+    public function set_course($course, $block) {
         $this->course = $course;
         $this->block = $block;
     }

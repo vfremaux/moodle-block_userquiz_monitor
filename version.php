@@ -26,8 +26,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2014031401;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2014050800;        // Requires this Moodle version.
+$plugin->version   = 2014031401; // The current plugin version (Date: YYYYMMDDXX).
+$plugin->requires  = 2014050800; // Requires this Moodle version.
 $plugin->component = 'block_userquiz_monitor'; // Full name of the plugin (used for diagnostics).
 $plugin->maturity = MATURITY_RC;
 $plugin->release = '2.7.0 (Build 2014031400)';

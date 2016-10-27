@@ -73,12 +73,12 @@ function get_monitorexam($courseid, &$response, &$block) {
 
     $maxratio = 0;
     foreach (array_keys($rootcats) as $catid) {
-        $ratioc = round(($rootcats[$catid]->goodC / $rootcats[$catid]->cptC );
-        $rootcats[$catid]->ratioC = (@$rootcats[$catid]->cptC == 0) ? 0 : $ratioc * 100);
-        $ratioa = round(($rootcats[$catid]->goodA / $rootcats[$catid]->cptA);
-        $rootcats[$catid]->ratioA = (@$rootcats[$catid]->cptA == 0) ? 0 : $ratioa * 100);
-        $ratio = round(($rootcats[$catid]->good / $rootcats[$catid]->cpt);
-        $rootcats[$catid]->ratio = (@$rootcats[$catid]->cpt == 0) ? 0 : $ratio * 100);
+        $ratioc = $rootcats[$catid]->goodC / $rootcats[$catid]->cptC;
+        $rootcats[$catid]->ratioC = (@$rootcats[$catid]->cptC == 0) ? 0 : round($ratioc * 100);
+        $ratioa = $rootcats[$catid]->goodA / $rootcats[$catid]->cptA;
+        $rootcats[$catid]->ratioA = (@$rootcats[$catid]->cptA == 0) ? 0 : round($ratioa * 100);
+        $ratio = $rootcats[$catid]->good / $rootcats[$catid]->cpt;
+        $rootcats[$catid]->ratio = (@$rootcats[$catid]->cpt == 0) ? 0 : round($ratio * 100);
         if ($maxratio < $rootcats[$catid]->ratio) {
             $maxratio = $rootcats[$catid]->ratio;
         }
