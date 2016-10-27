@@ -38,7 +38,7 @@ $string['close'] = 'Fermer';
 $string['columnnotes'] = '({$a}) Niveau des questions - A ou C.<br/>(2) Correspond au ratio nombre de bonnes réponses / nombre de questions posées<br/>';
 $string['columnnotesdual'] = '({$a}) Niveau des questions - A ou C.<br/>';
 $string['columnnotesratio'] = '({$a}) Correspond au ratio nombre de bonnes réponses / nombre de questions posées<br/>';
-$string['commenthist'] = 'Accéder à l\'historique de vos résultats : ';
+$string['commenthist'] = 'Accéder à l\'historique de vos résultats&nbsp;:&ensp;';
 $string['configalternativeexamcaption'] = 'Titre alternatif pour la page d\'examen';
 $string['configdirectreturn'] = 'Revenir directement au plateau après la tentative';
 $string['configdualserie'] = 'Activer la double série de questions';
@@ -67,13 +67,13 @@ $string['errorquestionoutsidescope'] = 'Certaines questions tirées dans les exa
 $string['erroruserquiznoquiz'] = 'Il n\'y a aucun test disponible avec ce nombre de questions. Il s\'agit probablement d\'une erreur de configuration du plateau de révision.';
 $string['examination'] = 'Ici se trouve la partie examen';
 $string['examinstructions'] = 'Instructions pour l\'examen<br/>(Remplace le texte par défaut si non vide)';
-$string['examsdepth'] = 'Profondeur des examens : ';
+$string['examsdepth'] = 'Profondeur des examens&nbsp;:&ensp;';
 $string['examsenabled'] = 'Activer les examens';
 $string['examsettings'] = 'Réglages des examens';
 $string['examsfilterinfo'] = 'Résultats calculés sur les {$a} derniers examens';
 $string['examtitle'] = 'Simulation d\'examen {$a}';
-$string['filterinfo'] = 'Résultats calculés du {$a->from} au {$a->to} ';
-$string['filtering'] = 'Filtre des résultats ';
+$string['filterinfo'] = 'Résultats calculés du {$a->from} au {$a->to}';
+$string['filtering'] = 'Filtre des résultats';
 $string['graphicassets'] = 'Paramètres graphiques';
 $string['statsbuttonicon'] = 'Icone pour le bouton statistiques';
 $string['detailsicon'] = 'Icone pour le bouton de sous-categorie';
@@ -114,15 +114,15 @@ $string['questiontype'] = 'Type des questions&nbsp;:&ensp;';
 $string['ratio'] = '<b>Ratio<sup>{$a}</sup></b>';
 $string['ratio1'] = 'RATIO';
 $string['reftitle'] = 'Réferentiel de l\'examen {$a}';
-$string['reset'] = 'Remise à zéro ';
+$string['reset'] = 'Remise à zéro';
 $string['resetinfo1'] = 'Réinitialisation effectuée';
 $string['resetinfo2'] = 'Impossible de réinitialiser vos les résultats';
 $string['resetinfo3'] = 'Aucune tentative n\'est à supprimer.';
-$string['resultsdepth'] = 'Profondeur des résultats&nbsp;:&ensap;';
+$string['resultsdepth'] = 'Profondeur des résultats&nbsp;:&ensp;';
 $string['resultsdepthdesc'] = '<b>Profondeur des résultats (semaines) : </b> Avec ce réglage, vous pouvez indiquer sur combien de semaines passées à partir de la date courante vous souhaitez afficher vos complations de progression. Ceci permet d\'éliminer quelques uns des premiers résultats qui pourraient fausser l\'affichage de votre progression réelle';
 $string['runexam'] = 'Lancer un examen';
 $string['runtest'] = 'Lancer un entraînement';
-$string['runtraininghelp'] = 'Sélectionnez des catégories ou sous-catégories dans le tableau ci-dessous puis choisissez la taille de votre questionnaire :';
+$string['runtraininghelp'] = 'Sélectionnez des catégories ou sous-catégories dans le tableau ci-dessous puis choisissez la taille de votre questionnaire&nbsp:&ensp;';
 $string['schedule'] = 'Ici se trouve le programme de formation {$a}';
 $string['selectallcb'] = 'Tout selectionner';
 $string['selectschedule'] = '<p>Vous pouvez visualiser le référentiel de l\'examen {$a} par catégorie sur les 12 catégories de questions standard. Vous pourrez alors mieux appréhender le classement des thèmes de cet examen et organiser vos révisions selon votre convenance.</p><p>Selectionner une catégorie pour afficher son programme : </p>';
@@ -175,6 +175,6 @@ $string['examinstructionsdefault'] = '<p><b>L\'examen blanc simule les condition
 <ul>
 <li><b>Répondez à toutes les questions</b> ou votre tentative sera peu significative et risquera de fausser votre évaluation.</li>
 <li><b>Prévoyez donc un temps suffisant</b> pour terminer l\'examen sans être dérangé.</li>
-<li>En fonction des options de votre pack vous pouvez disposer d\'un nombre d\'examens limité :
+<li>En fonction des options de votre pack vous pouvez disposer d\'un nombre d\'examens limité&nbsp;:
 <b>entraînez-vous donc suffisamment au préalable</b> pour pouvoir profiter de chaque examen blanc.</li>
 </ul>';

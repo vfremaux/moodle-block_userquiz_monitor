@@ -97,8 +97,6 @@ div.errorcontainer {
      width:100%;
 }
 
-
-
 #divtotal{
     font-size : 120%;
 }
@@ -106,7 +104,6 @@ div.errorcontainer {
 .smallnotes{
     font-size:0.9em;
 }
-
 
 .active{
     font-weight:bold;
@@ -128,19 +125,17 @@ div.errorcontainer {
     line-height: 24px;
 }
 
-* tabbar */
 .tabrow0 {
     font-size: 100%;
     line-height:1.8em;
     list-style:none;
-    margin:0px;
-    padding:0px;
+    margin:0;
+    padding:0;
     width:100%;
 }
 
 .tabrow0 li {
       display: inline;
-      margin: 0 -4px 0 0;
       padding: 0;
 }
 
@@ -206,8 +201,6 @@ div.errorcontainer {
     z-index:102;
 }
 
-/*subnav*/
-
 .tabrow0 .empty {
     height: 1px;
     overflow: hidden;
@@ -216,7 +209,7 @@ div.errorcontainer {
 
 .tabrow0 div,
 .tabrow0 ul {
-    background-color:#E0E0E0; /*gris très foncé*/
+    background-color:#E0E0E0;
     background-image: none !important;
     border-top: 1px solid #999999;
     font-size: 90%;
@@ -224,15 +217,15 @@ div.errorcontainer {
     line-height: normal;
     list-style: none;
     margin: 0;
-    padding: 0px;
+    padding: 0;
     position: absolute;
     top: 1.95em;
     width: 100%;
 }
 
 .tabrow0 ul li {
-    display:inline;
-    margin-top:0px;
+    display: inline;
+    margin-top: 0;
     background-image: none !important;
 }
 

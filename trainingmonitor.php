@@ -52,7 +52,7 @@ function get_monitortest($courseid, &$response, &$block) {
 
     // Preconditions.
     if (empty($quizzesids)) {
-        $response.= $OUTPUT->notification(get_string('configwarningmonitor', 'block_userquiz_monitor'), 'notifyproblem');
+        $response .= $OUTPUT->notification(get_string('configwarningmonitor', 'block_userquiz_monitor'), 'notifyproblem');
         return;
     }
 
@@ -71,9 +71,12 @@ function get_monitortest($courseid, &$response, &$block) {
 
     $maxratio = 0;
     foreach (array_keys($rootcats) as $catid) {
-        $rootcats[$catid]->ratioC = (@$rootcats[$catid]->cptC == 0) ? 0 : round(($rootcats[$catid]->goodC / $rootcats[$catid]->cptC ) * 100);
-        $rootcats[$catid]->ratioA = (@$rootcats[$catid]->cptA == 0) ? 0 : round(($rootcats[$catid]->goodA / $rootcats[$catid]->cptA ) * 100);
-        $rootcats[$catid]->ratio = (@$rootcats[$catid]->cpt == 0) ? 0 : round(($rootcats[$catid]->good / $rootcats[$catid]->cpt ) * 100);
+        $ratioc = $rootcats[$catid]->goodC / $rootcats[$catid]->cptC;
+        $rootcats[$catid]->ratioC = (@$rootcats[$catid]->cptC == 0) ? 0 : round($ratioc * 100);
+        $ratioa = $rootcats[$catid]->goodA / $rootcats[$catid]->cptA;
+        $rootcats[$catid]->ratioA = (@$rootcats[$catid]->cptA == 0) ? 0 : round($ratioa * 100);
+        $ratio = $rootcats[$catid]->good / $rootcats[$catid]->cpt;
+        $rootcats[$catid]->ratio = (@$rootcats[$catid]->cpt == 0) ? 0 : round($ratio * 100);
         if ($maxratio < $rootcats[$catid]->ratio) {
             $maxratio = $rootcats[$catid]->ratio;
         }
@@ -83,7 +86,7 @@ function get_monitortest($courseid, &$response, &$block) {
         $maxratio = 1;
     }
 
-    $graphwidth = ($overall->ratio * 100)/$maxratio;
+    $graphwidth = ($overall->ratio * 100) / $maxratio;
 
     // Call javascript.
     $scripts = get_js_scripts(array_keys($rootcats));
@@ -94,7 +97,11 @@ function get_monitortest($courseid, &$response, &$block) {
 
     if (!empty($userattempts)) {
         $params = calcul_hist($rootcategory, $attempts);
-        $params = array('mode' => 'displayhist', 'datetype' => 'short', 'action' => 'Get_Stats', 'type' => 'category', 'param' => $params);
+        $params = array('mode' => 'displayhist',
+                        'datetype' => 'short',
+                        'action' => 'Get_Stats',
+                        'type' => 'category',
+                        'param' => $params);
         $popuplink = new moodle_url('/blocks/userquiz_monitor/popup.php', $params);
         $action = new popup_action('click', $popuplink, 'ratings', array('height' => 400, 'width' => 600));
         $label = get_string('hist', 'block_userquiz_monitor');
@@ -118,7 +125,7 @@ function get_monitortest($courseid, &$response, &$block) {
     $components['progressbarA'] = $renderer->progress_bar_html_jqw($rootcategory, $graphparams);
 
     if (!empty($block->config->dualserie)) {
-        $graphparams = array ( 
+        $graphparams = array (
             'boxheight' => 50,
             'boxwidth' => 300,
             'skin' => 'C',
@@ -159,7 +166,7 @@ function get_monitortest($courseid, &$response, &$block) {
 
     foreach ($rootcats as $catid => $cat) {
 
-        if  ($catid == 0) {
+        if ($catid == 0) {
             continue; // But why.
         }
 
@@ -184,7 +191,11 @@ function get_monitortest($courseid, &$response, &$block) {
         }
 
         if (!empty($userattempts)) {
-            $params = array('mode' => 'displayhist', 'datetype' => 'long', 'action' => 'Get_Stats', 'type' => 'category', 'param' => $params);
+            $params = array('mode' => 'displayhist',
+                            'datetype' => 'long',
+                            'action' => 'Get_Stats',
+                            'type' => 'category',
+                            'param' => $params);
             $popuplink = new moodle_url('/blocks/userquiz_monitor/popup.php', $params);
             $params = array('height' => 400, 'width' => 600);
             $action = new popup_action('click', $popuplink, 'ratings', $params);
@@ -192,10 +203,12 @@ function get_monitortest($courseid, &$response, &$block) {
             $pixurl = new pix_icon('graph', $label, 'block_userquiz_monitor', array('class' => 'userquiz-cmd-icon'));
             $cat->accessorieslink = $OUTPUT->action_link($popuplink, '', $action, array(), $pixurl);
         } else {
-            $cat->accessorieslink = '<img width="38" height="20" title="'.get_string('hist', 'block_userquiz_monitor').'" src="'.$OUTPUT->pix_url('graph', 'block_userquiz_monitor').'"/>';
+            $title = get_string('hist', 'block_userquiz_monitor');
+            $pixurl = $OUTPUT->pix_url('graph', 'block_userquiz_monitor');
+            $cat->accessorieslink = '<img width="38" height="20" title="'.$title.'" src="'.$pixurl.'"/>';
         }
 
-        $data = array ( 
+        $data = array (
             'boxheight' => 50,
             'boxwidth' => 160,
             'type' => 'local',
@@ -207,7 +220,7 @@ function get_monitortest($courseid, &$response, &$block) {
         $cat->progressbarA = $renderer->progress_bar_html_jqw($cat->id, $data);
 
         if ($block->config->dualserie) {
-            $data = array ( 
+            $data = array (
                 'boxheight' => 50,
                 'boxwidth' => 160,
                 'type' => 'local',
@@ -219,7 +232,8 @@ function get_monitortest($courseid, &$response, &$block) {
             $cat->progressbarC = $renderer->progress_bar_html_jqw($cat->id, $data);
         }
 
-        $cat->jshandler1 = 'updateselectorpl(\''.$courseid.'\',\''.$rootcategory.'\', idcategoriespl , \'cbpl\', \'none\', \''.$quizzesliststring.'\')';
+        $cat->jshandler1 = 'updateselectorpl(\''.$courseid.'\',\''.$rootcategory.'\', idcategoriespl,';
+        $cat->jshanlder1 .= ' \'cbpl\', \'none\', \''.$quizzesliststring.'\')';
         $cat->jshandler2 = 'activedisplaytrainingsubcategories('.$courseid.', '.$rootcategory.', '.$catid;
         $cat->jshandler2 .= ', idcategoriespl , \''.$quizzesliststring.'\' , \''.$scale.'\', '.$blockid.')';
         $response .= $renderer->category_result($cat);
@@ -241,6 +255,5 @@ function get_monitortest($courseid, &$response, &$block) {
     $response .= '</form>';
 
     // Init elements on the page.
-    $response.= '<script type="text/javascript"> initelements();</script>';
+    $response .= '<script type="text/javascript"> initelements();</script>';
 }
-

@@ -117,12 +117,13 @@ class block_userquiz_monitor extends block_base {
         include_once($CFG->dirroot.'/blocks/userquiz_monitor/schedulemonitor.php');
 
         $renderer = $PAGE->get_renderer('block_userquiz_monitor');
+        $renderer->set_block($this);
 
         // HTML response.
         $response = '';
 
         // Menu establishment.
-        $response = $renderer->tabs($this);
+        $response = $renderer->tabs();
         $defaultview = (!empty($SESSION->userquizview)) ? $SESSION->userquizview : 'training';
         $selectedview = optional_param('selectedview', $defaultview, PARAM_TEXT);
 
@@ -131,7 +132,7 @@ class block_userquiz_monitor extends block_base {
         if ($selectedview == 'schedule') {
 
             $title = get_string('reftitle', 'block_userquiz_monitor', $this->config->trainingprogramname);
-            $schedule = $OUTPUT->heading( $title, 1);
+            $schedule = $OUTPUT->heading($title, 1);
 
             if (!empty($this->config->rootcategory)) {
                 $schedule .= get_schedule($this);

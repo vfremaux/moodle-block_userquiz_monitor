@@ -59,7 +59,7 @@ function block_userquiz_monitor_get_user_attempts($blockid, $quizzesids, $userid
         $userid = $USER->id;
     }
 
-    // add time range limit
+    // Add time range limit.
     $userprefs = $DB->get_record('userquiz_monitor_prefs', array('userid' => $userid, 'blockid' => $blockid));
     $timerangefilterclause = '';
     if (@$userprefs->resultsdepth > 0) {
@@ -70,7 +70,7 @@ function block_userquiz_monitor_get_user_attempts($blockid, $quizzesids, $userid
     list ($insql, $inparams) = $DB->get_in_or_equal($quizzesids);
     $params = array_merge(array($userid), $inparams);
 
-    // Get user's attempts list
+    // Get user's attempts list.
     $sql = "
         SELECT
             distinct(ua.id),
@@ -177,7 +177,8 @@ function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategor
                     foreach ($allstates as $state) {
 
                         // Get question informations.
-                        $question = $DB->get_record_select('question', " id = ? ", array($state->question), 'id, defaultmark, category');
+                        $fields = 'id, defaultmark, category';
+                        $question = $DB->get_record_select('question', " id = ? ", array($state->question), $fields);
                         $parent = $DB->get_field('question_categories', 'parent', array('id' => $question->category));
 
                         if (!$parent) {
@@ -186,7 +187,7 @@ function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategor
                         }
 
                         if (!in_array($parent, $rootcatkeys)) {
-                            // discard  all results that fall outside the revision tree.
+                            // Discard  all results that fall outside the revision tree.
                             $errormsg = get_string('errorquestionoutsidescope', 'block_userquiz_monitor');
                             continue;
                         }
@@ -267,9 +268,9 @@ function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategor
 
     // Post compute ratios.
 
-    $overall->ratioA = ($overall->cptA == 0) ? 0 : round(($overall->goodA / $overall->cptA )*100);
-    $overall->ratioC = ($overall->cptC == 0) ? 0 : round(($overall->goodC / $overall->cptC )*100);
-    $overall->ratio = ($overall->cpt == 0) ? 0 : round(($overall->good / $overall->cpt )*100);
+    $overall->ratioA = ($overall->cptA == 0) ? 0 : round(($overall->goodA / $overall->cptA ) * 100);
+    $overall->ratioC = ($overall->cptC == 0) ? 0 : round(($overall->goodC / $overall->cptC ) * 100);
+    $overall->ratio = ($overall->cpt == 0) ? 0 : round(($overall->good / $overall->cpt ) * 100);
 
     return $errormsg;
 }
