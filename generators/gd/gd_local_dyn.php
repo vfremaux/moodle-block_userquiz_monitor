@@ -32,9 +32,6 @@ if (!$test) {
 
 // Output special situations messages.
 
-$imageWidth = 199;
-$imageHeight = 44;
-
 $stop = required_param('stop', PARAM_TEXT);
 $skin = required_param('skin', PARAM_TEXT);
 $background = $CFG->dirroot.'/blocks/userquiz_monitor/generators/gd/generic_bg_local.png';

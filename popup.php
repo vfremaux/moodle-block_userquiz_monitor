@@ -36,18 +36,18 @@ if ($mode == 'displayhist') {
     // Define histogram's parameters.
     $height = 400; // Unit : px ; Define the graph's height.
     $width = 600; // Unit : px ; Define the graph's width.
-    $stopA = 85; // Unit : %.
-    $stopC = 75; // Unit : %.
+    $stopa = 85; // Unit : %.
+    $stopc = 75; // Unit : %.
     $response = '';
-    $param = required_param('param', PARAM_TEXT); 
-    $datetype = required_param('datetype', PARAM_TEXT); 
+    $param = required_param('param', PARAM_TEXT);
+    $datetype = required_param('datetype', PARAM_TEXT);
 
     $param = urldecode($param);
-    $param= stripslashes($param);
-    $attempts = json_decode($param, true) ;
+    $param = stripslashes($param);
+    $attempts = json_decode($param, true);
 
     if (empty($attempts)) {
-        echo(get_string('nohistory', 'block_userquiz_monitor'));
+        echo(get_string('nohist', 'block_userquiz_monitor'));
     } else {
         $cpt = 0;
         foreach ($attempts as $attempt) {
@@ -55,15 +55,15 @@ if ($mode == 'displayhist') {
             if (!empty($attempt['attempttimefinish'])) {
 
                 if ($attempt['nbquestionsA'] != 0) {
-                    $graphheightA = round(($attempt['cptgoodanswersA']/$attempt['nbquestionsA'])*100);
+                    $graphheighta = round(($attempt['cptgoodanswersA'] / $attempt['nbquestionsA']) * 100);
                 } else {
-                    $graphheightA = 0;
+                    $graphheighta = 0;
                 }
 
                 if ($attempt['nbquestionsC'] != 0) {
-                    $graphheightC =  round(($attempt['cptgoodanswersC']/$attempt['nbquestionsC'])*100);
+                    $graphheightc = round(($attempt['cptgoodanswersC'] / $attempt['nbquestionsC']) * 100);
                 } else {
-                    $graphheightC = 0;
+                    $graphheightc = 0;
                 }
 
                 $day = date('j', $attempt['attempttimefinish']);
@@ -107,16 +107,14 @@ if ($mode == 'displayhist') {
                 }
 
                 if ($datetype == "short") {
-                        $testdate =  $day .
-                            '/'.date('m', $attempt['attempttimefinish']) .
-                            '/'.date('Y', $attempt['attempttimefinish']);
+                    $testdate = $day .'/'.date('m/Y', $attempt['attempttimefinish']);
                 } else {
-                    $testdate =  $day.'/'.date('m/Y H:i', $attempt['attempttimefinish']).']';
+                    $testdate = $day.'/'.date('m/Y H:i', $attempt['attempttimefinish']).']';
                 }
 
-                $result = array( 'graphheightA' => $graphheightA,
-                                 'graphheightC' => $graphheightC,
-                                 'date' =>  $testdate);
+                $result = array( 'graphheightA' => $graphheighta,
+                                 'graphheightC' => $graphheightc,
+                                 'date' => $testdate);
                 $results[] = $result;
             }
             $cpt++;
@@ -136,12 +134,12 @@ if ($mode == 'displayhist') {
                     $data = array (
                             'boxheight' => $height,
                             'boxwidth' => $width,
-                            'stopA' => $stopA,
-                            'stopC' => $stopC,
-                            'results' => $resultsbis) ;
+                            'stopA' => $stopa,
+                            'stopC' => $stopc,
+                            'results' => $resultsbis);
                     $progressbar[] = $renderer->histogram($data);
                     unset($resultsbis);
-                    $j=0;
+                    $j = 0;
                 }
             }
 
@@ -149,15 +147,15 @@ if ($mode == 'displayhist') {
                 $data = array (
                         'boxheight' => $height,
                         'boxwidth' => $width,
-                        'stopA' => $stopA,
-                        'stopC' => $stopC,
-                        'results' => $resultsbis) ;
+                        'stopA' => $stopa,
+                        'stopC' => $stopc,
+                        'results' => $resultsbis);
                 $progressbar[] = $renderer->histogram($data);
             }
 
             if (!empty($resultsbis) && !empty($progressbar)) {
                 foreach ($progressbar as $histgraph) {
-                    $response .= '<div>'.$histgraph.'</div>'; 
+                    $response .= '<div>'.$histgraph.'</div>';
                 }
             }
             echo($response);
@@ -165,9 +163,9 @@ if ($mode == 'displayhist') {
             $data = array (
                 'boxheight' => $height,
                 'boxwidth' => $width,
-                'stopA' => $stopA,
-                'stopC' => $stopC,
-                'results' => $results) ;
+                'stopA' => $stopa,
+                'stopC' => $stopc,
+                'results' => $results);
             $progressbar = $renderer->histogram($data);
             $response = $progressbar;
             echo($response);
@@ -179,12 +177,12 @@ if ($mode == 'displaysubcategories') {
 
     // Get quiz id.
     $response = '<head>';
-    $response.=     '<link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/blocks/userquiz_monitor/styles.css"/>';
-    $response.= '</head>';
-    $response.= '<body>';
+    $response .= '<link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/blocks/userquiz_monitor/styles.css"/>';
+    $response .= '</head>';
+    $response .= '<body>';
     $quizid = $_GET['quizid'];
-    $id = required_param('categoryid', PARAM_TEXT); 
-    $response.= get_subcategories($id, $quizid);
-    $response.= '</body>';
+    $id = required_param('categoryid', PARAM_TEXT);
+    $response .= get_subcategories($id, $quizid);
+    $response .= '</body>';
     echo($response);
 }
