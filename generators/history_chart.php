@@ -23,7 +23,7 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
-function call_hist_chart($test_data, $data) {
+function call_hist_chart($testdata, $data) {
 
     global $CFG;
 
@@ -68,14 +68,14 @@ function call_hist_chart($test_data, $data) {
     $response .= '} else if (hasRequestedVersion) {';
     $response .= 'AC_FL_RunContent(';
     $response .= '"src", "'.$CFG->wwwroot.'/blocks/userquiz_monitor/generators/history_chart",';
-    $response .= '"width", "'.($data['boxwidth']+100).'",';
-    $response .= '"height", "'.($data['boxheight']+100).'",';
+    $response .= '"width", "'.($data['boxwidth'] + 100).'",';
+    $response .= '"height", "'.($data['boxheight'] + 100).'",';
     $response .= '"align", "middle",';
     $response .= '"id", "history_chart",';
     $response .= '"quality", "high",';
     $response .= '"bgcolor", "#ffffff",';
     $response .= '"name", "history_chart",';
-    $response .= '"FlashVars","data='.$test_data.'",';
+    $response .= '"FlashVars","data='.$testdata.'",';
     $response .= '"allowScriptAccess","sameDomain",';
     $response .= '"type", "application/x-shockwave-flash",';
     $response .= '"pluginspage", "http://www.adobe.com/go/getflashplayer"';

@@ -55,8 +55,8 @@ function get_js_scripts($categories) {
     $script .= '<script type="text/javascript" src="'.$CFG->wwwroot.'/blocks/userquiz_monitor/js/block_js.js"></script>';
 
     // Categories id container.
-    $script.= "<script type=\"text/javascript\">\n";
-    $script.= "var idcategoriespl = new Array();\n";
+    $script .= "<script type=\"text/javascript\">\n";
+    $script .= "var idcategoriespl = new Array();\n";
     foreach ($categories as $categoryid) {
         if ($categoryid == 0) {
             continue; // Weird bug on Credit à la consommation .. Root Category issue.

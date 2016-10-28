@@ -64,7 +64,7 @@ class block_userquiz_monitor_build_renderer extends plugin_base_renderer {
             $this->block->add_quiz_instance($numq, $this->quizsection);
         }
 
-        // build 10 to NN quizzes.
+        // Build 10 to NN quizzes.
 
         // Bind instances to block.
     }

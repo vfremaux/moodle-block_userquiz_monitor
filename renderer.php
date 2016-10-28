@@ -686,14 +686,14 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                     $jshandler = 'updateselectorpr('.$courseid.', '.$rootcategory.',';
                     $jshandler .= ' \''.$subcategoriesids.'\', \'none\', \''.$quizzesliststring.'\')';
                     $cb = '
-                        <input type="checkbox" 
+                        <input type="checkbox"
                           name="cbpr'.$subcat->id.'"
                           id="cbpr'.$subcat->id.'"
                           onclick="'.$jshandler.'"
                           style="padding-left:2px;" />
                     ';
                 }
-    
+
                 $str .= '<div class="trans100" id="divpr'.$subcat->id.'" >';
                 $str .= '<table class="tablemonitorcategorycontainer">';
                 $str .= '<tr>';

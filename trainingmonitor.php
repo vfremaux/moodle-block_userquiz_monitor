@@ -69,22 +69,7 @@ function get_monitortest($courseid, &$response, &$block) {
 
     $errormsg = block_userquiz_monitor_compute_all_results($userattempts, $rootcategory, $rootcats, $attempts, $overall);
 
-    $maxratio = 0;
-    foreach (array_keys($rootcats) as $catid) {
-        $ratioc = $rootcats[$catid]->goodC / $rootcats[$catid]->cptC;
-        $rootcats[$catid]->ratioC = (@$rootcats[$catid]->cptC == 0) ? 0 : round($ratioc * 100);
-        $ratioa = $rootcats[$catid]->goodA / $rootcats[$catid]->cptA;
-        $rootcats[$catid]->ratioA = (@$rootcats[$catid]->cptA == 0) ? 0 : round($ratioa * 100);
-        $ratio = $rootcats[$catid]->good / $rootcats[$catid]->cpt;
-        $rootcats[$catid]->ratio = (@$rootcats[$catid]->cpt == 0) ? 0 : round($ratio * 100);
-        if ($maxratio < $rootcats[$catid]->ratio) {
-            $maxratio = $rootcats[$catid]->ratio;
-        }
-    }
-
-    if ($maxratio == 0) {
-        $maxratio = 1;
-    }
+    $maxratio = block_userquiz_monitor_compute_ratios($rootcats);
 
     $graphwidth = ($overall->ratio * 100) / $maxratio;
 

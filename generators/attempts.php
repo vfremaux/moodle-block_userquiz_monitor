@@ -64,8 +64,8 @@ function call_attempts($testdata, $data ) {
     $response .= '} else if (hasRequestedVersion) {';
     $response .= 'AC_FL_RunContent(';
     $response .= '"src", "'.$CFG->wwwroot.'/blocks/userquiz_monitor/generators/attempts",';
-    $response .= '"width", "'.($data['boxwidth']+50).'>",';
-    $response .= '"height", "'.($data['boxheight']+50).'>",';
+    $response .= '"width", "'.($data['boxwidth'] + 50).'>",';
+    $response .= '"height", "'.($data['boxheight'] + 50).'>",';
     $response .= '"align", "middle",';
     $response .= '"id", "attempts",';
     $response .= '"quality", "high",';

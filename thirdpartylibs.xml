@@ -7,4 +7,11 @@
     <version>1.6</version>
     <licenseversion>2005</licenseversion>
   </library>
+  <library>
+    <location>generators/history</location>
+    <name>Extra code</name>
+    <license></license>
+    <version>1.6</version>
+    <licenseversion>2005</licenseversion>
+  </library>
 </libraries>
