@@ -147,23 +147,19 @@ $string['warningconfigtest'] = 'Please select a set of userquizes to perform tra
 $string['launch_help'] = '
 * Launch a training
 
-Pour lancer un entrainement, vous devez sélectionner les catégories 
-(ou sous-catégories) qui vous intéressent dans le tableau de bord 
-ci-dessous et choisir le nombre de questions que vous voulez lancer.
+To launch a training, you will choose your training scope by selecting categories
+(or subcategories) you want to focus on in the training space
+you can then choose the amount of questions you want to answer.
 ';
 
 $string['total_help'] = '
 * Global progress
 
-Ces résultats sont calculés sur la totalité des rubriques et vous 
-indiquent votre taux de réussite moyen aux entrainements 
-sur toute la période de révision écoulée depuis la dernière remise 
-à zéro.
-';
+Results are compiled across all your attempts and give your mean score
+in training in the selected period';
 
 $string['totalexam_help'] = '
 * Exam progress
 
-Ces résultats sont calculés sur la totalité des rubriques et vous 
-indiquent votre taux de réussite moyen aux examens blancs.
+Results are compiled across all your examination attemps on the selected period.
 ';

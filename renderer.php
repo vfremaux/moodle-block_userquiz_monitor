@@ -108,7 +108,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                 }
             } else {
                 $str .= '<tr valign="top">';
-                $str .= '<td colspan="3" align="center" style="color:#ff0000\">'.$noavailableattemptsstr.'</td>';
+                $str .= '<td colspan="3" align="center" style="color:#ff0000">'.$noavailableattemptsstr.'</td>';
                 $str .= '</tr>';
             }
         }
@@ -297,7 +297,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         $str .= '<h1>'.$totalexamstr.' '.$OUTPUT->help_icon('totalexam', 'block_userquiz_monitor', false).'</h1>';
         $str .= '<div class="trans100">';
         $str .= '<p>'.$commenthist.' '.$accessorieslink.'<p>';
-        $str .= '<p>'.$total.'<p>'; 
+        $str .= '<p>'.$total.'<p>';
         $str .= '</div>';
         $str .= '</td>';
 
@@ -337,16 +337,22 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         $progressbarid = 'progress_bar'.$id;
         $progressbarname = 'progress_bar'.$id;
 
-        $test_data = urlencode(json_encode($data));
+        $testdata = urlencode(json_encode($data));
         $data['id'] = $id;
         if ($data['type'] == 'local') {
             $params = array('barwidth' => $data['successrate'], 'stop' => $data['stop'], 'skin' => $data['skin']);
             $barurl = new moodle_url('/blocks/userquiz_monitor/generators/gd/gd_local_dyn.php', $params);
-            $progressbarimg = '<img id="'.$progressbarid.'" name="'.$progressbarname.'" src="'.$barurl.'" class="progress-bar-end" />';
+            $progressbarimg = '<img id="'.$progressbarid.'"
+                                    name="'.$progressbarname.'"
+                                    src="'.$barurl.'"
+                                    class="progress-bar-end" />';
         } else {
             $params = array('barwidth' => $data['successrate'], 'stop' => $data['stop'], 'skin' => $data['skin']);
             $barurl = new moodle_url('/blocks/userquiz_monitor/generators/gd/gd_total_dyn.php', $params);
-            $progressbarimg = '<img id="'.$progressbarid.'" name="'.$progressbarname.'" src="'.$barurl.'" class="progress-bar-full" />';
+            $progressbarimg = '<img id="'.$progressbarid.'"
+                                    name="'.$progressbarname.'"
+                                    src="'.$barurl.'"
+                                    class="progress-bar-full" />';
         }
         return $progressbarimg;
     }
@@ -381,7 +387,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         $pointer->color = ($data['skin'] == 'A') ? '#800000' : '#0000C0'; // TODO Parametrize.
         $pointer->label = get_string('meanscore', 'block_userquiz_monitor');
         $pointer->size = 30;
- 
+
         $target = new StdClass();
         $target->value = $data['stop'];
         $target->color = ($data['skin'] == 'A') ? '#800000' : '#0000C0'; // TODO Parametrize.
@@ -462,7 +468,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                     </tr>
                     <tr>
                         <td>
-                            <input type="hidden" name="mode" value="test"/> 
+                            <input type="hidden" name="mode" value="test"/>
                             <input type="hidden" name="courseid" value="'.$COURSE->id.'"/>
                             <input type="submit" value="'.$runteststr.'" id="submit" disabled />
                         </td>
@@ -619,7 +625,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                 $ratioa = $subcats[$subcatid]->goodA / $subcats[$subcatid]->cptA;
                 $subcats[$subcatid]->ratioA = ($subcats[$subcatid]->cptA == 0) ? 0 : round($ratioa * 100);
                 $ratio = $subcats[$subcatid]->good / $subcats[$subcatid]->cpt;
-                $subcats[$subcatid]->ratio = ($subcats[$subcatid]->cpt == 0) ? 0 : round($ratio * 100) ;
+                $subcats[$subcatid]->ratio = ($subcats[$subcatid]->cpt == 0) ? 0 : round($ratio * 100);
                 if ($maxratio < $subcats[$subcatid]->ratio) {
                     $maxratio = $subcats[$subcatid]->ratio;
                 }
@@ -677,42 +683,43 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
 
                 $cb = '';
                 if ($mode == 'training') {
-                    $cb = "
-                        <input type=\"checkbox\" 
-                          name=\"cbpr{$subcat->id}\" 
-                          id=\"cbpr{$subcat->id}\" 
-                          onclick=\"updateselectorpr('{$courseid}', '{$rootcategory}', '{$subcategoriesids}', 'none', '{$quizzesliststring}')\" 
-                          style=\"padding-left:2px;\" />
-                    ";
+                    $jshandler = 'updateselectorpr('.$courseid.', '.$rootcategory.',';
+                    $jshandler .= ' \''.$subcategoriesids.'\', \'none\', \''.$quizzesliststring.'\')';
+                    $cb = '
+                        <input type="checkbox" 
+                          name="cbpr'.$subcat->id.'"
+                          id="cbpr'.$subcat->id.'"
+                          onclick="'.$jshandler.'"
+                          style="padding-left:2px;" />
+                    ';
                 }
     
-                $str .= '
-                    <div class="trans100" id="divpr'.$subcat->id.'" >
-                    <table class="tablemonitorcategorycontainer">
-                        <tr>
-                            <td  colspan="3">
-                                <div class="categoryname" style="width:100%;">
-                                    '.$subcat->name.'
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                             <td style="width:70%; background-color:#D9E1D6;">
-                                '.$cb.'
-                             </td>
-                        ';
-                if (!empty($this->theblock->config->dualserie)) {
-                    $str .= '<td style="width : 15%; background-color:#D9E1D6; text-align:center;font-size:0.8em; color:#658EA0;">
-                                    '.get_string('level1', 'block_userquiz_monitor').'
-                                 </td>';
-                }
-                $str .= '<td style="width : 15%; background-color:#D9E1D6; text-align:center;font-size:0.8em; color:#658EA0;">
-                                '.get_string('ratio1', 'block_userquiz_monitor').'
-                             </td>
-                        </tr>
-                ';
+                $str .= '<div class="trans100" id="divpr'.$subcat->id.'" >';
+                $str .= '<table class="tablemonitorcategorycontainer">';
+                $str .= '<tr>';
+                $str .= '<td colspan="3">';
+                $str .= '<div class="categoryname" style="width:100%;">';
+                $str .= $subcat->name;
+                $str .= '</div>';
+                $str .= '</td>';
+                $str .= '</tr>';
 
-                $graphwidth = round(($subcat->ratio * 100)/$maxratio);
+                $str .= '<tr>';
+                $str .= '<td class="userquiz-monitor-bg" style="width:70%;">';
+                $str .= $cb;
+                $str .= '</td>';
+
+                if (!empty($this->theblock->config->dualserie)) {
+                    $str .= '<td class="userquiz-monitor-bg" style="width :15%;text-align:center;font-size:0.8em;">';
+                    $str .= get_string('level1', 'block_userquiz_monitor');
+                    $str .= '</td>';
+                }
+                $str .= '<td class="userquiz-monitor-bg" style="width:15%;text-align:center;font-size:0.8em;">';
+                $str .= get_string('ratio1', 'block_userquiz_monitor');
+                $str .= '</td>';
+                $str .= '</tr>';
+
+                $graphwidth = round(($subcat->ratio * 100) / $maxratio);
 
                 if ($graphwidth < 1) {
                     $graphwidth = 1;
@@ -733,7 +740,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                         );
                         $progressbar = $this->progress_bar_html_jqw($subcat->id, $data);
 
-                        $str.= '<tr>';
+                        $str .= '<tr>';
                         $str .= '<td class="userquiz-cat-progress">';
                         $str .= $progressbar;
                         $str .= '</td>';
@@ -747,9 +754,9 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                         $str .= '<h4>'.$subcat->goodA.'/'.$subcat->cptA.'</h4>';
                         $str .= '</td>';
                         $str .= '</tr>';
-                   }
+                    }
                     if ($this->theblock->config->dualserie && ($questiontype == 'C')) {
-                        $data = array ( 
+                        $data = array (
                             'boxheight' => 50,
                             'boxwidth' => 160,
                             'skin' => 'C',
@@ -759,7 +766,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                             'successrate' => $subcat->ratioC,
                         );
                         $progressbar = $this->progress_bar_html_jqw($subcat->id, $data);
-    
+
                         $str .= '<tr>';
                         $str .= '<td class="userquiz-cat-progress">';
                         $str .= $progressbar;
@@ -841,7 +848,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         } else {
             $absolutestart = $COURSE->startdate;
         }
-    
+
         if ($domain == 'exams') {
             if ($prefs = $DB->get_record('userquiz_monitor_prefs', array('userid' => $USER->id, 'blockid' => $blockid))) {
                 if ($prefs->examsdepth > 0) {
@@ -902,12 +909,15 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         $selectedview = $SESSION->userquizview = $selectedview;
 
         if (!empty($conf->informationpageid)) {
-            // page deals with the page format
+            // Page deals with the page format.
             $taburl = new moodle_url('/course/view.php', array('id' => $COURSE->id, 'page' => $conf->informationpageid));
             $rows[0][] = new tabobject('information', $taburl, get_string('menuinformation', 'block_userquiz_monitor'));
         }
 
-        // $rows[0][] = new tabobject('schedule', "view.php?id=".$COURSE->id."&selectedview=schedule", get_string('menuamfref', 'block_userquiz_monitor', $conf->trainingprogramname));
+        /*
+         * $label = get_string('menuamfref', 'block_userquiz_monitor', $conf->trainingprogramname);
+         * $rows[0][] = new tabobject('schedule', "view.php?id=".$COURSE->id."&selectedview=schedule", $label);
+         */
         if (!empty($conf->trainingenabled)) {
             $taburl = new moodle_url('/course/view.php', array('id' => $COURSE->id, 'selectedview' => 'training'));
             $rows[0][] = new tabobject('training', $taburl, get_string('menutest', 'block_userquiz_monitor'));
@@ -924,7 +934,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Renders the full total block. 
+     * Renders the full total block.
      * @param array $components an array of $rendered subcomponents as strings
      * @param array $data scalar data to render as valriable inputs
      * @param int $rootcategory
@@ -1057,7 +1067,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
 
         $str .= '<div class="trans100" id="divpl'.$cat->id.'">';
         $str .= '<table class="tablemonitorcategorycontainer">';
- 
+
         $str .= '<tr>';
         $str .= '<td colspan="5">';
         $str .= '<div class="categoryname" style="width:100%;">';
@@ -1065,7 +1075,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         $str .= '</div>';
         $str .= '</td>';
         $str .= '</tr>';
- 
+
         $str .= '<tr>';
         $str .= '<td class="userquiz-monitor-category">';
         $str .= '<input type="checkbox"
@@ -1084,7 +1094,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         $str .= '<td class="userquiz-monitor-category ratio">';
         $str .= get_string('ratio1', 'block_userquiz_monitor');
         $str .= '</td>';
-        $str .= '<td style="width:25%; background-color:#D9E1D6;">';
+        $str .= '<td class="userquiz-monitor-bg" style="width:25%;">';
         $pixurl = $OUTPUT->pix_url('detail', 'block_userquiz_monitor');
         $str .= '<img class="userquiz-monitor-cat-detail"
                       title="'.$seesubsstr.'"
@@ -1209,7 +1219,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Provides the url of an eventual stored asset from a filearea. 
+     * Provides the url of an eventual stored asset from a filearea.
      * If none exist, returns default url.
      * @param string $filearea the filearea name
      * @param string|moodle_url $defaulturl

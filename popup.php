@@ -61,7 +61,7 @@ if ($mode == 'displayhist') {
                 }
 
                 if ($attempt['nbquestionsC'] != 0) {
-                    $graphheightc =  round(($attempt['cptgoodanswersC'] / $attempt['nbquestionsC']) * 100);
+                    $graphheightc = round(($attempt['cptgoodanswersC'] / $attempt['nbquestionsC']) * 100);
                 } else {
                     $graphheightc = 0;
                 }
@@ -114,7 +114,7 @@ if ($mode == 'displayhist') {
 
                 $result = array( 'graphheightA' => $graphheighta,
                                  'graphheightC' => $graphheightc,
-                                 'date' =>  $testdate);
+                                 'date' => $testdate);
                 $results[] = $result;
             }
             $cpt++;
@@ -181,7 +181,7 @@ if ($mode == 'displaysubcategories') {
     $response .= '</head>';
     $response .= '<body>';
     $quizid = $_GET['quizid'];
-    $id = required_param('categoryid', PARAM_TEXT); 
+    $id = required_param('categoryid', PARAM_TEXT);
     $response .= get_subcategories($id, $quizid);
     $response .= '</body>';
     echo($response);

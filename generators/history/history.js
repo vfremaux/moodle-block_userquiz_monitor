@@ -9,12 +9,10 @@ BrowserHistoryUtils = {
         if (elm.addEventListener) {
             elm.addEventListener(evType, fn, useCapture);
             return true;
-        }
-        else if (elm.attachEvent) {
+        } else if (elm.attachEvent) {
             var r = elm.attachEvent('on' + evType, fn);
             return r;
-        }
-        else {
+        } else {
             elm['on' + evType] = fn;
         }
     }
@@ -65,19 +63,19 @@ BrowserHistory = (function() {
     // UserAgent detection.
     var useragent = navigator.userAgent.toLowerCase();
 
-    if (useragent.indexOf("opera") != -1) {
+    if (useragent.indexOf("opera") !== -1) {
         browser.opera = true;
-    } else if (useragent.indexOf("msie") != -1) {
+    } else if (useragent.indexOf("msie") !== -1) {
         browser.ie = true;
         browser.version = parseFloat(useragent.substring(useragent.indexOf('msie') + 4));
-    } else if (useragent.indexOf("safari") != -1) {
+    } else if (useragent.indexOf("safari") !== -1) {
         browser.safari = true;
         browser.version = parseFloat(useragent.substring(useragent.indexOf('safari') + 7));
-    } else if (useragent.indexOf("gecko") != -1) {
+    } else if (useragent.indexOf("gecko") !== -1) {
         browser.firefox = true;
     }
 
-    if (browser.ie == true && browser.version == 7) {
+    if (browser.ie == true && browser.version === 7) {
         window["_ie_firstload"] = false;
     }
 
@@ -102,14 +100,14 @@ BrowserHistory = (function() {
     function getPlayer(objectId) {
         var objectId = objectId || null;
         var player = null; /* AJH, needed?  = document.getElementById(getPlayerId()); */
-        if (browser.ie && objectId != null) {
+        if (browser.ie && objectId !== null) {
             player = document.getElementById(objectId);
         }
-        if (player == null) {
+        if (player === null) {
             player = document.getElementsByTagName('object')[0];
         }
 
-        if (player == null || player.object == null) {
+        if (player === null || player.object === null) {
             player = document.getElementsByTagName('embed')[0];
         }
 
@@ -124,7 +122,7 @@ BrowserHistory = (function() {
             players = tmp;
         }
 
-        if (players.length == 0 || players[0].object == null) {
+        if (players.length === 0 || players[0].object === null) {
             var tmp = document.getElementsByTagName('embed');
             players = tmp;
         }
@@ -135,9 +133,9 @@ BrowserHistory = (function() {
         var doc = getHistoryFrame().contentWindow.document;
         var hash = String(doc.location.search);
 
-        if (hash.length == 1 && hash.charAt(0) == "?") {
+        if (hash.length === 1 && hash.charAt(0) === "?") {
             hash = "";
-        } else if (hash.length >= 2 && hash.charAt(0) == "?") {
+        } else if (hash.length >= 2 && hash.charAt(0) === "?") {
             hash = hash.substring(1);
         }
         return hash;
@@ -159,7 +157,7 @@ BrowserHistory = (function() {
          * It would be nice if we could use document.location.hash here,
          * but it's faulty sometimes.
          */
-        if (hash == '') {
+        if (hash === '') {
             hash = '#';
         }
         document.location.hash = hash;
@@ -186,12 +184,12 @@ BrowserHistory = (function() {
              * history entry, and if so ignore, because it's coming from the creation
              * of the history iframe
              */
-            if (flexAppUrl == defaultHash && document.location.href == initialHref && window['_ie_firstload']) {
+            if (flexAppUrl === defaultHash && document.location.href === initialHref && window['_ie_firstload']) {
                 currentHref = initialHref;
                 return;
             }
 
-            if ((!flexAppUrl || flexAppUrl == defaultHash) && window['_ie_firstload']) {
+            if ((!flexAppUrl || flexAppUrl === defaultHash) && window['_ie_firstload']) {
                 newUrl = baseUrl + '#' + defaultHash;
                 flexAppUrl = defaultHash;
             } else {
@@ -204,9 +202,9 @@ BrowserHistory = (function() {
             setHash(flexAppUrl);
         } else {
 
-            if (backStack.length == 0 && initialState.flexAppUrl == flexAppUrl) {
+            if (backStack.length === 0 && initialState.flexAppUrl === flexAppUrl) {
                 initialState = createState(baseUrl, newUrl, flexAppUrl);
-            } else if(backStack.length > 0 && backStack[backStack.length - 1].flexAppUrl == flexAppUrl) {
+            } else if(backStack.length > 0 && backStack[backStack.length - 1].flexAppUrl === flexAppUrl) {
                 backStack[backStack.length - 1] = createState(baseUrl, newUrl, flexAppUrl);
             }
 
@@ -257,7 +255,7 @@ BrowserHistory = (function() {
             return;
         }
         var last = backStack[backStack.length - 1];
-        if (!last && backStack.length == 0){
+        if (!last && backStack.length === 0){
             last = initialState;
         }
         forwardStack.push(current);
@@ -282,7 +280,7 @@ BrowserHistory = (function() {
     function checkForUrlChange() {
 
         if (browser.ie) {
-            if (currentHref != document.location.href && currentHref + '#' != document.location.href) {
+            if (currentHref !== document.location.href && currentHref + '#' !== document.location.href) {
                 /*
                  * This occurs when the user has navigated to a specific URL
                  * within the app, and didn't use browser back/forward
@@ -295,7 +293,7 @@ BrowserHistory = (function() {
                     currentHref = document.location.href;
                     document.location.reload();
                 } else {
-                    if (getHash() != getIframeHash()) {
+                    if (getHash() !== getIframeHash()) {
                         var sourceToSet = historyFrameSourcePrefix + getHash();
                         getHistoryFrame().src = sourceToSet;
                     }
@@ -305,7 +303,7 @@ BrowserHistory = (function() {
 
         if (browser.safari) {
             // For Safari, we have to check to see if history.length changed.
-            if (currentHistoryLength >= 0 && history.length != currentHistoryLength) {
+            if (currentHistoryLength >= 0 && history.length !== currentHistoryLength) {
                 /*
                  * If it did change, then we have to look the old state up
                  * in our hand-maintained array since document.location.hash
@@ -315,7 +313,7 @@ BrowserHistory = (function() {
                 var flexAppUrl = historyHash[currentHistoryLength];
 
                 // ADR: to fix multiple.
-                if (typeof BrowserHistory_multiple != "undefined" && BrowserHistory_multiple == true) {
+                if (typeof BrowserHistory_multiple !== "undefined" && BrowserHistory_multiple === true) {
                     var pl = getPlayers();
                     for (var i = 0; i < pl.length; i++) {
                         pl[i].browserURLChange(flexAppUrl);
@@ -359,7 +357,7 @@ BrowserHistory = (function() {
 
                 // Ok, that didn't work, try someplace back in the history stack.
                 if ((bsl >= 2) && (backStack[bsl - 2])) {
-                    if (backStack[bsl - 2].flexAppUrl == getHash()) {
+                    if (backStack[bsl - 2].flexAppUrl === getHash()) {
                         urlActions.back = true;
                         handleBackButton();
                     }
@@ -372,13 +370,13 @@ BrowserHistory = (function() {
                     }
 
                     for (var i = 0; i < backStack.length; i++) {
-                        if (backStack[i].flexAppUrl == getHash() && i != (bsl - 2)) {
+                        if (backStack[i].flexAppUrl === getHash() && i !== (bsl - 2)) {
                             arbitraryUrl = true;
                             foundInStacks.back = i;
                         }
                     }
                     for (var i = 0; i < forwardStack.length; i++) {
-                        if (forwardStack[i].flexAppUrl == getHash() && i != (bsl - 2)) {
+                        if (forwardStack[i].flexAppUrl === getHash() && i !== (bsl - 2)) {
                             arbitraryUrl = true;
                             foundInStacks.forward = i;
                         }
@@ -391,7 +389,7 @@ BrowserHistory = (function() {
                 var flexAppUrl = getHash();
 
                 // ADR: to fix multiple.
-                if (typeof BrowserHistory_multiple != "undefined" && BrowserHistory_multiple == true) {
+                if (typeof BrowserHistory_multiple !== "undefined" && BrowserHistory_multiple === true) {
                     var pl = getPlayers();
                     for (var i = 0; i < pl.length; i++) {
                         pl[i].browserURLChange(flexAppUrl);
@@ -405,7 +403,7 @@ BrowserHistory = (function() {
 
     // Write an anchor into the page to legitimize it as a URL for Firefox et al.
     function addAnchor(flexAppUrl) {
-        if (document.getElementsByName(flexAppUrl).length == 0) {
+        if (document.getElementsByName(flexAppUrl).length === 0) {
             getAnchorElement().innerHTML += "<a name='" + flexAppUrl + "'>" + flexAppUrl + "</a>";
         }
     }
@@ -413,7 +411,8 @@ BrowserHistory = (function() {
     var _initialize = function () {
         if (browser.ie) {
             var scripts = document.getElementsByTagName('script');
-            for (var i = 0, s; s = scripts[i]; i++) {
+            for (var i = 0; i < scripts.length; i++) {
+                s = scripts[i];
                 if (s.src.indexOf("history.js") > -1) {
                     var iframe_location = (new String(s.src)).replace("history.js", "historyFrame.html");
                 }
@@ -446,7 +445,8 @@ BrowserHistory = (function() {
             var reloader_content = document.createElement('div');
             reloader_content.id = 'safarireloader';
             var scripts = document.getElementsByTagName('script');
-            for (var i = 0, s; s = scripts[i]; i++) {
+            for (var i = 0; i < scripts.length; i++) {
+                s = scripts[i];
                 if (s.src.indexOf("history.js") > -1) {
                     html = (new String(s.src)).replace(".js", ".html");
                 }
@@ -457,7 +457,7 @@ BrowserHistory = (function() {
             reloader_content.style.left = reloader_content.style.top = '-9999px';
             iframe = reloader_content.getElementsByTagName('iframe')[0];
 
-            if (document.getElementById("safari_remember_field").value != "" ) {
+            if (document.getElementById("safari_remember_field").value !== "" ) {
                 historyHash = document.getElementById("safari_remember_field").value.split(",");
             }
 
@@ -498,7 +498,7 @@ BrowserHistory = (function() {
             }
             // If on safari, set the title to be the empty string.
             if (browser.safari) {
-                if (title == "") {
+                if (title === "") {
                     try {
                     var tmp = window.location.href.toString();
                     title = tmp.substring((tmp.lastIndexOf("/") + 1), tmp.lastIndexOf("#"));
@@ -534,7 +534,7 @@ BrowserHistory = (function() {
 
             if (browser.safari) {
                 currentHistoryLength = history.length;
-                if (historyHash.length == 0) {
+                if (historyHash.length === 0) {
                     historyHash[currentHistoryLength] = def;
                     var newloc = "#" + def;
                     window.location.replace(newloc);
@@ -567,7 +567,7 @@ BrowserHistory = (function() {
            var baseUrl = pos != -1 ? document.location.href.substr(0, pos) : document.location.href;
            var newUrl = baseUrl + '#' + flexAppUrl;
 
-           if (document.location.href != newUrl && document.location.href + '#' != newUrl) {
+           if (document.location.href !== newUrl && document.location.href + '#' != newUrl) {
                currentHref = newUrl;
                addHistoryEntry(baseUrl, newUrl, flexAppUrl);
                currentHistoryLength = history.length;
@@ -578,7 +578,7 @@ BrowserHistory = (function() {
 
         browserURLChange: function(flexAppUrl) {
             var objectId = null;
-            if (browser.ie && currentObjectId != null) {
+            if (browser.ie && currentObjectId !== null) {
                 objectId = currentObjectId;
             }
             pendingURL = '';

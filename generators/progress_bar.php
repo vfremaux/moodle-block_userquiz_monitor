@@ -35,7 +35,8 @@ function call_progress_bar($testdata, $data) {
 
     $str = '';
     $str .= '<script type="text/javascript" id="js_'.$progressbarid.'">';
-    $str .= 'setupProgressBar('.$data['boxwidth'].', '.$data['boxheight'].', \''.$progressbarid.'\', \''.$progressbarname.'\', \''.$testdata.'\')';
+    $str .= 'setupProgressBar('.$data['boxwidth'].', '.$data['boxheight'].', \''.$progressbarid;
+    $str .= '\', \''.$progressbarname.'\', \''.$testdata.'\')';
     $str .= '</script>';
 
     $str .= '<noscript>';
