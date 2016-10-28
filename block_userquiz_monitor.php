@@ -56,6 +56,44 @@ class block_userquiz_monitor extends block_base {
         return true;
     }
 
+    /**
+     * Serialize and store config data
+     */
+    public function instance_config_save($data, $nolongerused = false) {
+        global $USER;
+
+        $fs = get_file_storage();
+
+        $usercontext = context_user::instance($USER->id);
+        $context = context_block::instance($this->instance->id);
+
+        foreach ($this->get_fileareas() as $fa) {
+            $groupkey = 'gr'.$fa;
+            $groupdata = @$data->$groupkey;
+            if (!empty($groupdata['clear'.$fa])) {
+                $fs->delete_area_files($context->id, 'block_userquiz_monitor', $fa, 0);
+            } else {
+                $filepickeritemid = $groupdata[$fa];
+                if (!$fs->is_area_empty($usercontext->id, 'user', 'draft', $filepickeritemid, true)) {
+                    file_save_draft_area_files($filepickeritemid, $context->id, 'block_userquiz_monitor', $fa, 0);
+                }
+            }
+
+            // Clean structure for block config.
+            if (!empty($data->$groupdata)) {
+                unset($data->$groupdata);
+            }
+        }
+
+        // Move embedded files into a proper filearea and adjust HTML links.
+        $data->examinstructionsformat = $data->examinstructions['format'];
+        $data->examinstructions = file_save_draft_area_files($data->examinstructions['itemid'], $this->context->id,
+                                                               'block_userquiz_monitor', 'content', 0,
+                                                               array('subdirs' => true), $data->examinstructions['text']);
+
+        parent::instance_config_save($data);
+    }
+
     public function get_content() {
 
         if ($this->content !== null) {
@@ -70,22 +108,6 @@ class block_userquiz_monitor extends block_base {
         return $this->content;
     }
 
-    /**
-     * Serialize and store config data
-     */
-    public function instance_config_save($data, $nolongerused = false) {
-        global $DB;
-
-        $config = clone($data);
-        // Move embedded files into a proper filearea and adjust HTML links.
-        $config->examinstructionsformat = $data->examinstructions['format'];
-        $config->examinstructions = file_save_draft_area_files($data->examinstructions['itemid'], $this->context->id,
-                                                               'block_userquiz_monitor', 'content', 0,
-                                                               array('subdirs' => true), $data->examinstructions['text']);
-
-        parent::instance_config_save($config, $nolongerused);
-    }
-
     public function get_report() {
         global $DB, $COURSE, $CFG, $USER, $SESSION, $OUTPUT, $PAGE;
 
@@ -95,12 +117,13 @@ class block_userquiz_monitor extends block_base {
         include_once($CFG->dirroot.'/blocks/userquiz_monitor/schedulemonitor.php');
 
         $renderer = $PAGE->get_renderer('block_userquiz_monitor');
+        $renderer->set_block($this);
 
         // HTML response.
         $response = '';
 
         // Menu establishment.
-        $response = $renderer->tabs($this);
+        $response = $renderer->tabs();
         $defaultview = (!empty($SESSION->userquizview)) ? $SESSION->userquizview : 'training';
         $selectedview = optional_param('selectedview', $defaultview, PARAM_TEXT);
 
@@ -109,7 +132,7 @@ class block_userquiz_monitor extends block_base {
         if ($selectedview == 'schedule') {
 
             $title = get_string('reftitle', 'block_userquiz_monitor', $this->config->trainingprogramname);
-            $schedule = $OUTPUT->heading( $title, 1);
+            $schedule = $OUTPUT->heading($title, 1);
 
             if (!empty($this->config->rootcategory)) {
                 $schedule .= get_schedule($this);
@@ -218,5 +241,20 @@ class block_userquiz_monitor extends block_base {
         }
 
         return $response;
+    }
+
+    public function get_required_javascript() {
+        global $CFG, $PAGE;
+
+        parent::get_required_javascript();
+
+        $PAGE->requires->jquery_plugin('jqwidgets-bulletchart', 'local_vflibs');
+    }
+
+    protected function get_fileareas() {
+        return array('statsbuttonicon',
+                     'detailsicon',
+                     'serie1icon',
+                     'serie2icon');
     }
 }

@@ -26,29 +26,31 @@ defined('MOODLE_INTERNAL') || die();
 function get_schedule($theblock) {
     global $COURSE, $PAGE;
 
-    if (!empty($theblocks->config->rootcategory)) {
+    if (!empty($theblock->config->rootcategory)) {
         $PAGE->requires->js('/blocks/userquiz_monitor/js/block_js.js');
 
-        $response =         '<table class="trans100" style="margin-bottom:20px; width:100%;">
-                                <tr>
-                                    <td>
-                                        <div style="margin-bottom:20px; margin-left:5px; width:100%;">
-                                            <p>'.get_string('selectschedule', 'block_userquiz_monitor', $theblock->config->trainingprogramname).'</p>';
+        $response = '<table class="trans100" style="margin-bottom:20px; width:100%;">';
+        $response .= '<tr>';
+        $response .= '<td>';
+        $response .= '<div style="margin-bottom:20px; margin-left:5px; width:100%;">';
+        $response .= '<p>'.get_string('selectschedule', 'block_userquiz_monitor', $theblock->config->trainingprogramname).'</p>';
 
         for ($i = 0; $i < 12; $i++) {
             $class = ($i == 0) ? 'active' : 'inactive';
-            $response .= '<a id="amfcat'.$i.'" onClick="refreshcontent('.$COURSE->id.', '.$theblock->config->rootcategory.', '.$i.')" '.$class.' >&nbsp '.($i+1).' &nbsp</a>';
+            $jshandler = 'refreshcontent('.$COURSE->id.', '.$theblock->config->rootcategory.', '.$i.')';
+            $response .= '<a id="amfcat'.$i.'" onClick="'.$jshandler.'" '.$class.' >&nbsp '.($i + 1).' &nbsp</a>';
         }
 
-        $response .=                     '</div>
-                                        <div id="divschedule" style="margin-top:20px; width:100%;">
-                                        </div>
-                                    </td>
-                                </tr>
-                            </table>';
-        $response .=         '<script type="text/javascript">refreshcontent('.$COURSE->id.', '.$theblock->config->rootcategory.', 0);</script>';
+        $response .= '</div>';
+        $response .= '<div id="divschedule" style="margin-top:20px; width:100%;">';
+        $response .= '</div>';
+        $response .= '</td>';
+        $response .= '</tr>';
+        $response .= '</table>';
+        $js = 'refreshcontent('.$COURSE->id.', '.$theblock->config->rootcategory.', 0);';
+        $response .= '<script type="text/javascript">'.$js.'</script>';
 
-        return($response);
+        return $response;
     }
 }
 
