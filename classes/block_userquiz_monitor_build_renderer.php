@@ -74,8 +74,7 @@ class block_userquiz_monitor_build_renderer extends plugin_base_renderer {
         include_once('/course/format/page/xlib.php');
 
         // Create page for training userquiz_monitor.
-        if (empty())
-        $monitorpage = new Stdclass() {
+        $monitorpage = new Stdclass();
         $monitorpage->nameone = get_string('tmpmonitorpagename', 'block_userquiz_monitor');
         $monitorpage->nametwo = get_string('tmpmonitorpagenameshort', 'block_userquiz_monitor');
         $monitorpage->visible = FORMAT_PAGE_DISP_HIDDEN;
@@ -83,7 +82,7 @@ class block_userquiz_monitor_build_renderer extends plugin_base_renderer {
         format_page_add_page($monitorpage);
 
         // Create page for training quizzes.
-        $quizpage = new Stdclass() {
+        $quizpage = new Stdclass();
         $quizpage->nameone = get_string('tmptrainingquizpagename', 'block_userquiz_monitor');
         $quizpage->nametwo = get_string('tmptrainingquizpagenameshort', 'block_userquiz_monitor');
         $quizpage->visible = FORMAT_PAGE_DISP_HIDDEN;
@@ -91,7 +90,7 @@ class block_userquiz_monitor_build_renderer extends plugin_base_renderer {
         format_page_add_page($quizpage);
 
         // Create page for exam quiz.
-        $quizpage = new Stdclass() {
+        $quizpage = new Stdclass();
         $quizpage->nameone = get_string('tmpexamquizpagename', 'block_userquiz_monitor');
         $quizpage->nametwo = get_string('tmpexamquizpagenameshort', 'block_userquiz_monitor');
         $quizpage->visible = FORMAT_PAGE_DISP_HIDDEN;
