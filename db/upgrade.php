@@ -100,7 +100,7 @@ function xmldb_block_userquiz_monitor_upgrade($oldversion=0) {
 
         // Launch create table for userquiz_monitor_cat_stats.
         if (!$dbman->table_exists($table)) {
-           $dbman->create_table($table);
+            $dbman->create_table($table);
         }
 
         upgrade_block_savepoint(true, 2011041900, 'userquiz_monitor');

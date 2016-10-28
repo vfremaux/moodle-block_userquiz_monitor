@@ -68,7 +68,7 @@ $recordsgetcategories = $DB->get_records_sql($sqlselectcategories, array($rootca
 if (!empty($recordsgetcategories)) {
     foreach ($recordsgetcategories as $recordsgetcategory) {
 
-        if ($cpt ==  $id) {
+        if ($cpt == $id) {
             $response .= '<table class="test_report">';
             $response .= '<tr>';
             $response .= '<td>';
