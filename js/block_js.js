@@ -1,4 +1,4 @@
-/**
+/*
  * Reset training
  */
 // jshint unused:false, undef:false
@@ -11,12 +11,12 @@ function resettraining(courseid, userid, quizzeslist) {
     $.get(url, function (data, status) {
         alert(data);
         window.location = M.cfg.wwwroot + "/course/view.php?id=" + courseid;
-        }, 'html');
+    }, 'html');
 }
 
 /**
-* Refresh the number of questions on the selector of the training dashbord
-*/
+ * Refresh the number of questions on the selector of the training dashbord
+ */
 function refresh_selector(categoryid, quizzeslist, rootcategory) {
 
     var params = "rootcategory=" + rootcategory + "&categoryid=" + categoryid + "&quizzeslist=" + quizzeslist;
@@ -34,8 +34,8 @@ function activedisplaytrainingsubcategories(courseid, rootcategory, categoryid, 
     var isdetected = false;
     var cpt = 0;
 
-    $('#progressbarcontainerA'+categoryid).css('visibility', 'visible');
-    $('#progressbarcontainerC'+categoryid).css('visibility', 'visible');
+    $('#progressbarcontainerA' + categoryid).css('visibility', 'visible');
+    $('#progressbarcontainerC' + categoryid).css('visibility', 'visible');
 
     for (var i = 0; i < list.length; i++) {
 
@@ -51,7 +51,7 @@ function activedisplaytrainingsubcategories(courseid, rootcategory, categoryid, 
     }
 
     if (positionheight != 0) {
-        positionheight = positionheight; 
+        positionheight = positionheight;
     }
 
     displaytrainingsubcategories(courseid, rootcategory, categoryid, list, quizzeslist, scale, positionheight, blockid);
@@ -96,9 +96,9 @@ function activedisplayexaminationsubcategories(courseid, categoryid, list, quizi
         positionheight = positionheight;
     }
 
-    var params = "blockid=" + blockid + "&courseid=" + courseid + "&categoryid=" + categoryid+"&quizzeslist=" + quizid;
+    var params = "blockid=" + blockid + "&courseid=" + courseid + "&categoryid=" + categoryid + "&quizzeslist=" + quizid;
     params += "&positionheight=" + positionheight + "&mode=examination&blockid=" + blockid;
-    var url = M.cfg.wwwroot+"/blocks/userquiz_monitor/ajax/subcategoriescontent.php?" + params;
+    var url = M.cfg.wwwroot + "/blocks/userquiz_monitor/ajax/subcategoriescontent.php?" + params;
 
     $.get(url, function(data) {
         $('#displaysubcategories').html(data);
@@ -127,9 +127,9 @@ function displaytrainingsubcategories(courseid, rootcategory, categoryid, list, 
     }
 
     var params = "blockid=" + blockid + "&courseid=" + courseid + "&rootcategory=" + rootcategory;
-    params += "&categoryid=" + categoryid+"&quizzeslist=" + quizzeslist + "&scale=" + scale;
+    params += "&categoryid=" + categoryid + "&quizzeslist=" + quizzeslist + "&scale=" + scale;
     params += "&positionheight=" + positionheight + "&mode=training&blockid=" + blockid;
-    var url = M.cfg.wwwroot+"/blocks/userquiz_monitor/ajax/subcategoriescontent.php?" + params;
+    var url = M.cfg.wwwroot + "/blocks/userquiz_monitor/ajax/subcategoriescontent.php?" + params;
 
     $.post(url, '', function(data) {
         $('#partright').html(data);
@@ -145,7 +145,7 @@ function refreshcontent(courseid, rootcategory, id){
 
     var params = "courseid=" + courseid + "&rootcategory=" + rootcategory + "&id=" + id;
 
-    var url = M.cfg.wwwroot+'/blocks/userquiz_monitor/ajax/schedulecontent.php?' + params;
+    var url = M.cfg.wwwroot + '/blocks/userquiz_monitor/ajax/schedulecontent.php?' + params;
 
     $.get(url, function(data) {
         eval($('#divschedule').html(data));
@@ -177,7 +177,7 @@ function updateselectorpl(courseid, rootcategory, list, location, mode, quizzesl
     }
 
     for (var i = 0; i < list.length; i++) {
-        if ($('#cbpl'+list[i]).prop('checked')) {
+        if ($('#cbpl' + list[i]).prop('checked')) {
             if (categorieslist == '') {
                 categorieslist = list[i];
             } else {
@@ -193,7 +193,7 @@ function updateselectorpl(courseid, rootcategory, list, location, mode, quizzesl
 
     var params = "courseid=" + courseid + "&rootcategory=" + rootcategory + "&categoryid=" + categorieslist;
     params += "&location=mode0&quizzeslist=" + quizzeslist;
-    var url = M.cfg.wwwroot+'/blocks/userquiz_monitor/updateselector.php?' + params;
+    var url = M.cfg.wwwroot + '/blocks/userquiz_monitor/updateselector.php?' + params;
 
     $.get(url, function(data) {
         $('#selectorcontainer').html(data);
@@ -201,8 +201,8 @@ function updateselectorpl(courseid, rootcategory, list, location, mode, quizzesl
 }
 
 /**
-* Updates the selector following the user's choice.
-*/
+ * Updates the selector following the user's choice.
+ */
 function updateselectorprajax(courseid, rootcategory, cats, quizzeslist) {
 
     var categorieslist = '';
@@ -225,7 +225,7 @@ function updateselectorprajax(courseid, rootcategory, cats, quizzeslist) {
 
     var params = "courseid=" + courseid + "&rootcategory=" + rootcategory + "&categoryid=" + categorieslist;
     params += "&location=mode1&quizzeslist=" + quizzeslist;
-    var url = M.cfg.wwwroot+'/blocks/userquiz_monitor/updateselector.php?' + params;
+    var url = M.cfg.wwwroot + '/blocks/userquiz_monitor/updateselector.php?' + params;
 
     $.get(url, function(data) {
         $('#selectorcontainer').html(data);
@@ -239,7 +239,7 @@ function updateselectorplajax(courseid, rootcategory, categoryid, quizzeslist) {
 
     var params = "courseid=" + courseid + "&rootcategory=" + rootcategory + "&categoryid=" + categoryid;
     params += "&location=mode0&quizzeslist=" + quizzeslist;
-    var url = M.cfg.wwwroot+'/blocks/userquiz_monitor/updateselector.php?' + params;
+    var url = M.cfg.wwwroot + '/blocks/userquiz_monitor/updateselector.php?' + params;
 
     $.get(url, function(data) {
         $('#selectorcontainer').html(data);
@@ -256,7 +256,7 @@ function selectallcbpl() {
     }
 }
 
-function selectallcbpr(categoriesidlist) { 
+function selectallcbpr(categoriesidlist) {
     var tab = categoriesidlist.split(',');
     for (var t = 0; t < tab.length; t++) {
         if ($('#checkall_pr').prop('checked')) {
@@ -286,7 +286,7 @@ function show(id) {
     }
 }
 
-function closepr(button) { 
+function closepr(button) {
     $('#checkall_pl').prop('checked', false);
     $('#checkall_pl').prop('disabled', false);
     $('#partright').html('');
@@ -300,7 +300,7 @@ function closepr(button) {
     }
 }
 
-function closeprexam() { 
+function closeprexam() {
     $('#displaysubcategories').html('');
 
     for (var j = 0; j < idcategoriespl.length; j++) {
@@ -345,4 +345,3 @@ function updateselectorpr(courseid, rootcategory, list, display, quizzeslist) {
 function urlencodeurlencode(str) {
     return escape(str.replace(/%/g, '%25').replace(/\+/g, '%2B')).replace(/%25/g, '%');
 }
-

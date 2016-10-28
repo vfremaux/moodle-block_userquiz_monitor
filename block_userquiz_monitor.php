@@ -59,7 +59,7 @@ class block_userquiz_monitor extends block_base {
     /**
      * Serialize and store config data
      */
-    function instance_config_save($data, $nolongerused = false) {
+    public function instance_config_save($data, $nolongerused = false) {
         global $USER;
 
         $fs = get_file_storage();

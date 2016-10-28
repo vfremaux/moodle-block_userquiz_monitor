@@ -50,7 +50,7 @@ class block_userquiz_monitor_build_renderer extends plugin_base_renderer {
 
     public function build() {
 
-        // Build page or sections
+        // Build page or sections.
         if ($course->format == 'page') {
             $this->build_pages();
         } else {
@@ -59,18 +59,18 @@ class block_userquiz_monitor_build_renderer extends plugin_base_renderer {
 
         // Build quizzes instances.
 
-        // Build 1 to 10 quizzes
+        // Build 1 to 10 quizzes.
         for ($i = 1; $i <= 10; $i++) {
             $this->block->add_quiz_instance($numq, $this->quizsection);
         }
 
-        // build 10 to NN quizzes
+        // build 10 to NN quizzes.
 
-        // Bind instances to block
+        // Bind instances to block.
     }
 
     protected function build_pages() {
-        // Load page libs
+        // Load page libs.
         include_once('/course/format/page/xlib.php');
 
         // Create page for training userquiz_monitor.
