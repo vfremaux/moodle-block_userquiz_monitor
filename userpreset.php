@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Get user's dashbord selection an configure the url sending to the quiz 
+ * Get user's dashbord selection an configure the url sending to the quiz
  *
  * @package     block_userquiz_monitor
  * @category    blocks
@@ -23,7 +23,6 @@
  * @copyright   Valery Fremaux <valery.fremaux@gmail.com> (MyLearningFactory.com)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 require('../../config.php');
 
 // Init variables.
@@ -45,7 +44,7 @@ if (!$instance = $DB->get_record('block_instances', array('id' => $blockid))) {
     print_error('badblockinstance', 'block_userquiz_monitor');
 }
 
-$theBlock = block_instance('userquiz_monitor', $instance);
+$theblock = block_instance('userquiz_monitor', $instance);
 
 if (!empty($courseid) && !empty($mode)) {
 
@@ -53,9 +52,9 @@ if (!empty($courseid) && !empty($mode)) {
 
         // Choose the appropriate quiz.
 
-        $quizzlistforblock = implode("','", $theBlock->config->trainingquizzes);
+        $quizzlistforblock = implode("','", $theblock->config->trainingquizzes);
 
-        $sql =  "
+        $sql = "
             SELECT
                 count(qs.questionid) as numquestions,
                 qs.quizid
@@ -80,7 +79,7 @@ if (!empty($courseid) && !empty($mode)) {
 
         // Retrieve settings checkbox on the left side.
         $cbpl = preg_grep('/^cb_pl/', array_keys($_GET));
-        $cbpl_h = preg_grep('/^h_cb_pl/', array_keys($_GET));
+        $cbplh = preg_grep('/^h_cb_pl/', array_keys($_GET));
 
         // If there is at least one selection.
         if (!empty($cbpl)) {
@@ -119,18 +118,18 @@ if (!empty($courseid) && !empty($mode)) {
             $cbpr = preg_grep('/^cbpr/', array_keys($_GET));
 
             // If there is at least one selection.
-            if ($cbpr != "" && $cbpr != null) {
+            if ($cbpr != '' && $cbpr != null) {
                 // Filter subcategories id.
                 $categorieslistpr = preg_replace('/^cbpr/', '', $cbpr);
                 $selectionstrpr = implode(',', $categorieslistpr);
                 $selectionstr = $selectionstrpr;
                 $nbquestions = optional_param('selectornbquestions', 0, PARAM_INT);
             } else {
-                if ($cbpl_h != "" && $cbpl_h != null) {
+                if ($cbplh != '' && $cbplh != null) {
                     $nbquestions = optional_param('selectornbquestions', 0, PARAM_INT);
 
                     // Filter categories id.
-                    $categorieslistpl = preg_replace('/^h_cb_pl/', '', $cbpl_h);
+                    $categorieslistpl = preg_replace('/^h_cb_pl/', '', $cbplh);
                     $selectionstrpl = implode(',', $categorieslistpl);
                     $selectionstr = $selectionstrpl;
                 }
@@ -138,7 +137,7 @@ if (!empty($courseid) && !empty($mode)) {
 
             if ($testid == 0) {
                 if (debugging()) {
-                    echo "Problem in finding a test";
+                    echo 'Problem in finding a test';
                 }
                 $OUTPUT->continue_button(new moodle_url('/course/view.php', array('id' => $courseid)));
             } else {
@@ -151,7 +150,7 @@ if (!empty($courseid) && !empty($mode)) {
                     redirect(new moodle_url('/mod/quiz/startattempt.php', $params));
                 } else {
                     if (debugging()) {
-                        echo "Problem in the selection";
+                        echo 'Problem in the selection';
                     }
                     echo $OUTPUT->continue_button(new moodle_url('/course/view.php', array('id' => $courseid)));
                 }
@@ -160,6 +159,6 @@ if (!empty($courseid) && !empty($mode)) {
     }
 
     if ($mode == 'examination') {
-        redirect(new moodle_url('/mod/quiz/attempt.php', array('q' => $theBlock->config->examquiz)));
+        redirect(new moodle_url('/mod/quiz/attempt.php', array('q' => $theblock->config->examquiz)));
     }
 }

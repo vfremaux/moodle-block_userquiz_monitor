@@ -71,19 +71,7 @@ function get_monitorexam($courseid, &$response, &$block) {
 
     $errormsg = block_userquiz_monitor_compute_all_results($userattempts, $rootcategory, $rootcats, $attempts, $overall);
 
-    $maxratio = 0;
-    foreach (array_keys($rootcats) as $catid) {
-        $rootcats[$catid]->ratioC = (@$rootcats[$catid]->cptC == 0) ? 0 : round(($rootcats[$catid]->goodC / $rootcats[$catid]->cptC ) * 100);
-        $rootcats[$catid]->ratioA = (@$rootcats[$catid]->cptA == 0) ? 0 : round(($rootcats[$catid]->goodA / $rootcats[$catid]->cptA ) * 100);
-        $rootcats[$catid]->ratio = (@$rootcats[$catid]->cpt == 0) ? 0 : round(($rootcats[$catid]->good / $rootcats[$catid]->cpt ) * 100);
-        if ($maxratio < $rootcats[$catid]->ratio) {
-            $maxratio = $rootcats[$catid]->ratio;
-        }
-    }
-
-    if ($maxratio == 0) {
-        $maxratio = 1;
-    }
+    $maxratio = block_userquiz_monitor_compute_ratios($rootcats);
 
     $graphwidth = ($overall->ratio * 100) / $maxratio;
 
@@ -102,10 +90,10 @@ function get_monitorexam($courseid, &$response, &$block) {
                 $percentscorec = round(($scoreset->goodC / $scoreset->cptC) * 100);
 
                 if ($percentscorea >= 85 && $percentscorec >= 75) {
-                    $attemptdate =  date('j/m/Y', $userattempt->timefinish);
+                    $attemptdate = date('j/m/Y', $userattempt->timefinish);
                     $results[] = array( "date" => $attemptdate, "success" => true);
                 } else {
-                    $attemptdate =  date('j/m/Y', $userattempt->timefinish);
+                    $attemptdate = date('j/m/Y', $userattempt->timefinish);
                     $results[] = array( 'date' => $attemptdate, 'success' => false);
                 }
             }
@@ -119,7 +107,7 @@ function get_monitorexam($courseid, &$response, &$block) {
             'boxwidth' => 400,
             'maxattempts' => $userattemptnum,
             'results' => $results,
-        ) ;
+        );
 
         $testdata = urlencode(json_encode($data));
         $attemptsgraph = $renderer->attempts($data);

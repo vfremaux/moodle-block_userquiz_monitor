@@ -21,12 +21,12 @@
  * @copyright   Valery Fremaux <valery.fremaux@gmail.com> (MyLearningFactory.com)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Provides all the necessary javascript in order to manage the dashbord.
  */
 function get_js_scripts($categories) {
-    // Get global variables.
     global $CFG, $COURSE;
 
     // Init.
@@ -52,17 +52,19 @@ function get_js_scripts($categories) {
     $button .= '</table>';
 
     // Include script which manages ajax.
-    $script.= '<script type="text/javascript" src="'.$CFG->wwwroot.'/blocks/userquiz_monitor/js/block_js.js"></script>';
+    $script .= '<script type="text/javascript" src="'.$CFG->wwwroot.'/blocks/userquiz_monitor/js/block_js.js"></script>';
 
-    // Categories id container
-    $script.= "<script type=\"text/javascript\">\n";
-    $script.= "var idcategoriespl = new Array();\n";
+    // Categories id container.
+    $script .= "<script type=\"text/javascript\">\n";
+    $script .= "var idcategoriespl = new Array();\n";
     foreach ($categories as $categoryid) {
-        if ($categoryid == 0) continue; // Weird bug on Credit à la consommation .. Root Category issue.
-        $script.= "idcategoriespl[$j] = ".$categoryid.";\n" ;
+        if ($categoryid == 0) {
+            continue; // Weird bug on Credit à la consommation .. Root Category issue.
+        }
+        $script .= "idcategoriespl[$j] = ".$categoryid.";\n";
         $j++;
     }
-    $script.= "</script>\n";
+    $script .= "</script>\n";
 
     return $script;
 }

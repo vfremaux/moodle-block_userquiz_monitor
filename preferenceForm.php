@@ -27,7 +27,7 @@ require_once($CFG->libdir.'/formslib.php');
 
 class PreferenceForm extends moodleform {
 
-    var $blockid;
+    protected $blockid;
 
     public function __construct($blockid) {
         $this->blockid = $blockid;
@@ -38,7 +38,7 @@ class PreferenceForm extends moodleform {
         global $COURSE, $DB;
 
         $instance = $DB->get_record('block_instances', array('id' => $this->blockid));
-        $theBlock = block_instance('userquiz_monitor', $instance);
+        $theblock = block_instance('userquiz_monitor', $instance);
 
         $mform =& $this->_form;
 
@@ -50,7 +50,7 @@ class PreferenceForm extends moodleform {
 
         $mform->addElement('html', get_string('resultsdepthdesc', 'block_userquiz_monitor'));
 
-        if (!empty($theBlock->config->trainingenabled)) {
+        if (!empty($theblock->config->trainingenabled)) {
             $options = array('0' => get_string('optnofilter', 'block_userquiz_monitor'),
                 '1' => get_string('optoneweek', 'block_userquiz_monitor'),
                 '2' => get_string('opttwoweeks', 'block_userquiz_monitor'),
@@ -61,7 +61,7 @@ class PreferenceForm extends moodleform {
             $mform->addElement('select', 'resultsdepth', get_string('resultsdepth', 'block_userquiz_monitor'), $options);
         }
 
-        if (!empty($theBlock->config->examenabled)) {
+        if (!empty($theblock->config->examenabled)) {
             $examoptions = array('0' => get_string('optnofilter', 'block_userquiz_monitor'),
                 '1' => get_string('optoneexam', 'block_userquiz_monitor'),
                 '2' => get_string('opttwoexams', 'block_userquiz_monitor'),

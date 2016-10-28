@@ -72,14 +72,21 @@ $string['examsdepth'] = 'Exams depth: ';
 $string['examsettings'] = 'Examination settings';
 $string['examsfilterinfo'] = 'Results are calculated over {$a} exam attempts';
 $string['examtitle'] = 'Simulation {$a} examination';
-$string['filterinfo'] = 'Results are calculated from {$a->from} to {$a->to} ';
+$string['filterinfo'] = 'Results are calculated from {$a->from} to {$a->to}';
 $string['filtering'] = 'Progress results filtering';
+$string['graphicassets'] = 'Graphic assets';
+$string['statsbuttonicon'] = 'Icon for stats button';
+$string['detailsicon'] = 'Icon for subcategory button';
+$string['clear'] = 'Clear this image';
+$string['serie1icon'] = 'Icon for question serie 1';
+$string['serie2icon'] = 'Icon for question serie 2';
 $string['generalsettings'] = 'General settings';
 $string['hist'] = 'Histogram';
 $string['info1'] = '* Be sure to select at least one category or subcategory before releasing training. <br/>';
 $string['launch'] = 'Launch the test';
 $string['level'] = '<b>Level<sup>{$a}</sup></b>';
 $string['level1'] = 'LEVEL';
+$string['localcss'] = 'Local CSS';
 $string['menuamfref'] = '{$a} Reference';
 $string['menuexamination'] = 'Assessment';
 $string['menuinformation'] = 'Information';
@@ -92,7 +99,7 @@ $string['nohist'] = 'No history data available.';
 $string['nousedattemptsstr'] = 'No attempts performed';
 $string['numberquestions'] = 'Number of question';
 $string['optfiveexams'] = '5 passed exams';
-$string['optfiveweeks'] = '5 passed weeks ';
+$string['optfiveweeks'] = '5 passed weeks';
 $string['optfourexams'] = '4 passed exams';
 $string['optfourweeks'] = '4 passed weeks';
 $string['optnofilter'] = 'All results (no filtering)';
@@ -103,7 +110,7 @@ $string['optthreeweeks'] = '3 passed weeks';
 $string['opttwoexams'] = '2 passed exams';
 $string['opttwoweeks'] = '2 passed weeks';
 $string['pluginname'] = 'Userquiz monitoring';
-$string['questiontype'] = 'Questions\'s types : ';
+$string['questiontype'] = 'Questions\'s types:&ensp;';
 $string['ratio'] = '<b>Ratio<sup>{$a}</sup></b>';
 $string['ratio1'] = 'RATIO';
 $string['reftitle'] = '{$a} Assessment Reference';
@@ -121,7 +128,9 @@ $string['selectallcb'] = 'Select all';
 $string['selectschedule'] = 'Select a category to view program';
 $string['showdiv'] = 'Show / Hide the total score';
 $string['stillavailable'] = ' still available';
-$string['subcategoryname'] = 'Subcategory\'s name : ';
+$string['subcategoryname'] = 'Subcategory\'s name:&ensp;';
+$string['target'] = 'Target';
+$string['meanscore'] = 'Mean Score';
 $string['testinstructions'] = '<p>To launch a training, please select categoies or subcategories you wxant to focus on in the following table than choose the number of questions you want to get in your training.</p><p>The dashboard computes your success rate per category, accumulating your mean success level from the beginning of your trainig period.</p>';
 $string['testtitle'] = 'Self-training to the assessment';
 $string['thankyou'] = 'Thank you for having submitted to this examination';
@@ -138,23 +147,19 @@ $string['warningconfigtest'] = 'Please select a set of userquizes to perform tra
 $string['launch_help'] = '
 * Launch a training
 
-Pour lancer un entrainement, vous devez sélectionner les catégories 
-(ou sous-catégories) qui vous intéressent dans le tableau de bord 
-ci-dessous et choisir le nombre de questions que vous voulez lancer.
+To launch a training, you will choose your training scope by selecting categories
+(or subcategories) you want to focus on in the training space
+you can then choose the amount of questions you want to answer.
 ';
 
 $string['total_help'] = '
 * Global progress
 
-Ces résultats sont calculés sur la totalité des rubriques et vous 
-indiquent votre taux de réussite moyen aux entrainements 
-sur toute la période de révision écoulée depuis la dernière remise 
-à zéro.
-';
+Results are compiled across all your attempts and give your mean score
+in training in the selected period';
 
 $string['totalexam_help'] = '
 * Exam progress
 
-Ces résultats sont calculés sur la totalité des rubriques et vous 
-indiquent votre taux de réussite moyen aux examens blancs.
+Results are compiled across all your examination attemps on the selected period.
 ';
