@@ -275,7 +275,7 @@ function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategor
     return $errormsg;
 }
 
-function block_userquiz_monitor_compute_ratio(&$rootcats) {
+function block_userquiz_monitor_compute_ratios(&$rootcats) {
 
     $maxratio = 0;
 
