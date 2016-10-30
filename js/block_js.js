@@ -1,7 +1,18 @@
-/*
+/**
  * Reset training
  */
 // jshint unused:false, undef:false
+
+function getpositionelement(id) {
+    var divHeight = 0;
+
+    if ($('#divpl' + id).attr('offsetHeight')) {
+        divHeight = $('#divpl' + id).attr('offsetHeight');
+    } else if ($('#divpl' + id).css('pixelHeight')) {
+        divHeight = $('#divpl' + id).css('pixelHeight');
+    }
+    return(divHeight);
+}
 
 function resettraining(courseid, userid, quizzeslist) {
 
@@ -27,81 +38,49 @@ function refresh_selector(categoryid, quizzeslist, rootcategory) {
     }, 'html');
 }
 
-// Refresh right's part of dashbord training.
-function activedisplaytrainingsubcategories(courseid, rootcategory, categoryid, list, quizzeslist, scale, blockid) {
-    var sizetemp = 0;
-    var positionheight = 0;
-    var isdetected = false;
-    var cpt = 0;
-
-    $('#progressbarcontainerA' + categoryid).css('visibility', 'visible');
-    $('#progressbarcontainerC' + categoryid).css('visibility', 'visible');
-
-    for (var i = 0; i < list.length; i++) {
-
-        if (list[i] === categoryid) {
-            isdetected = true;
-        }
-
-        if (isdetected === false) {
-            sizetemp = getpositionelement(list[i]);
-            positionheight = positionheight + sizetemp + 5.3;
-            cpt++;
+function selectallcbpl() {
+    for (var j = 0; j < idcategoriespl.length; j++) {
+        if ($('#checkall_pl').prop('checked')) {
+            $('#cbpl' + idcategoriespl[j]).prop('checked', true);
+        } else {
+            $('#cbpl' + idcategoriespl[j]).prop('checked', false);
         }
     }
-
-    if (positionheight != 0) {
-        positionheight = positionheight;
-    }
-
-    displaytrainingsubcategories(courseid, rootcategory, categoryid, list, quizzeslist, scale, positionheight, blockid);
 }
 
 /**
- * Display subcategories on the right part of the examination dashbord
+ * Updates the selector following the user's choice.
  */
-function activedisplayexaminationsubcategories(courseid, categoryid, list, quizid, blockid) {
+function updateselectorpl(courseid, rootcategory, list, location, mode, quizzeslist) {
 
-    var sizetempt = 0;
-    var positionheight = 0;
-    var isdetected = false;
+    var categorieslist = '';
     var cpt = 0;
 
-    for (var i = 0; i < list.length; i++) {
-        if (list[i] == categoryid) {
-            $('#divpl' + list[i]).addClass('trans100');
-            $('#divpl' + list[i]).removeClass('trans50');
-        } else {
-            $('#divpl' + list[i]).addClass('trans50');
-            $('#divpl' + list[i]).removeClass('trans100');
-            $('#progressbarcontainerA' + list[i]).css('visibility', 'hidden');
-            $('#progressbarcontainerC' + list[i]).css('visibility', 'hidden');
-        }
+    if (mode === 'all') {
+        selectallcbpl();
     }
 
     for (var i = 0; i < list.length; i++) {
-
-        if (list[i] === categoryid) {
-            isdetected = true;
+        if ($('#cbpl' + list[i]).prop('checked')) {
+            if (categorieslist === '') {
+                categorieslist = list[i];
+            } else {
+                categorieslist = categorieslist + "," + list[i];
+            }
         }
-
-        if (isdetected === false) {
-            sizetemp = getpositionelement(list[i]);
-            positionheight = positionheight + sizetemp + 4.8;
-            cpt++;
-        }
+        cpt++;
     }
 
-    if (positionheight != 0) {
-        positionheight = positionheight;
+    if (categorieslist === '') {
+        categorieslist = 'null';
     }
 
-    var params = "blockid=" + blockid + "&courseid=" + courseid + "&categoryid=" + categoryid + "&quizzeslist=" + quizid;
-    params += "&positionheight=" + positionheight + "&mode=examination&blockid=" + blockid;
-    var url = M.cfg.wwwroot + "/blocks/userquiz_monitor/ajax/subcategoriescontent.php?" + params;
+    var params = "courseid=" + courseid + "&rootcategory=" + rootcategory + "&categoryid=" + categorieslist;
+    params += "&location=mode0&quizzeslist=" + quizzeslist;
+    var url = M.cfg.wwwroot + '/blocks/userquiz_monitor/updateselector.php?' + params;
 
     $.get(url, function(data) {
-        $('#displaysubcategories').html(data);
+        $('#selectorcontainer').html(data);
     }, 'html');
 }
 
@@ -138,6 +117,84 @@ function displaytrainingsubcategories(courseid, rootcategory, categoryid, list, 
     updateselectorplajax(wwwroot, courseid, rootcategory, categoryid, quizzeslist);
 }
 
+// Refresh right's part of dashbord training.
+function activedisplaytrainingsubcategories(courseid, rootcategory, categoryid, list, quizzeslist, scale, blockid) {
+    var sizetemp = 0;
+    var positionheight = 0;
+    var isdetected = false;
+    var cpt = 0;
+
+    $('#progressbarcontainerA' + categoryid).css('visibility', 'visible');
+    $('#progressbarcontainerC' + categoryid).css('visibility', 'visible');
+
+    for (var i = 0; i < list.length; i++) {
+
+        if (list[i] === categoryid) {
+            isdetected = true;
+        }
+
+        if (isdetected === false) {
+            sizetemp = getpositionelement(list[i]);
+            positionheight = positionheight + sizetemp + 5.3;
+            cpt++;
+        }
+    }
+
+    if (positionheight !== 0) {
+        positionheight = positionheight;
+    }
+
+    displaytrainingsubcategories(courseid, rootcategory, categoryid, list, quizzeslist, scale, positionheight, blockid);
+}
+
+/**
+ * Display subcategories on the right part of the examination dashbord
+ */
+function activedisplayexaminationsubcategories(courseid, categoryid, list, quizid, blockid) {
+
+    var sizetempt = 0;
+    var positionheight = 0;
+    var isdetected = false;
+    var cpt = 0;
+
+    for (var i = 0; i < list.length; i++) {
+        if (list[i] === categoryid) {
+            $('#divpl' + list[i]).addClass('trans100');
+            $('#divpl' + list[i]).removeClass('trans50');
+        } else {
+            $('#divpl' + list[i]).addClass('trans50');
+            $('#divpl' + list[i]).removeClass('trans100');
+            $('#progressbarcontainerA' + list[i]).css('visibility', 'hidden');
+            $('#progressbarcontainerC' + list[i]).css('visibility', 'hidden');
+        }
+    }
+
+    for (i = 0; i < list.length; i++) {
+
+        if (list[i] === categoryid) {
+            isdetected = true;
+        }
+
+        if (isdetected === false) {
+            sizetemp = getpositionelement(list[i]);
+            positionheight = positionheight + sizetemp + 4.8;
+            cpt++;
+        }
+    }
+
+    if (positionheight !== 0) {
+        positionheight = positionheight;
+    }
+
+    var params = "blockid=" + blockid + "&courseid=" + courseid + "&categoryid=" + categoryid + "&quizzeslist=" + quizid;
+    params += "&positionheight=" + positionheight + "&mode=examination&blockid=" + blockid;
+    var url = M.cfg.wwwroot + "/blocks/userquiz_monitor/ajax/subcategoriescontent.php?" + params;
+
+    $.get(url, function(data) {
+        $('#displaysubcategories').html(data);
+    }, 'html');
+}
+
 /**
  * Updates the program following the user's choice.
  */
@@ -148,7 +205,7 @@ function refreshcontent(courseid, rootcategory, id){
     var url = M.cfg.wwwroot + '/blocks/userquiz_monitor/ajax/schedulecontent.php?' + params;
 
     $.get(url, function(data) {
-        eval($('#divschedule').html(data));
+        $('#divschedule').html(data);
         highlightamfcat(id);
     });
 }
@@ -167,42 +224,6 @@ function highlighttrainingcat(categoryid) {
 /**
  * Updates the selector following the user's choice.
  */
-function updateselectorpl(courseid, rootcategory, list, location, mode, quizzeslist) {
-
-    var categorieslist = '';
-    var cpt = 0;
-
-    if (mode == 'all') {
-        selectallcbpl();
-    }
-
-    for (var i = 0; i < list.length; i++) {
-        if ($('#cbpl' + list[i]).prop('checked')) {
-            if (categorieslist == '') {
-                categorieslist = list[i];
-            } else {
-                categorieslist = categorieslist + "," + list[i];
-            }
-        }
-        cpt++;
-    }
-
-    if (categorieslist == '') {
-        categorieslist = 'null';
-    }
-
-    var params = "courseid=" + courseid + "&rootcategory=" + rootcategory + "&categoryid=" + categorieslist;
-    params += "&location=mode0&quizzeslist=" + quizzeslist;
-    var url = M.cfg.wwwroot + '/blocks/userquiz_monitor/updateselector.php?' + params;
-
-    $.get(url, function(data) {
-        $('#selectorcontainer').html(data);
-    }, 'html');
-}
-
-/**
- * Updates the selector following the user's choice.
- */
 function updateselectorprajax(courseid, rootcategory, cats, quizzeslist) {
 
     var categorieslist = '';
@@ -210,7 +231,7 @@ function updateselectorprajax(courseid, rootcategory, cats, quizzeslist) {
 
     for (var i = 0; i < cats.length; i++) {
         if ($('#cbpr' + cats[i]).prop('checked')) {
-            if (categorieslist == '') {
+            if (categorieslist === '') {
                 categorieslist = cats[i];
             } else {
                 categorieslist = categorieslist + "," + cats[i];
@@ -246,16 +267,6 @@ function updateselectorplajax(courseid, rootcategory, categoryid, quizzeslist) {
     }, 'html');
 }
 
-function selectallcbpl() {
-    for (var j = 0; j < idcategoriespl.length; j++) {
-        if ($('#checkall_pl').prop('checked')) {
-            $('#cbpl' + idcategoriespl[j]).prop('checked', true);
-        } else {
-            $('#cbpl' + idcategoriespl[j]).prop('checked', false);
-        }
-    }
-}
-
 function selectallcbpr(categoriesidlist) {
     var tab = categoriesidlist.split(',');
     for (var t = 0; t < tab.length; t++) {
@@ -279,7 +290,7 @@ function initelements() {
 }
 
 function show(id) {
-    if ($('#' + id).css('display') == 'none') {
+    if ($('#' + id).css('display') === 'none') {
         $('#' + id).css('display', 'block');
     } else {
         $('#' + id).css('display', 'none');
@@ -308,17 +319,6 @@ function closeprexam() {
         $('#progressbarcontainerA' + idcategoriespl[j]).css('visibility', 'visible');
         $('#progressbarcontainerC' + idcategoriespl[j]).css('visibility', 'visible');
     }
-}
-
-function getpositionelement(id) {
-    var divHeight = 0;
-
-    if ($('#divpl' + id).attr('offsetHeight')) {
-        divHeight = $('#divpl' + id).attr('offsetHeight');
-    } else if ($('#divpl' + id).css('pixelHeight')) {
-        divHeight = $('#divpl' + id).css('pixelHeight');
-    }
-    return(divHeight);
 }
 
 function updateselectorpr(courseid, rootcategory, list, display, quizzeslist) {

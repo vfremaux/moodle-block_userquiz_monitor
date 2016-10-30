@@ -108,7 +108,9 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                 }
             } else {
                 $str .= '<div class="userquiz-monitor-row">';
-                $str .= '<div class="userquiz-monitor-cell" colspan="3" align="center" style="color:#ff0000">'.$noavailableattemptsstr.'</div>';
+                $str .= '<div class="userquiz-monitor-cell" colspan="3" align="center" style="color:#ff0000">';
+                $str .= $noavailableattemptsstr;
+                $str .= '</div>';
                 $str .= '</div>';
             }
         }
@@ -1199,7 +1201,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         $str .= '<div class="userquiz-monitor-cell" style="text-align:center;">';
         $str .= '<span style="float:right">';
         $pixurl = $this->get_area_url('detailsicon', $OUTPUT->pix_url('detail', 'block_userquiz_monitor'));
-        $str .= '<img class="userquiz-monitor-cat-button" 
+        $str .= '<img class="userquiz-monitor-cat-button"
                       title="'.$seesubsstr.'"
                       src="'.$pixurl.'"
                       onclick="'.$jshandler.'" />';
@@ -1267,7 +1269,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
     }
 
     /**
-     * This is an override of the standard function in core renderer, to admit a derivated url from 
+     * This is an override of the standard function in core renderer, to admit a derivated url from
      * moodle files.
      */
     public function render_pix_icon(pix_icon $icon, $alternateurl = '') {
@@ -1303,10 +1305,10 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
             $text .= $link->text;
         }
 
-        // A disabled link is rendered as formatted text
+        // A disabled link is rendered as formatted text.
         if (!empty($link->attributes['disabled'])) {
-            // do not use div here due to nesting restriction in xhtml strict
-            return html_writer::tag('span', $text, array('class'=>'currentlink'));
+            // Do not use div here due to nesting restriction in xhtml strict.
+            return html_writer::tag('span', $text, array('class' => 'currentlink'));
         }
 
         $attributes = $link->attributes;

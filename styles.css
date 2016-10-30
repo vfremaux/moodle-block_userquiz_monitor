@@ -32,28 +32,28 @@ div.errorcontainer {
 /* ****************************** */
 
 .trans50 {
-     -khtml-opacity: 0.2;
-     -moz-opacity: 0.2;
-     -webkit-border-bottom-right-radius: 4px;
-     background-color:#EDEEE6;
-     border:1px solid #E8E8E8;
-     filter:alpha(opacity=20);
-     margin-top : 5px;
-     opacity: 0.2;
-     width:100%;
+    -khtml-opacity: 0.2;
     -moz-border-radius-bottomleft: 4px;
     -moz-border-radius-bottomright: 4px;
     -moz-border-radius-topleft: 4px;
     -moz-border-radius-topright: 4px;
+    -moz-opacity: 0.2;
     -webkit-border-bottom-left-radius: 4px;
+    -webkit-border-bottom-right-radius: 4px;
     -webkit-border-top-left-radius: 4px;
     -webkit-border-top-right-radius: 4px;
+    background-color:#EDEEE6;
     border-bottom-left-radius: 4px;
     border-bottom-right-radius: 4px;
     border-bottom:2px solid;
     border-right:2px solid;
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
+    border:1px solid #E8E8E8;
+    filter:alpha(opacity=20);
+    margin-top : 5px;
+    opacity: 0.2;
+    width:100%;
 }
 
 .trans100 {
@@ -88,16 +88,16 @@ div.errorcontainer {
 }
 
 .userquiz-monitor-trainingcontainer {
-     border:1px solid #E8E8E8;
-     display:table;
-     margin-top : 5px;
-     width:100%;
+    border:1px solid #E8E8E8;
+    display:table;
+    margin-top : 5px;
+    width:100%;
 }
 
 .userquiz-monitor-categorycontainer {
-     display:table;
-     width:100%;
-     margin: 0 5px 0 0;
+    display:table;
+    margin: 0 5px 0 0;
+    width:100%;
 }
 
 .userquiz-monitor-area {
@@ -114,8 +114,8 @@ div.errorcontainer {
 
 .userquiz-monitor-cell {
     display:table-cell;
-    vertical-align:top;
     padding:5px;
+    vertical-align:top;
 }
 
 .userquiz-monitor-cell.colspaned {
@@ -144,7 +144,7 @@ div.errorcontainer {
 
 .block-userquiz-monitor h4 { color:#658EA0;
     font-size:1.0em;
-    text-align : center;
+    text-align:center;
 }
 
 .block-userquiz-monitor h1{
@@ -164,8 +164,8 @@ div.errorcontainer {
 }
 
 .tabrow0 li {
-      display: inline;
-      padding: 0;
+    display: inline;
+    padding: 0;
 }
 
 .tabrow0 a span {
@@ -198,7 +198,7 @@ div.errorcontainer {
 }
 
 .tabrow0 .here a:hover {
-      background-image: none !important;
+    background-image: none !important;
 }
 
 .tabrow0 a:hover span {
@@ -220,7 +220,7 @@ div.errorcontainer {
 
 
 .tabrow0 .here a {
-      color:#444;
+    color:#444;
 }
 
 .tabrow0 .here a:link,
@@ -362,8 +362,8 @@ userquiz-cmd-icon {
 }
 
 img.userquiz-monitor-questiontype {
+    height:20px;
     width:19px;
-    height:20px; 
 }
 
 .userquiz-cat-progress > div,
