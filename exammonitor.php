@@ -127,13 +127,15 @@ function get_monitorexam($courseid, &$response, &$block) {
         $popuplink = new moodle_url('/blocks/userquiz_monitor/popup.php', $params);
         $action = new popup_action('click', $popuplink, 'ratings', array('height' => 400, 'width' => 600));
         $label = get_string('hist', 'block_userquiz_monitor');
-        $pixicon = new pix_icon('graph', $label, 'block_userquiz_monitor', array('class' => 'userquiz-cmd-icon'));
-        $accessorieslink = $OUTPUT->action_link($popuplink, '', $action, array(), $pixicon);
+        $pixicon = new pix_icon('graph', $label, 'block_userquiz_monitor', array('class' => 'userquiz-monitor-cat-button'));
+        $link = new action_link($popuplink, '', $action, array(), $pixicon);
+        $alternateurl = $renderer->get_area_url('statsbuttonicon', '');
+        $accessorieslink = $renderer->render_action_link($link, $alternateurl);
     } else {
         $params = '';
         $title = get_string('hist', 'block_userquiz_monitor');
-        $pixurl = $OUTPUT->pix_url('graph', 'block_userquiz_monitor');
-        $accessorieslink = '<img class="userquiz-cmd-icon" title="'.$title.'" src="'.$pixurl.'"/>';
+        $pixurl = $renderer->get_area_url('statsbuttonicon', $OUTPUT->pix_url('graph', 'block_userquiz_monitor'));
+        $accessorieslink = '<img class="userquiz-monitor-cat-button" title="'.$title.'" src="'.$pixurl.'"/>';
     }
 
     $runlaunchform = '<div>'.get_string('noavailableattemptsstr', 'block_userquiz_monitor').'</div>';
@@ -182,12 +184,14 @@ function get_monitorexam($courseid, &$response, &$block) {
             $popuplink = new moodle_url('/blocks/userquiz_monitor/popup.php', $params);
             $action = new popup_action('click', $popuplink, 'ratings', array('height' => 400, 'width' => 600));
             $title = get_string('hist', 'block_userquiz_monitor');
-            $pixicon = new pix_icon('graph', $label, 'block_userquiz_monitor', array('class' => 'userquiz-cmd-icon'));
-            $cat->buttons .= $OUTPUT->action_link($popuplink, $title, $action, array(), $pixicon);
+            $pixicon = new pix_icon('graph', $label, 'block_userquiz_monitor', array('class' => 'userquiz-monitor-cat-button'));
+            $link = new action_link($popuplink, '', $action, array(), $pixicon);
+            $alternateurl = $renderer->get_area_url('statsbuttonicon', '');
+            $cat->buttons .= $renderer->render_action_link($link, $alternateurl);
         } else {
             $title = get_string('hist', 'block_userquiz_monitor');
-            $pixurl = $OUTPUT->pix_url('graph', 'block_userquiz_monitor');
-            $cat->buttons .= '<span><img class="userquiz-cmd-icon" title="'.$title.'" src="'.$pixurl.'" /></span>';
+            $pixurl = $renderer->get_area_url('statsbuttonicon', $OUTPUT->pix_url('graph', 'block_userquiz_monitor'));
+            $cat->buttons .= '<span><img class="userquiz-monitor-cat-button" title="'.$title.'" src="'.$pixurl.'" /></span>';
         }
 
         if ($cpt == 0) {
