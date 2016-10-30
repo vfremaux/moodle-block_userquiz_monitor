@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot.'/blocks/moodleblock.class.php');
 require_once($CFG->dirroot.'/blocks/userquiz_monitor/block_userquiz_monitor.php');
 
-function block_userquiz_monitor_pluginfile($course, $birecord_or_cm, $context, $filearea, $args, $forcedownload) {
+function block_userquiz_monitor_pluginfile($course, $birecordorcm, $context, $filearea, $args, $forcedownload) {
 
     if ($context->contextlevel != CONTEXT_BLOCK) {
         send_file_not_found();
@@ -43,9 +43,10 @@ function block_userquiz_monitor_pluginfile($course, $birecord_or_cm, $context, $
 
     $filename = array_pop($args);
     $filepath = $args ? '/'.implode('/', $args).'/' : '/';
-    $filepath = str_replace('/0/', '/', $filepath); // fix root files.
+    $filepath = str_replace('/0/', '/', $filepath); // Fix root files.
 
-    if (!$file = $fs->get_file($context->id, 'block_userquiz_monitor', $filearea, 0, $filepath, $filename) or $file->is_directory()) {
+    if (!$file = $fs->get_file($context->id, 'block_userquiz_monitor', $filearea, 0, $filepath, $filename) ||
+            $file->is_directory()) {
         send_file_not_found();
     }
 
