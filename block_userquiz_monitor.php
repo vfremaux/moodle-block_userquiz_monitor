@@ -67,7 +67,7 @@ class block_userquiz_monitor extends block_base {
         $usercontext = context_user::instance($USER->id);
         $context = context_block::instance($this->instance->id);
 
-        foreach ($this->get_fileareas() as $fa) {
+        foreach (self::get_fileareas() as $fa) {
             $groupkey = 'gr'.$fa;
             $groupdata = @$data->$groupkey;
             if (!empty($groupdata['clear'.$fa])) {
@@ -80,8 +80,8 @@ class block_userquiz_monitor extends block_base {
             }
 
             // Clean structure for block config.
-            if (!empty($data->$groupdata)) {
-                unset($data->$groupdata);
+            if (!empty($data->$groupkey)) {
+                unset($data->$groupkey);
             }
         }
 
@@ -251,7 +251,7 @@ class block_userquiz_monitor extends block_base {
         $PAGE->requires->jquery_plugin('jqwidgets-bulletchart', 'local_vflibs');
     }
 
-    protected function get_fileareas() {
+    static public function get_fileareas() {
         return array('statsbuttonicon',
                      'detailsicon',
                      'serie1icon',
