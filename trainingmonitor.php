@@ -90,12 +90,14 @@ function get_monitortest($courseid, &$response, &$block) {
         $popuplink = new moodle_url('/blocks/userquiz_monitor/popup.php', $params);
         $action = new popup_action('click', $popuplink, 'ratings', array('height' => 400, 'width' => 600));
         $label = get_string('hist', 'block_userquiz_monitor');
-        $pixicon = new pix_icon('graph', $label, 'block_userquiz_monitor', array('class' => 'userquiz-cmd-icon'));
-        $components['accessorieslink'] = $OUTPUT->action_link($popuplink, '', $action, array(), $pixicon);
+        $pixicon = new pix_icon('graph', $label, 'block_userquiz_monitor', array('class' => 'userquiz-monitor-cat-button'));
+        $link = new action_link($popuplink, '', $action, array(), $pixicon);
+        $alternateurl = $renderer->get_area_url('statsbuttonicon', '');
+        $components['accessorieslink'] = $renderer->render_action_link($link, $alternateurl);
     } else {
         $title = get_string('hist', 'block_userquiz_monitor');
-        $pixurl = $OUTPUT->pix_url('graph', 'block_userquiz_monitor');
-        $components['accessorieslink'] = '<img width="38" height="20" title="'.$title.'" src="'.$pixurl.'"/>';
+        $pixurl = $renderer->get_area_url('statsbuttonicon', $OUTPUT->pix_url('graph', 'block_userquiz_monitor'));
+        $components['accessorieslink'] = '<img class="userquiz-monitor-cat-button"  title="'.$title.'" src="'.$pixurl.'"/>';
     }
 
     $graphparams = array (
@@ -136,14 +138,14 @@ function get_monitortest($courseid, &$response, &$block) {
 
     $response .= $renderer->global_monitor($total, $selector);
 
-    $response .= '<table style="width:100%;" class="trainingcontener">';
+    $response .= '<div class="userquiz-monitor-trainingcontainer container-fluid">';
 
     if (!empty($errormsg)) {
         $response .= $renderer->errorline($errormsg);
     }
 
-    $response .= '<tr valign="top">';
-    $response .= '<td style="width:50%; padding:5px;">';
+    $response .= '<div class="userquiz-monitor-container-row row-fluid">';
+    $response .= '<div class="userquiz-monitor-area span6">';
 
     $cpt = 0;
     $scale = '';
@@ -185,12 +187,14 @@ function get_monitortest($courseid, &$response, &$block) {
             $params = array('height' => 400, 'width' => 600);
             $action = new popup_action('click', $popuplink, 'ratings', $params);
             $label = get_string('hist', 'block_userquiz_monitor');
-            $pixurl = new pix_icon('graph', $label, 'block_userquiz_monitor', array('class' => 'userquiz-cmd-icon'));
-            $cat->accessorieslink = $OUTPUT->action_link($popuplink, '', $action, array(), $pixurl);
+            $pixicon = new pix_icon('graph', $label, 'block_userquiz_monitor', array('class' => 'userquiz-monitor-cat-button'));
+            $link = new action_link($popuplink, '', $action, array(), $pixicon);
+            $alternateurl = $renderer->get_area_url('statsbuttonicon', '');
+            $cat->accessorieslink = $renderer->render_action_link($link, $alternateurl);
         } else {
             $title = get_string('hist', 'block_userquiz_monitor');
-            $pixurl = $OUTPUT->pix_url('graph', 'block_userquiz_monitor');
-            $cat->accessorieslink = '<img width="38" height="20" title="'.$title.'" src="'.$pixurl.'"/>';
+            $pixurl = $renderer->get_area_url('statsbuttonicon', $OUTPUT->pix_url('graph', 'block_userquiz_monitor'));
+            $cat->accessorieslink = '<img class="userquiz-monitor-cat-button shadow" title="'.$title.'" src="'.$pixurl.'" />';
         }
 
         $data = array (
@@ -218,7 +222,7 @@ function get_monitortest($courseid, &$response, &$block) {
         }
 
         $cat->jshandler1 = 'updateselectorpl(\''.$courseid.'\',\''.$rootcategory.'\', idcategoriespl,';
-        $cat->jshanlder1 .= ' \'cbpl\', \'none\', \''.$quizzesliststring.'\')';
+        $cat->jshandler1 .= ' \'cbpl\', \'none\', \''.$quizzesliststring.'\')';
         $cat->jshandler2 = 'activedisplaytrainingsubcategories('.$courseid.', '.$rootcategory.', '.$catid;
         $cat->jshandler2 .= ', idcategoriespl , \''.$quizzesliststring.'\' , \''.$scale.'\', '.$blockid.')';
         $response .= $renderer->category_result($cat);
@@ -231,12 +235,14 @@ function get_monitortest($courseid, &$response, &$block) {
         $notenum++;
     }
     $response .= '<span class="smallnotes">'.get_string('columnnotesratio', 'block_userquiz_monitor', $notenum).'</span>';
-    $response .= '</td>';
-    $response .= '<td style="width:50%; padding:5px;">';
+    $response .= '</div>';
+
+    $response .= '<div class="userquiz-monitor-area span6">';
     $response .= $renderer->subcat_container();
-    $response .= '</td>';
-    $response .= '</tr>';
-    $response .= '</table>';
+    $response .= '</div>';
+
+    $response .= '</div>'; // Table row.
+    $response .= '</div>'; // Training Container Table.
     $response .= '</form>';
 
     // Init elements on the page.

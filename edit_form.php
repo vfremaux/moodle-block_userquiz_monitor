@@ -126,34 +126,34 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
 
         $group = array();
         $group[0] = & $mform->createElement('filepicker', 'statsbuttonicon', '', $imgfpickerattributes);
-        $group[1] = & $mform->createElement('checkbox', 'clearstatsbuttonicon', '');
+        $group[1] = & $mform->createElement('advcheckbox', 'clearstatsbuttonicon', '');
 
         $label = get_string('statsbuttonicon', 'block_userquiz_monitor');
-        $mform->addGroup($group, 'grstatsbuttonicon', $label, array(get_string('clear', 'block_userquiz_monitor').'&nbsp;:&nbsp;'), ' ', false);
+        $mform->addGroup($group, 'config_grstatsbuttonicon', $label, array(get_string('clear', 'block_userquiz_monitor').'&nbsp;:&nbsp;'), ' ', false);
 
         $group = array();
         $group[0] = & $mform->createElement('filepicker', 'detailsicon', '', $imgfpickerattributes);
-        $group[1] = & $mform->createElement('checkbox', 'cleardetailsicon', '');
+        $group[1] = & $mform->createElement('advcheckbox', 'cleardetailsicon', '');
 
         $label = get_string('detailsicon', 'block_userquiz_monitor');
-        $mform->addGroup($group, 'grdetailsicon', $label, array(get_string('clear', 'block_userquiz_monitor').'&nbsp;:&nbsp;'), ' ', false);
+        $mform->addGroup($group, 'config_grdetailsicon', $label, array(get_string('clear', 'block_userquiz_monitor').'&nbsp;:&nbsp;'), ' ', false);
 
         $group = array();
         $group[0] = & $mform->createElement('filepicker', 'serie1icon', '', $imgfpickerattributes);
-        $group[1] = & $mform->createElement('checkbox', 'clearserie1icon', '');
+        $group[1] = & $mform->createElement('advcheckbox', 'clearserie1icon', '');
 
         $label = get_string('serie1icon', 'block_userquiz_monitor');
-        $mform->addGroup($group, 'grserie1icon', $label, array(get_string('clear', 'block_userquiz_monitor').'&nbsp;:&nbsp;'), ' ', false);
+        $mform->addGroup($group, 'config_grserie1icon', $label, array(get_string('clear', 'block_userquiz_monitor').'&nbsp;:&nbsp;'), ' ', false);
 
         $group = array();
         $group[0] = & $mform->createElement('filepicker', 'serie2icon', '', $imgfpickerattributes);
-        $group[1] = & $mform->createElement('checkbox', 'clearserie2icon', '');
+        $group[1] = & $mform->createElement('advcheckbox', 'clearserie2icon', '');
 
         $label = get_string('serie2icon', 'block_userquiz_monitor');
-        $mform->addGroup($group, 'grserie2icon', $label, array(get_string('clear', 'block_userquiz_monitor').'&nbsp;:&nbsp;'), ' ', false);
+        $mform->addGroup($group, 'config_grserie2icon', $label, array(get_string('clear', 'block_userquiz_monitor').'&nbsp;:&nbsp;'), ' ', false);
 
         $mform->addelement('textarea', 'localcss', get_string('localcss', 'block_userquiz_monitor'), array('rows' => 10, 'cols' => 60));
-        $mform->setType('localcss', PARAM_TEXT);
+        $mform->setType('config_localcss', PARAM_TEXT);
     }
 
     public function set_data($defaults, &$files = null) {
@@ -207,10 +207,13 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
 
         $context = context_block::instance($this->block->instance->id);
 
+        print_object($defaults);
+
         $draftitemid = file_get_submitted_draft_itemid('statsbuttonicon');
         file_prepare_draft_area($draftitemid, $context->id, 'block_userquiz_monitor', 'statsbuttonicon', 0,
                                 array('subdirs' => 0, 'maxbytes' => $COURSE->maxbytes, 'maxfiles' => 1));
-        $defaults->grstatsbuttonicon = array('statsbuttonicon' => $draftitemid);
+        $key = 'config_grstatsbuttonicon';
+        $defaults->$key = array('statsbuttonicon' => $draftitemid);
 
         $draftitemid = file_get_submitted_draft_itemid('detailsicon');
         file_prepare_draft_area($draftitemid, $context->id, 'block_userquiz_monitor', 'detailsicon', 0,
@@ -226,5 +229,7 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
         file_prepare_draft_area($draftitemid, $context->id, 'block_userquiz_monitor', 'serie2icon', 0,
                                 array('subdirs' => 0, 'maxbytes' => $COURSE->maxbytes, 'maxfiles' => 1));
         $defaults->grserie2icon = array('serie2icon' => $draftitemid);
+
+        print_object($defaults);
     }
 }
