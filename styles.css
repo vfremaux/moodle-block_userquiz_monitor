@@ -21,12 +21,6 @@ table.tablemonitortotalprogress {
     text-align:center;
     width : 100%;
 }
-table.tablemonitorcategoriescontainer {
-    width : 100%;
-}
-table.tablemonitorcategorycontainer {
-    width : 100%;
-}
 
 /* ****************************** */
 
@@ -87,14 +81,49 @@ div.errorcontainer {
     width:100%;
 }
 
-.globalmonitor {
+.userquiz-monitor-globalmonitor {
     border:1px solid #E8E8E8;
+    display:table;
+    width:100%;
 }
 
-.trainingcontener {
+.userquiz-monitor-trainingcontainer {
      border:1px solid #E8E8E8;
+     display:table;
      margin-top : 5px;
      width:100%;
+}
+
+.userquiz-monitor-categorycontainer {
+     display:table;
+     width:100%;
+     margin: 0 5px 0 0;
+}
+
+.userquiz-monitor-area {
+    padding:5px;
+}
+
+.userquiz-monitor-row {
+    display:table-row;
+}
+
+.userquiz-monitor-block {
+    display:inline-block;
+}
+
+.userquiz-monitor-cell {
+    display:table-cell;
+    vertical-align:top;
+    padding:5px;
+}
+
+.userquiz-monitor-cell.colspaned {
+    display:table-caption;
+}
+
+.userquiz-monitor-cell.vertical-centered {
+    vertical-align:middle;
 }
 
 #divtotal{
@@ -337,8 +366,12 @@ img.userquiz-monitor-questiontype {
     height:20px; 
 }
 
-td.userquiz-cat-progress > div,
-td.progressbar > div {
+.userquiz-cat-progress > div,
+.progressbar > div {
     margin-bottom:30px;
     margin-top:30px;
+}
+
+.userquiz-monitor-cat-button {
+    max-height:80px;
 }
