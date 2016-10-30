@@ -38,7 +38,8 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
         // Fields for editing HTML block title and contents.
         $mform->addElement('header', 'configheader', get_string('generalsettings', 'block_userquiz_monitor'));
 
-        $mform->addElement('text', 'config_trainingprogramname', get_string('configtrainingprogramname', 'block_userquiz_monitor'));
+        $label = get_string('configtrainingprogramname', 'block_userquiz_monitor');
+        $mform->addElement('text', 'config_trainingprogramname', $label);
         $mform->setType('config_trainingprogramname', PARAM_CLEANHTML);
 
         $quizzes = $DB->get_records('quiz', array('course' => $COURSE->id), 'id', 'id,name');
@@ -126,34 +127,39 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
 
         $group = array();
         $group[0] = & $mform->createElement('filepicker', 'statsbuttonicon', '', $imgfpickerattributes);
-        $group[1] = & $mform->createElement('checkbox', 'clearstatsbuttonicon', '');
+        $group[1] = & $mform->createElement('advcheckbox', 'clearstatsbuttonicon', '');
 
         $label = get_string('statsbuttonicon', 'block_userquiz_monitor');
-        $mform->addGroup($group, 'grstatsbuttonicon', $label, array(get_string('clear', 'block_userquiz_monitor').'&nbsp;:&nbsp;'), ' ', false);
+        $separators = array(get_string('clear', 'block_userquiz_monitor').'&nbsp;:&nbsp;');
+        $mform->addGroup($group, 'config_grstatsbuttonicon', $label, $separators, ' ', false);
 
         $group = array();
         $group[0] = & $mform->createElement('filepicker', 'detailsicon', '', $imgfpickerattributes);
-        $group[1] = & $mform->createElement('checkbox', 'cleardetailsicon', '');
+        $group[1] = & $mform->createElement('advcheckbox', 'cleardetailsicon', '');
 
         $label = get_string('detailsicon', 'block_userquiz_monitor');
-        $mform->addGroup($group, 'grdetailsicon', $label, array(get_string('clear', 'block_userquiz_monitor').'&nbsp;:&nbsp;'), ' ', false);
+        $separators = array(get_string('clear', 'block_userquiz_monitor').'&nbsp;:&nbsp;');
+        $mform->addGroup($group, 'config_grdetailsicon', $label, $separators, ' ', false);
 
         $group = array();
         $group[0] = & $mform->createElement('filepicker', 'serie1icon', '', $imgfpickerattributes);
-        $group[1] = & $mform->createElement('checkbox', 'clearserie1icon', '');
+        $group[1] = & $mform->createElement('advcheckbox', 'clearserie1icon', '');
 
         $label = get_string('serie1icon', 'block_userquiz_monitor');
-        $mform->addGroup($group, 'grserie1icon', $label, array(get_string('clear', 'block_userquiz_monitor').'&nbsp;:&nbsp;'), ' ', false);
+        $separators = array(get_string('clear', 'block_userquiz_monitor').'&nbsp;:&nbsp;');
+        $mform->addGroup($group, 'config_grserie1icon', $label, $separators, ' ', false);
 
         $group = array();
         $group[0] = & $mform->createElement('filepicker', 'serie2icon', '', $imgfpickerattributes);
-        $group[1] = & $mform->createElement('checkbox', 'clearserie2icon', '');
+        $group[1] = & $mform->createElement('advcheckbox', 'clearserie2icon', '');
 
         $label = get_string('serie2icon', 'block_userquiz_monitor');
-        $mform->addGroup($group, 'grserie2icon', $label, array(get_string('clear', 'block_userquiz_monitor').'&nbsp;:&nbsp;'), ' ', false);
+        $separators = array(get_string('clear', 'block_userquiz_monitor').'&nbsp;:&nbsp;');
+        $mform->addGroup($group, 'config_grserie2icon', $label, $separators, ' ', false);
 
-        $mform->addelement('textarea', 'localcss', get_string('localcss', 'block_userquiz_monitor'), array('rows' => 10, 'cols' => 60));
-        $mform->setType('localcss', PARAM_TEXT);
+        $label = get_string('localcss', 'block_userquiz_monitor');
+        $mform->addelement('textarea', 'localcss', $label, array('rows' => 10, 'cols' => 60));
+        $mform->setType('config_localcss', PARAM_TEXT);
     }
 
     public function set_data($defaults, &$files = null) {

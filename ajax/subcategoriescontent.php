@@ -51,9 +51,9 @@ $renderer->set_block($theblock);
 
 if ($mode == 'training') {
     $rootcategory = required_param('rootcategory', PARAM_INT);
-    $response .= $renderer->subcategories($courseid, $rootcategory, $categoryid, $quizid, $positionheight, $mode, $theblock);
+    $response .= $renderer->subcategories($courseid, $rootcategory, $categoryid, $quizid, $positionheight, $mode);
 } else {
-    $response .= $renderer->subcategories($courseid, null, $categoryid, $quizid, $positionheight, $mode, $theblock);
+    $response .= $renderer->subcategories($courseid, null, $categoryid, $quizid, $positionheight, $mode);
 }
 
 echo($response);
