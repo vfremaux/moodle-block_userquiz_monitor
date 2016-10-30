@@ -14,6 +14,20 @@ function getpositionelement(id) {
     return(divHeight);
 }
 
+/**
+ * Updates the selector following the user's choice.
+ */
+function updateselectorplajax(courseid, rootcategory, categoryid, quizzeslist) {
+
+    var params = "courseid=" + courseid + "&rootcategory=" + rootcategory + "&categoryid=" + categoryid;
+    params += "&location=mode0&quizzeslist=" + quizzeslist;
+    var url = M.cfg.wwwroot + '/blocks/userquiz_monitor/updateselector.php?' + params;
+
+    $.get(url, function(data) {
+        $('#selectorcontainer').html(data);
+    }, 'html');
+}
+
 function resettraining(courseid, userid, quizzeslist) {
 
     var params = "userid=" + userid + "&quizzeslist=" + quizzeslist;
@@ -253,20 +267,6 @@ function updateselectorprajax(courseid, rootcategory, cats, quizzeslist) {
     }, 'html');
 }
 
-/**
- * Updates the selector following the user's choice.
- */
-function updateselectorplajax(courseid, rootcategory, categoryid, quizzeslist) {
-
-    var params = "courseid=" + courseid + "&rootcategory=" + rootcategory + "&categoryid=" + categoryid;
-    params += "&location=mode0&quizzeslist=" + quizzeslist;
-    var url = M.cfg.wwwroot + '/blocks/userquiz_monitor/updateselector.php?' + params;
-
-    $.get(url, function(data) {
-        $('#selectorcontainer').html(data);
-    }, 'html');
-}
-
 function selectallcbpr(categoriesidlist) {
     var tab = categoriesidlist.split(',');
     for (var t = 0; t < tab.length; t++) {
@@ -323,7 +323,7 @@ function closeprexam() {
 
 function updateselectorpr(courseid, rootcategory, list, display, quizzeslist) {
     var number = '';
-    var idsubcategories = new Array();
+    var idsubcategories = [];
     var cpt = 0;
 
     if (display === 'all') {
