@@ -31,7 +31,7 @@
     <TABLE NAME="userquiz_monitor_cat_stats" COMMENT="Stores stats for categories">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" />
-        <FIELD NAME="userquiz" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="id of block instance" />
+        <FIELD NAME="quizid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="id of block instance" />
         <FIELD NAME="categoryid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Question category id" />
         <FIELD NAME="userid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="User id" />
         <FIELD NAME="attemptid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Attempt id" />
@@ -45,7 +45,7 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="index_userquiz" UNIQUE="false" FIELDS="userquiz" />
+        <INDEX NAME="index_quizid" UNIQUE="false" FIELDS="quizid" />
         <INDEX NAME="index_categoryid" UNIQUE="false" FIELDS="categoryid" />
         <INDEX NAME="index_userid" UNIQUE="false" FIELDS="userid" />
         <INDEX NAME="index_attemptid" UNIQUE="false" FIELDS="attemptid" />
