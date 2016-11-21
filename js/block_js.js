@@ -30,7 +30,7 @@ function updateselectorplajax(courseid, rootcategory, categoryid, quizzeslist) {
 
 function resettraining(courseid, userid, quizzeslist) {
 
-    var params = "userid=" + userid + "&quizzeslist=" + quizzeslist;
+    var params = "id=" + courseid + "&userid=" + userid + "&quizzeslist=" + quizzeslist;
     var url = M.cfg.wwwroot + "/blocks/userquiz_monitor/ajax/resettraining.php?" + params;
 
     $.get(url, function (data, status) {
