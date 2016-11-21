@@ -220,6 +220,11 @@ function userquizmonitor_count_available_attempts($userid, $quizid) {
     ";
     $usedattempts = $DB->get_records_select('quiz_attempts', $select, array($userid, $quizid));
     $params = array('userid' => $userid, 'quizid' => $quizid);
+    $limitsenabled = $DB->get_field('qa_usernumattempts', 'enabled', array('quizid' => $quizid));
+    if (!$limitsenabled) {
+        // Always give a new attempts to requirer.
+        return 1;
+    }
     $availableattempts = $DB->get_field('qa_usernumattempts_limits', 'maxattempts', $params);
 
     $userattemptscount = (is_array($usedattempts)) ? count($usedattempts) : 0;

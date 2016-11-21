@@ -244,7 +244,7 @@ class block_userquiz_monitor extends block_base {
     }
 
     public function get_required_javascript() {
-        global $CFG, $PAGE;
+        global $PAGE;
 
         parent::get_required_javascript();
 
