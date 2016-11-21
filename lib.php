@@ -45,7 +45,8 @@ function block_userquiz_monitor_pluginfile($course, $birecordorcm, $context, $fi
     $filepath = $args ? '/'.implode('/', $args).'/' : '/';
     $filepath = str_replace('/0/', '/', $filepath); // Fix root files.
 
-    if (!$file = $fs->get_file($context->id, 'block_userquiz_monitor', $filearea, 0, $filepath, $filename) ||
+    $file = $fs->get_file($context->id, 'block_userquiz_monitor', $filearea, 0, $filepath, $filename);
+    if (!$file ||
             $file->is_directory()) {
         send_file_not_found();
     }
