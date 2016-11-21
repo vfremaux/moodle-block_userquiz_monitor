@@ -85,6 +85,17 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
             $str .= '</div>';
         }
 
+        $limitsenabled = $DB->get_field('qa_usernumattempts', 'enabled', array('quizid' => $quizid));
+        if (!$limitsenabled) {
+            $iconurl = $OUTPUT->pix_url('availableattempt', 'block_userquiz_monitor');
+            $str .= '<div class="userquiz-monitor-row">';
+            $str .= '<div class="userquiz-monitor-cell">'.$attemptstr.'</div>';
+            $str .= '<div class="userquiz-monitor-cell">'.$availablestr.'</div>';
+            $str .= '<div class="userquiz-monitor-cell"><img src="'.$iconurl.'" /></div>';
+            $str .= '</div>';
+            return $str;
+        }
+
         if ($maxattempts = $DB->get_record('qa_usernumattempts_limits', array('userid' => $userid, 'quizid' => $quizid))) {
             if ($availableattempts = $maxattempts->maxattempts - count($usedattempts)) {
                 $iconurl = $OUTPUT->pix_url('availableattempt', 'block_userquiz_monitor');
