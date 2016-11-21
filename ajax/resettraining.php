@@ -28,17 +28,34 @@ header('ContentType: text/html; charset=UTF-8');
 
 // Init variable.
 
+$id = optional_param('id', 0, PARAM_INT); // Course id.
 $userid = optional_param('userid', 0, PARAM_INT);
 $quizzeslist = optional_param('quizzeslist', '', PARAM_RAW);
+
+if (!$course = $DB->get_record('course', array('id' => $id))) {
+    print_error('coursemisconf');
+}
+
+// Security.
+
+require_login($course);
+$context = context_course::instance($id);
+if (!empty($USER->realuser)) {
+    // Allow admins running impersonations to perform.
+    require_capability('moodle/course:manageactivities', $context, $USER->realuser);
+} else {
+    require_capability('moodle/course:manageactivities', $context);
+}
 
 if ($userid && !empty($quizzeslist)) {
     $getrecords = null;
     $bexecdelete1 = true;
     $bexecdelete2 = false;
     $quizzeslist = urldecode($quizzeslist);
+    $quizzeslist = str_replace("'", '', $quizzeslist);
     $quizzeslistarr = explode(',', $quizzeslist);
 
-    list($insql, $params) = $DB->get_in_or_equal($quizzeslistarr, SQL_PARAMS_QM);
+    list($insql, $params) = $DB->get_in_or_equal($quizzeslistarr, SQL_PARAMS_NAMED);
 
     $sqldeletequestionstates = "
         DELETE
