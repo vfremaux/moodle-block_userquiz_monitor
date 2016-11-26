@@ -36,7 +36,8 @@ function check_userquiz_monitor_review_applicability($attemptobj) {
     $context = context_course::instance($course->id);
 
     // Get all candidates userquiz monitors in course.
-    $uqmbs = $DB->get_records('block_instances', array('blockname' => 'userquiz_monitor', 'parentcontextid' => $context->id), 'id, configdata');
+    $params = array('blockname' => 'userquiz_monitor', 'parentcontextid' => $context->id);
+    $uqmbs = $DB->get_records('block_instances', $params, 'id, configdata');
     if (empty($uqmbs)) {
         return;
     }
@@ -44,11 +45,11 @@ function check_userquiz_monitor_review_applicability($attemptobj) {
     // Check config and if current quiz is the exam quiz.
     foreach ($uqmbs as $uqm) {
         $config = unserialize(base64_decode($uqm->configdata));
-        print_object($config);
         if ($attemptobj->get_quizid() == $config->examquiz) {
             if ($config->directreturn) {
                 if ($config->examdeadend) {
-                    redirect(new moodle_url('/blocks/userquiz_monitor/examfinish.php', array('id' => $course->id, 'blockid' => $uqm->id)));
+                    $params = array('id' => $course->id, 'blockid' => $uqm->id);
+                    redirect(new moodle_url('/blocks/userquiz_monitor/examfinish.php', $params));
                 } else {
                     redirect(new moodle_url('/course/view.php', array('id' => $course->id)));
                 }
