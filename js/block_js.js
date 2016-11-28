@@ -128,7 +128,7 @@ function displaytrainingsubcategories(courseid, rootcategory, categoryid, list, 
         $('#partright').html(data);
     }, 'html');
 
-    updateselectorplajax(wwwroot, courseid, rootcategory, categoryid, quizzeslist);
+    updateselectorplajax(courseid, rootcategory, categoryid, quizzeslist);
 }
 
 // Refresh right's part of dashbord training.
