@@ -52,7 +52,8 @@ if (!empty($courseid) && !empty($mode)) {
 
         // Choose the appropriate quiz.
 
-        $quizzlistforblock = implode("','", $theblock->config->trainingquizzes);
+        list($insql, $params) = $DB->get_in_or_equal($theblock->config->trainingquizzes);
+        $params = array_merge(array($courseid), $params);
 
         $sql = "
             SELECT
@@ -64,12 +65,12 @@ if (!empty($courseid) && !empty($mode)) {
             WHERE
                 q.course = ? AND
                 qs.quizid = q.id AND
-                q.id IN ('{$quizzlistforblock}')
+                q.id $insql
             GROUP BY
                 qs.quizid
         ";
 
-        $quizes = $DB->get_records_sql($sql, array($courseid));
+        $quizes = $DB->get_records_sql($sql, $params);
 
         if (!isset($quizes[$nbquestions])) {
             print_error('erroruserquiznoquiz', 'block_userquiz_monitor');
