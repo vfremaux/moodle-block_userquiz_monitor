@@ -116,20 +116,20 @@ class block_userquiz_monitor extends block_base {
         include_once($CFG->dirroot.'/blocks/userquiz_monitor/block_userquiz_monitor_lib.php');
         include_once($CFG->dirroot.'/blocks/userquiz_monitor/schedulemonitor.php');
 
-        $renderer = $PAGE->get_renderer('block_userquiz_monitor');
-        $renderer->set_block($this);
-
         // HTML response.
         $response = '';
 
         // Menu establishment.
-        $response = $renderer->tabs();
         $defaultview = (!empty($SESSION->userquizview)) ? $SESSION->userquizview : 'training';
         $selectedview = optional_param('selectedview', $defaultview, PARAM_TEXT);
 
         // Display schedule.
         // Note : At the moment we do not really know what to do with this.
         if ($selectedview == 'schedule') {
+
+            $renderer = $PAGE->get_renderer('block_userquiz_monitor');
+            $renderer->set_block($this);
+            $response = $renderer->tabs();
 
             $title = get_string('reftitle', 'block_userquiz_monitor', $this->config->trainingprogramname);
             $schedule = $OUTPUT->heading($title, 1);
@@ -147,7 +147,13 @@ class block_userquiz_monitor extends block_base {
         // Display test.
         if ($selectedview == 'training') {
 
-            $training = $renderer->training_heading();
+            require_once($CFG->dirroot.'/blocks/userquiz_monitor/classes/output/block_userquiz_monitor_training_renderer.php');
+            $renderer = $PAGE->get_renderer('block_userquiz_monitor', 'training');
+            $renderer->set_block($this);
+
+            $response = $renderer->tabs();
+
+            $training = $renderer->heading();
 
             if ((! empty($this->config->rootcategory)) && (! empty($this->config->trainingquizzes))) {
                 get_monitortest($COURSE->id, $training, $this);
@@ -169,7 +175,13 @@ class block_userquiz_monitor extends block_base {
         // Display examination.
         if ($selectedview == 'examination') {
 
-            $examination = $renderer->exam_heading();
+            require_once($CFG->dirroot.'/blocks/userquiz_monitor/classes/output/block_userquiz_monitor_exam_renderer.php');
+            $renderer = $PAGE->get_renderer('block_userquiz_monitor', 'exam');
+            $renderer->set_block($this);
+
+            $response = $renderer->tabs();
+
+            $examination = $renderer->heading();
 
             if (empty($this->config->examinstructions)) {
                 $examination .= get_string('examinstructions', 'block_userquiz_monitor', $this->config->trainingprogramname);
@@ -197,6 +209,11 @@ class block_userquiz_monitor extends block_base {
 
         if ($selectedview == 'preferences') {
             include($CFG->dirroot.'/blocks/userquiz_monitor/preferenceForm.php');
+
+            $renderer = $PAGE->get_renderer('block_userquiz_monitor');
+            $renderer->set_block($this);
+
+            $response = $renderer->tabs();
 
             $preferenceform = new PreferenceForm($this->instance->id);
             $params = array('userid' => $USER->id, 'blockid' => $this->instance->id);
