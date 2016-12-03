@@ -125,7 +125,7 @@ function displaytrainingsubcategories(courseid, rootcategory, categoryid, list, 
     var url = M.cfg.wwwroot + "/blocks/userquiz_monitor/ajax/subcategoriescontent.php?" + params;
 
     $.post(url, '', function(data) {
-        $('#partright').html(data);
+        $('#displaysubcategories').html(data);
     }, 'html');
 
     updateselectorplajax(courseid, rootcategory, categoryid, quizzeslist);
@@ -300,7 +300,7 @@ function show(id) {
 function closepr(button) {
     $('#checkall_pl').prop('checked', false);
     $('#checkall_pl').prop('disabled', false);
-    $('#partright').html('');
+    $('#displaysubcategories').html('');
     $('.selectorcontainers').html(button);
     for (var j = 0; j < idcategoriespl.length; j++) {
         $('#cbpl' + idcategoriespl[j]).prop('checked', false);

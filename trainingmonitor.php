@@ -38,7 +38,7 @@ require_once($CFG->dirroot.'/blocks/userquiz_monitor/locallib.php');
 function get_monitortest($courseid, &$response, &$block) {
     global $USER, $DB, $PAGE, $OUTPUT;
 
-    $renderer = $PAGE->get_renderer('block_userquiz_monitor');
+    $renderer = $PAGE->get_renderer('block_userquiz_monitor', 'training');
 
     $rootcategory = @$block->config->rootcategory;
     $quizzesids = @$block->config->trainingquizzes;
@@ -133,7 +133,7 @@ function get_monitortest($courseid, &$response, &$block) {
                   'cptC' => $overall->cptC);
 
     $total = '<div id="divtotal" style="width:100%;">';
-    $total .= $renderer->total($components, $data, $quizzeslist);
+    $total .= $renderer->total($components, $data, $quizzeslist, 'training');
     $total .= '</div>';
 
     $selector = update_selector($courseid, null, 'mode0', $rootcategory, $quizzeslist);
@@ -240,7 +240,7 @@ function get_monitortest($courseid, &$response, &$block) {
     $response .= '</div>'; //closing area
 
     $response .= '<div class="userquiz-monitor-area span6">';
-    $response .= $renderer->subcat_container();
+    $response .= $renderer->category_detail_container();
     $response .= '</div>';
 
     $response .= '</div>'; // Table row.

@@ -26,6 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/blocks/userquiz_monitor/js/scripts.php');
+require_once($CFG->dirroot.'/blocks/userquiz_monitor/classes/output/block_userquiz_monitor_exam_renderer.php');
 
 /**
  * the dashboard builder.
@@ -33,7 +34,7 @@ require_once($CFG->dirroot.'/blocks/userquiz_monitor/js/scripts.php');
 function get_monitorexam($courseid, &$response, &$block) {
     global $USER, $DB, $OUTPUT, $PAGE;
 
-    $renderer = $PAGE->get_renderer('block_userquiz_monitor');
+    $renderer = $PAGE->get_renderer('block_userquiz_monitor', 'exam');
     $renderer->set_block($block);
 
     $rootcategory = @$block->config->rootcategory;
@@ -79,6 +80,7 @@ function get_monitorexam($courseid, &$response, &$block) {
     $scripts = get_js_scripts(array_keys($rootcats));
     $response .= $scripts;
 
+    /*
     if (!empty($userattempts)) {
         foreach ($userattempts as $userattempt) {
             $results = array();
@@ -113,13 +115,77 @@ function get_monitorexam($courseid, &$response, &$block) {
         $attemptsgraph = $renderer->attempts($data);
     }
 
+    $total = '<div id="divtotal" style="width:100%;">';
+    $total .= $renderer->total_progress($overall, $rootcategory);
+    $total .= '</div>';
+
+    */
+
     // Construct report tab.
     $formurl = new moodle_url('/blocks/userquiz_monitor/userpreset.php');
     $response .= '<form name="form" method="GET" action="'.$formurl.'">';
     $response .= '<input type="hidden" name="blockid" value="'.$block->instance->id.'">';
 
-    $total = $renderer->total_progress($overall, $rootcategory);
+    if (!empty($userattempts)) {
+        // Prepare a link to the history graphs.
+        $params = calcul_hist($rootcategory, $attempts);
+        $params = array('mode' => 'displayhist',
+                        'datetype' => 'short',
+                        'action' => 'Get_Stats',
+                        'type' => 'category',
+                        'param' => $params);
+        $popuplink = new moodle_url('/blocks/userquiz_monitor/popup.php', $params);
+        $action = new popup_action('click', $popuplink, 'ratings', array('height' => 400, 'width' => 600));
+        $label = get_string('hist', 'block_userquiz_monitor');
+        $pixicon = new pix_icon('graph', $label, 'block_userquiz_monitor', array('class' => 'userquiz-monitor-cat-button'));
+        $link = new action_link($popuplink, '', $action, array(), $pixicon);
+        $alternateurl = $renderer->get_area_url('statsbuttonicon', '');
+        $components['accessorieslink'] = $renderer->render_action_link($link, $alternateurl);
+    } else {
+        // Prepare an unlinked image to the history graphs.
+        $title = get_string('hist', 'block_userquiz_monitor');
+        $pixurl = $renderer->get_area_url('statsbuttonicon', $OUTPUT->pix_url('graph', 'block_userquiz_monitor'));
+        $components['accessorieslink'] = '<img class="userquiz-monitor-cat-button"  title="'.$title.'" src="'.$pixurl.'"/>';
+    }
 
+    // Prepare results bargaphs.
+    $graphparams = array (
+        'boxheight' => 50,
+        /* 'boxwidth' => 300, */
+        'boxwidth' => 160,
+        'skin' => 'A',
+        'type' => 'global',
+        'graphwidth' => $graphwidth,
+        'stop' => $block->config->rateAserie,
+        'successrate' => $overall->ratioA,
+    );
+    $components['progressbarA'] = $renderer->progress_bar_html_jqw($rootcategory, $graphparams);
+
+    if (!empty($block->config->dualserie)) {
+        $graphparams = array (
+            'boxheight' => 50,
+            /* 'boxwidth' => 300, */
+            'boxwidth' => 160,
+            'skin' => 'C',
+            'type' => 'global',
+            'graphwidth' => $graphwidth,
+            'stop' => $block->config->rateCserie,
+            'successrate' => $overall->ratioC,
+        );
+        $components['progressbarC'] = $renderer->progress_bar_html_jqw($rootcategory, $graphparams);
+    }
+
+    $data = array('dualserie' => $block->config->dualserie,
+                  'goodA' => $overall->goodA,
+                  'cptA' => $overall->cptA,
+                  'goodC' => $overall->goodC,
+                  'cptC' => $overall->cptC);
+
+    $total = '<div id="divtotal" style="width:100%;">';
+    $total .= $renderer->total($components, $data, null, 'exam');
+    $total .= '</div>';
+
+    /*
     if (!empty($userattempts)) {
         // Format the data to construct the histogram.
         $histparams = calcul_hist($rootcats, $attempts);
@@ -137,6 +203,7 @@ function get_monitorexam($courseid, &$response, &$block) {
         $pixurl = $renderer->get_area_url('statsbuttonicon', $OUTPUT->pix_url('graph', 'block_userquiz_monitor'));
         $accessorieslink = '<img class="userquiz-monitor-cat-button" title="'.$title.'" src="'.$pixurl.'"/>';
     }
+    */
 
     $runlaunchform = '<div>'.get_string('noavailableattemptsstr', 'block_userquiz_monitor').'</div>';
     if (userquizmonitor_count_available_attempts($USER->id, $quizid) > 0) {
@@ -144,7 +211,7 @@ function get_monitorexam($courseid, &$response, &$block) {
     }
 
     $totalexamstr = get_string('totalexam', 'block_userquiz_monitor');
-    $response .= $renderer->exam_launch_gui($runlaunchform, $quizid, $accessorieslink, $totalexamstr, $total);
+    $response .= $renderer->launch_gui($runlaunchform, $quizid, $totalexamstr, $total);
 
     if (!empty($block->config->examhidescoringinterface)) {
         return;
@@ -222,7 +289,7 @@ function get_monitorexam($courseid, &$response, &$block) {
                             'successrate' => $cat->ratioC);
         }
 
-        $response .= $renderer->exam_main_category($cat, $jshandler);
+        $response .= $renderer->main_category($cat, $jshandler);
         $cpt++;
     }
 
