@@ -60,6 +60,7 @@ function calcul_hist($categoryid, &$counters) {
 
 /**
  * On changes of the current selection, update the question amount choice list
+ * @return the 
  */
 function update_selector($courseid, $catidslist, $mode, $rootcat, $quizzeslist = '') {
     global $DB, $PAGE;
@@ -127,7 +128,7 @@ function update_selector($courseid, $catidslist, $mode, $rootcat, $quizzeslist =
                         $options .= '<option value="'.$i.'">'.$i.'</option>';
                     }
                 }
-                $response .= $renderer->category_monitor_container($options, $quizzeslist);
+                $response .= $renderer->training_lauch_gui($options, $quizzeslist);
             }
         } else {
             $select = "
@@ -156,10 +157,10 @@ function update_selector($courseid, $catidslist, $mode, $rootcat, $quizzeslist =
                 }
             }
 
-            $response .= $renderer->category_monitor_container($options, $quizzeslist);
+            $response .= $renderer->training_lauch_gui($options, $quizzeslist);
         }
     } else {
-        $response .= $renderer->empty_category_monitor_container();
+        $response .= $renderer->empty_training_lauch_gui();
     }
 
     return $response;
@@ -247,4 +248,34 @@ function userquiz_monitor_get_cattreeids($catid, &$catids) {
             $deepness--;
         }
     }
+}
+
+function userquiz_monitor_get_quiz_by_numquestions($courseid, $theblock, $nbquestions) {
+        global $DB;
+
+        list($insql, $params) = $DB->get_in_or_equal($theblock->config->trainingquizzes);
+        $params = array_merge(array($courseid), $params);
+
+        $sql = "
+            SELECT
+                count(qs.questionid) as numquestions,
+                qs.quizid
+               FROM
+                {quiz} q,
+                {quiz_slots} qs
+            WHERE
+                q.course = ? AND
+                qs.quizid = q.id AND
+                q.id $insql
+            GROUP BY
+                qs.quizid
+        ";
+
+        $quizes = $DB->get_records_sql($sql, $params);
+
+        if (!isset($quizes[$nbquestions])) {
+            print_error('erroruserquiznoquiz', 'block_userquiz_monitor');
+        }
+
+        return $quizes[$nbquestions]->quizid;
 }

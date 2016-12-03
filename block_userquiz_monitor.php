@@ -147,12 +147,7 @@ class block_userquiz_monitor extends block_base {
         // Display test.
         if ($selectedview == 'training') {
 
-            $title = get_string('testtitle', 'block_userquiz_monitor');
-            $training = '<table width="100%"></tr><td>';
-            $training .= $OUTPUT->heading( $title, 1);
-            $training .= '</td><td align="right">';
-            $training .= $renderer->filter_state('training', $this->instance->id);
-            $training .= '</td></tr></table>';
+            $training = $renderer->training_heading();
 
             if ((! empty($this->config->rootcategory)) && (! empty($this->config->trainingquizzes))) {
                 get_monitortest($COURSE->id, $training, $this);
@@ -174,16 +169,7 @@ class block_userquiz_monitor extends block_base {
         // Display examination.
         if ($selectedview == 'examination') {
 
-            if (!empty($this->config->alternateexamheading)) {
-                $title = format_text($this->config->alternateexamheading);
-            } else {
-                $title = get_string('examtitle', 'block_userquiz_monitor', $this->config->trainingprogramname);
-            }
-            $examination = '<table width="100%"></tr><td>';
-            $examination .= $OUTPUT->heading( $title, 1);
-            $examination .= '</td><td align="right">';
-            $examination .= $renderer->filter_state('exams', $this->instance->id);
-            $examination .= '</td></tr></table>';
+            $examination = $renderer->exam_heading();
 
             if (empty($this->config->examinstructions)) {
                 $examination .= get_string('examinstructions', 'block_userquiz_monitor', $this->config->trainingprogramname);

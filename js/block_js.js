@@ -24,7 +24,7 @@ function updateselectorplajax(courseid, rootcategory, categoryid, quizzeslist) {
     var url = M.cfg.wwwroot + '/blocks/userquiz_monitor/updateselector.php?' + params;
 
     $.get(url, function(data) {
-        $('#selectorcontainer').html(data);
+        $('.selectorcontainers').html(data);
     }, 'html');
 }
 
@@ -48,7 +48,7 @@ function refresh_selector(categoryid, quizzeslist, rootcategory) {
     var url = M.cfg.wwwroot + "/blocks/userquiz_monitor/ajax/refreshselector.php?" + params;
 
     $.get(url, function(data) {
-        $('#selectorcontainer').html(data);
+        $('.selectorcontainers').html(data);
     }, 'html');
 }
 
@@ -94,7 +94,7 @@ function updateselectorpl(courseid, rootcategory, list, location, mode, quizzesl
     var url = M.cfg.wwwroot + '/blocks/userquiz_monitor/updateselector.php?' + params;
 
     $.get(url, function(data) {
-        $('#selectorcontainer').html(data);
+        $('.selectorcontainers').html(data);
     }, 'html');
 }
 
@@ -263,7 +263,7 @@ function updateselectorprajax(courseid, rootcategory, cats, quizzeslist) {
     var url = M.cfg.wwwroot + '/blocks/userquiz_monitor/updateselector.php?' + params;
 
     $.get(url, function(data) {
-        $('#selectorcontainer').html(data);
+        $('.selectorcontainers').html(data);
     }, 'html');
 }
 
@@ -301,7 +301,7 @@ function closepr(button) {
     $('#checkall_pl').prop('checked', false);
     $('#checkall_pl').prop('disabled', false);
     $('#partright').html('');
-    $('#selectorcontainer').html(button);
+    $('.selectorcontainers').html(button);
     for (var j = 0; j < idcategoriespl.length; j++) {
         $('#cbpl' + idcategoriespl[j]).prop('checked', false);
         $('#cbpl' + idcategoriespl[j]).prop('disabled', false);
@@ -344,4 +344,8 @@ function updateselectorpr(courseid, rootcategory, list, display, quizzeslist) {
 
 function urlencodeurlencode(str) {
     return escape(str.replace(/%/g, '%25').replace(/\+/g, '%2B')).replace(/%25/g, '%');
+}
+
+function sync_training_selectors(selectobj) {
+    $('.selectorsnbquestions').val(selectobj.options[selectobj.selectedIndex].value);
 }
