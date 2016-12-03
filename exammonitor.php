@@ -154,11 +154,11 @@ function get_monitorexam($courseid, &$response, &$block) {
         $errormsg = $renderer->errorline($errormsg);
     }
 
-    $response .= '  <div class="trainingcontener">
-                        <table class="tablemonitorcategoriescontainer">
-                            '.$errormsg.'
-                            <tr valign="top">
-                                <td style="width:45%; padding:5px;">';
+    $response .= '<div class="trainingcontener">';
+    $response .= '<div class="tablemonitorcategoriescontainer">'; // Table.
+    $response .= $errormsg;
+    $response .= '<div class="userquiz-monitor-row">'; // Row.
+    $response .= '<div class="userquiz-monitor-cell">';
 
     $cpt = 0;
     foreach ($rootcats as $catid => $cat) {
@@ -232,12 +232,14 @@ function get_monitorexam($courseid, &$response, &$block) {
         $notenum++;
     }
     $response .= '<span class="smallnotes">'.get_string('columnnotesratio', 'block_userquiz_monitor', $notenum).'</span>';
-    $response .= '</td>';
-    $response .= '<td style="width:45%; padding:5px;">';
+    $response .= '</div>';
+
+    $response .= '<div class="userquiz-monitor-cell span6">';
     $response .= $renderer->category_detail_container();
-    $response .= '</td>';
-    $response .= '</tr>';
-    $response .= '</table>';
+    $response .= '</div>';
+
+    $response .= '</div>'; // Row.
+    $response .= '</div>'; // Table.
     $response .= '</center></div>';
     $response .= '</form>';
 }
