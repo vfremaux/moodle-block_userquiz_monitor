@@ -228,16 +228,16 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         $str = '';
 
         $str .= '<div class="userquiz-monitor-row">'; // Row.
-        $str .= '<div class="userquiz-monitor-cell vertical-centered userquiz-cat-progress" style="width:40%; text-align:left;">';
+        $str .= '<div class="userquiz-monitor-cell vertical-centered userquiz-cat-progress">';
         $str .= '<div id="progressbarcontainer'.$cat->skin.$cat->id.'">';
         $str .= $cat->progressbar;
         $str .= '</div>';
         $str .= '</div>';
-        $str .= '<div class="userquiz-monitor-cell vertical-centered" style="width:15%; text-align:center;">';
+        $str .= '<div class="userquiz-monitor-cell vertical-centered">';
         $pixurl = $this->output->pix_url(core_text::strtolower($cat->skin), 'block_userquiz_monitor');
         $str .= '<img class="userquiz-monitor-questiontype" src="'.$pixurl.'" />';
         $str .= '</div>';
-        $str .= '<div class="userquiz-monitor-cell vertical-centered" style="width:15%; text-align:center;">';
+        $str .= '<div class="userquiz-monitor-cell vertical-centered">';
         $good = 'good'.$cat->skin;
         $cpt = 'cpt'.$cat->skin;
         $str .= '<h4>'.$cat->$good.'/'.$cat->$cpt.'</h4>';
@@ -1197,7 +1197,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         $str .= '<div class="userquiz-monitor-categorycontainer">'; // Table.
 
         $str .= '<div class="userquiz-monitor-row">'; // Row.
-        $str .= '<div colspan="4" class="userquiz-monitor-cell categoryname">';
+        $str .= '<div class="userquiz-monitor-cell categoryname">';
         $str .= $cat->name;
         $str .= '</div>';
         $str .= '</div>'; // Row.
