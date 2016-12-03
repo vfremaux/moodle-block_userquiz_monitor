@@ -173,65 +173,6 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         return($attemptsgraph);
     }
 
-    public function training_lauch_gui($options, $quizzeslist) {
-        global $COURSE;
-
-        $numberofquestionsstr = get_string('numberquestions', 'block_userquiz_monitor');
-        $runteststr = get_string('runtest', 'block_userquiz_monitor');
-        $runtraininghelpstr = get_string('runtraininghelp', 'block_userquiz_monitor');
-        $jshandler = 'sync_training_selectors(this)';
-
-        $str = '<div class="userquiz-monitor-categorycontainer">
-                    <div class="userquiz-monitor-row">
-                        <div class="userquiz-monitor-cell">
-                            <p>'.$runtraininghelpstr.'</p>
-                        </div>
-                    </div>
-                    <div class="userquiz-monitor-row">
-                        <div class="userquiz-monitor-cell">
-                             '.$numberofquestionsstr.'
-                            <select class="selectorsnbquestions" name="selectornbquestions" size="1" onchange="'.$jshandler.'">
-                                '.$options.'
-                            </select>
-                        </div>
-                    </div>
-                    <div class="userquiz-monitor-row">
-                        <div class="userquiz-monitor-cell">
-                             <input type="hidden" name="mode" value="test"/>
-                             <input type="hidden" name="courseid" value="'.$COURSE->id.'"/>
-                             <input type="hidden" name="quizzeslist" value="'.$quizzeslist.'"/>
-                             <input type="submit" value="'.$runteststr.'" id="submit"/>
-                         </div>
-                     </div>
-                </div>';
-
-        return $str;
-    }
-
-    public function empty_training_lauch_gui() {
-        global $COURSE;
-
-        $runteststr = get_string('runtest', 'block_userquiz_monitor');
-        $runtraininghelpstr = get_string('runtraininghelp', 'block_userquiz_monitor');
-
-        $str = '<div class="userquiz-monitor-categorycontainer" >
-                    <div class="userquiz-monitor-row">
-                        <div class="userquiz-monitor-cell">
-                            <p>'.$runtraininghelpstr.'</p>
-                        </div>
-                    </div>
-                    <div class="userquiz-monitor-row">
-                        <div class="userquiz-monitor-cell">
-                            <input type="hidden" name="mode" value="test"/>
-                            <input type="hidden" name="courseid" value="'.$COURSE->id.'"/>
-                            <input type="submit" value="'.$runteststr.'" id="submit" disabled />
-                        </div>
-                    </div>
-                </div>';
-
-        return $str;
-    }
-
     /**
      * Displaying the subcategories of a category
      */

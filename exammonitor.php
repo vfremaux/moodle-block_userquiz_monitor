@@ -225,7 +225,7 @@ function get_monitorexam($courseid, &$response, &$block) {
     $response .= '<div class="tablemonitorcategoriescontainer">'; // Table.
     $response .= $errormsg;
     $response .= '<div class="userquiz-monitor-row">'; // Row.
-    $response .= '<div class="userquiz-monitor-cell">';
+    $response .= '<div class="userquiz-monitor-cell span6 md-col-6">';
 
     $cpt = 0;
     foreach ($rootcats as $catid => $cat) {
@@ -301,7 +301,7 @@ function get_monitorexam($courseid, &$response, &$block) {
     $response .= '<span class="smallnotes">'.get_string('columnnotesratio', 'block_userquiz_monitor', $notenum).'</span>';
     $response .= '</div>';
 
-    $response .= '<div class="userquiz-monitor-cell span6">';
+    $response .= '<div class="userquiz-monitor-cell span6 md-col-6">';
     $response .= $renderer->category_detail_container();
     $response .= '</div>';
 
