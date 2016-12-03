@@ -34,9 +34,9 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
     }
 
     public function available_attempts($userid, $quizid, $maxdisplay = 0) {
-        global $DB, $OUTPUT;
+        global $DB;
 
-        $nousedattemptsstr = $OUTPUT->notification(get_string('nousedattemptsstr', 'block_userquiz_monitor'));
+        $nousedattemptsstr = $this->output->notification(get_string('nousedattemptsstr', 'block_userquiz_monitor'));
         $noavailableattemptsstr = get_string('noavailableattemptsstr', 'block_userquiz_monitor');
         $availablestr = get_string('available', 'block_userquiz_monitor');
         $attemptstr = get_string('attempt', 'block_userquiz_monitor');
@@ -59,7 +59,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                     $attemptsstr = get_string('attempt', 'quiz', $usedix);
                     $usedurl = new moodle_url('/mod/quiz/review.php', array('q' => $quizid, 'attempt' => $usedattempt->id));
                     $attemptdate = '<a href="'.$usedurl.'">'.userdate($usedattempt->timefinish).'</a>';
-                    $iconurl = $OUTPUT->pix_url('usedattempt', 'block_userquiz_monitor');
+                    $iconurl = $this->output->pix_url('usedattempt', 'block_userquiz_monitor');
                     $str .= '<div class="userquiz-monitor-row">';
                     $str .= '<div userquiz-monitor-cell">'.$attemptsstr.'</div>';
                     $str .= '<div userquiz-monitor-cell">'.$attemptdate.'</div>';
@@ -67,7 +67,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                     $str .= '</div>';
                 } else {
                     if (!$printedellipse) {
-                        $iconurl = $OUTPUT->pix_url('usedattempt', 'block_userquiz_monitor');
+                        $iconurl = $this->output->pix_url('usedattempt', 'block_userquiz_monitor');
                         $str .= '<div class="userquiz-monitor-row">';
                         $str .= '<div class="userquiz-monitor-cell">...</div>';
                         $str .= '<div class="userquiz-monitor-cell"></div>';
@@ -87,7 +87,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
 
         $limitsenabled = $DB->get_field('qa_usernumattempts', 'enabled', array('quizid' => $quizid));
         if (!$limitsenabled) {
-            $iconurl = $OUTPUT->pix_url('availableattempt', 'block_userquiz_monitor');
+            $iconurl = $this->output->pix_url('availableattempt', 'block_userquiz_monitor');
             $str .= '<div class="userquiz-monitor-row">';
             $str .= '<div class="userquiz-monitor-cell">'.$attemptstr.'</div>';
             $str .= '<div class="userquiz-monitor-cell">'.$availablestr.'</div>';
@@ -98,11 +98,11 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
 
         if ($maxattempts = $DB->get_record('qa_usernumattempts_limits', array('userid' => $userid, 'quizid' => $quizid))) {
             if ($availableattempts = $maxattempts->maxattempts - count($usedattempts)) {
-                $iconurl = $OUTPUT->pix_url('availableattempt', 'block_userquiz_monitor');
+                $iconurl = $this->output->pix_url('availableattempt', 'block_userquiz_monitor');
                 $attemptsleft = $availableattempts;
                 for ($i = 0; $i < min($maxdisplay, $availableattempts); $i++) {
                     // Display as many available as possible.
-                    $iconurl = $OUTPUT->pix_url('availableattempt', 'block_userquiz_monitor');
+                    $iconurl = $this->output->pix_url('availableattempt', 'block_userquiz_monitor');
                     $str .= '<div class="userquiz-monitor-row">';
                     $str .= '<div class="userquiz-monitor-cell">'.$attemptstr.'</div>';
                     $str .= '<div class="userquiz-monitor-cell">'.$availablestr.'</div>';
@@ -132,13 +132,11 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
     }
 
     public function errorline($msg) {
-        global $OUTPUT;
-
         $str = '';
 
         $str .= '<div class="userquiz-monitor-row">';
         $str .= '<div class="userquiz-monitor-cell">';
-        $str .= $OUTPUT->notification($msg);
+        $str .= $this->output->notification($msg);
         $str .= '</div>';
         $str .= '</div>';
 
@@ -146,7 +144,6 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
     }
 
     public function total_progress($overall, $rootcategory) {
-        global $OUTPUT;
 
         $graphwidth = 100;
 
@@ -196,7 +193,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         $str .= '</div>';
         if (!empty($this->theblock->config->dualserie)) {
             $str .= '<div class="userquiz-monitor-cell vertical-centered" style="width:15%;">';
-            $pixurl = $this->get_area_url('serie1icon', $OUTPUT->pix_url('a', 'block_userquiz_monitor'));
+            $pixurl = $this->get_area_url('serie1icon', $this->output->pix_url('a', 'block_userquiz_monitor'));
             $str .= '<img class="userquiz-monitor-total-icon" src="'.$pixurl.'" />';
             $str .= '</div>';
         }
@@ -213,7 +210,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
             $str .= '</div>';
             $str .= '</div>';
             $str .= '<div class="userquiz-monitor-cell vertical-centered">';
-            $pixurl = $this->get_area_url('serie2icon', $OUTPUT->pix_url('c', 'block_userquiz_monitor'));
+            $pixurl = $this->get_area_url('serie2icon', $this->output->pix_url('c', 'block_userquiz_monitor'));
             $str .= '<img class="userquiz-monitor-total-icon" src="'.$pixurl.' "/>';
             $str .= '</div>';
             $str .= '<div class="userquiz-monitor-cell vertical-centered">';
@@ -226,8 +223,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         return $str;
     }
 
-    public function category_results($cat) {
-        global $OUTPUT;
+    public function exam_category_results($cat) {
 
         $str = '';
 
@@ -238,7 +234,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         $str .= '</div>';
         $str .= '</div>';
         $str .= '<div class="userquiz-monitor-cell vertical-centered" style="width:15%; text-align:center;">';
-        $pixurl = $OUTPUT->pix_url(core_text::strtolower($cat->skin), 'block_userquiz_monitor');
+        $pixurl = $this->output->pix_url(core_text::strtolower($cat->skin), 'block_userquiz_monitor');
         $str .= '<img class="userquiz-monitor-questiontype" src="'.$pixurl.'" />';
         $str .= '</div>';
         $str .= '<div class="userquiz-monitor-cell vertical-centered" style="width:15%; text-align:center;">';
@@ -272,19 +268,22 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         $str = '';
 
         $str .= '<div>';
-        $str .= '<table class="tablemonitorcategorycontainer">';
-        $str .= '<tr height="17">';
-        $str .= '<td><h1>'.$catdetailstr.'</h1></td>';
-        $str .= '</tr>';
-        $str .= '</table>';
+        $str .= '<div class="tablemonitorcategorycontainer">';
+        $str .= '<div class="userquiz-monitor-row">';
+
+        $str .= '<div class="userquiz-monitor-cell"><h1>'.$catdetailstr.'</h1></div>';
+
         $str .= '</div>';
+        $str .= '</div>'; // Table.
+        $str .= '</div>';
+
         $str .= '<div id="partright"></div>';
 
         return $str;
     }
 
     public function exam_launch_gui($runlaunchform, $quizid, $accessorieslink, $totalexamstr, $total) {
-        global $USER, $OUTPUT;
+        global $USER;
 
         $commenthist = get_string('commenthist', 'block_userquiz_monitor');
 
@@ -309,7 +308,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         }
 
         $str .= '<div class="userquiz-monitor-cell" valign="top" style="width:70%; padding:5px;">';
-        $str .= '<h1>'.$totalexamstr.' '.$OUTPUT->help_icon('totalexam', 'block_userquiz_monitor', false).'</h1>';
+        $str .= '<h1>'.$totalexamstr.' '.$this->output->help_icon('totalexam', 'block_userquiz_monitor', false).'</h1>';
         $str .= '<div class="trans100">';
         $str .= '<p>'.$commenthist.' '.$accessorieslink.'<p>';
         $str .= '<p>'.$total.'<p>';
@@ -440,12 +439,13 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         return($attemptsgraph);
     }
 
-    public function category_monitor_container($options, $quizzeslist) {
+    public function training_lauch_gui($options, $quizzeslist) {
         global $COURSE;
 
         $numberofquestionsstr = get_string('numberquestions', 'block_userquiz_monitor');
         $runteststr = get_string('runtest', 'block_userquiz_monitor');
         $runtraininghelpstr = get_string('runtraininghelp', 'block_userquiz_monitor');
+        $jshandler = 'sync_training_selectors(this)';
 
         $str = '<div class="userquiz-monitor-categorycontainer">
                     <div class="userquiz-monitor-row">
@@ -456,7 +456,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                     <div class="userquiz-monitor-row">
                         <div class="userquiz-monitor-cell">
                              '.$numberofquestionsstr.'
-                            <select id="selectornbquestions" name="selectornbquestions" size="1">
+                            <select class="selectorsnbquestions" name="selectornbquestions" size="1" onchange="'.$jshandler.'">
                                 '.$options.'
                             </select>
                         </div>
@@ -474,7 +474,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         return $str;
     }
 
-    public function empty_category_monitor_container() {
+    public function empty_training_lauch_gui() {
         global $COURSE;
 
         $runteststr = get_string('runtest', 'block_userquiz_monitor');
@@ -502,7 +502,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
      * Displaying the subcategories of a category
      */
     public function subcategories($courseid, $rootcategory, $categoryid, $quizzeslist, $positionheight, $mode) {
-        global $USER, $DB, $OUTPUT;
+        global $USER, $DB;
 
         $blockid = $this->theblock->instance->id;
 
@@ -668,10 +668,10 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                     }
                     $cancel = '';
                     if ($mode == 'training') {
-                        $pixurl = $OUTPUT->pix_url('cancel', 'block_userquiz_monitor');
+                        $pixurl = $this->output->pix_url('cancel', 'block_userquiz_monitor');
                         $cancel .= '<img class="userquiz-icon" src="'.$pixurl.'" onclick="closepr()" />';
                     } else {
-                        $pixurl = $OUTPUT->pix_url('cancel', 'block_userquiz_monitor');
+                        $pixurl = $this->output->pix_url('cancel', 'block_userquiz_monitor');
                         $cancel .= '<img class="userquiz-icon" src="'.$pixurl.'" onclick="closeprexam()" />';
                     }
 
@@ -761,7 +761,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                         $str .= $progressbar;
                         $str .= '</div>';
                         if (!empty($this->theblock->config->dualserie)) {
-                            $serieicon = $this->get_area_url('serie1icon', $OUTPUT->pix_url('a', 'block_userquiz_monitor'));
+                            $serieicon = $this->get_area_url('serie1icon', $this->output->pix_url('a', 'block_userquiz_monitor'));
                             $str .= '<div class="userquiz-monitor-cell userquiz-cat-total vertical-centered">';
                             $str .= '<img class="userquiz-cat-image" src="'.$serieicon.'" />';
                             $str .= '</div>';
@@ -788,7 +788,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                         $str .= $progressbar;
                         $str .= '</div>';
                         $str .= '<div class="userquiz-monitor-cell vertical-centered">';
-                        $serieicon = $this->get_area_url('serie2icon', $OUTPUT->pix_url('c', 'block_userquiz_monitor'));
+                        $serieicon = $this->get_area_url('serie2icon', $this->output->pix_url('c', 'block_userquiz_monitor'));
                         $str .= '<img class="userquiz-cat-image" src="'.$serieicon.'" />';
                         $str .= '</div>';
                         $str .= '<div class="userquiz-monitor-cell vertical-centered">';
@@ -806,31 +806,27 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
     }
 
     public function global_monitor($total, $selector) {
-        global $OUTPUT;
 
         $totalstr = get_string('total', 'block_userquiz_monitor');
 
         $str = '';
-        $str .= '<div class="userquiz-monitor-globalmonitor">'; // Table.
-        $str .= '<div class="userquiz-monitor-row">';
-        $str .= '<div class="userquiz-monitor-cell">';
-        $helpicon = $OUTPUT->help_icon('launch', 'block_userquiz_monitor', false);
-        $str .= '<h1>'.get_string('runtest', 'block_userquiz_monitor').' '.$helpicon.'</h1>';
-        $str .= '</div>';
-        $str .= '<div class="userquiz-monitor-cell">';
-        $str .= '<h1>'.$totalstr.' '.$OUTPUT->help_icon('total', 'block_userquiz_monitor', false).'</h1>';
-        $str .= '</div>';
-        $str .= '</div>'; // Row.
 
+        $str .= '<div>'; // Table.
         $str .= '<div class="userquiz-monitor-row">'; // Row.
-        $str .= '<div class="userquiz-monitor-cell">';
+        $str .= '<div class="userquiz-monitor-cell span3">';
+
+        $helpicon = $this->output->help_icon('launch', 'block_userquiz_monitor', false);
+        $str .= '<h1>'.get_string('runtest', 'block_userquiz_monitor').' '.$helpicon.'</h1>';
+
         $str .= '<div class="trans100">';
-        $str .= '<div id="selectorcontainer" style="width:100%; font-size : 120%;">';
+        $str .= '<div class="selectorcontainers" style="width:100%; font-size : 120%;">';
         $str .= $selector;
         $str .= '</div>';
         $str .= '</div>';
         $str .= '</div>';
-        $str .= '<div class="userquiz-monitor-cell userquiz-cat-progress">';
+
+        $str .= '<div class="userquiz-monitor-cell userquiz-cat-progress span9">';
+        $str .= '<h1>'.$totalstr.' '.$this->output->help_icon('total', 'block_userquiz_monitor', false).'</h1>';
         $str .= '<div class="trans100">';
         $str .= $total;
         $str .= '</div>';
@@ -842,7 +838,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
     }
 
     public function filter_state($domain, $blockid) {
-        global $USER, $COURSE, $DB, $OUTPUT;
+        global $USER, $COURSE, $DB;
 
         $lang = substr(current_language(), 0, 2);
 
@@ -871,13 +867,13 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
             if ($prefs = $DB->get_record('userquiz_monitor_prefs', array('userid' => $USER->id, 'blockid' => $blockid))) {
                 if ($prefs->examsdepth > 0) {
                     $filterinfo = get_string('examsfilterinfo', 'block_userquiz_monitor', $prefs->examsdepth);
-                    $pixurl = $OUTPUT->pix_url('examfilter_'.$prefs->examsdepth.'_'.$lang, 'block_userquiz_monitor');
+                    $pixurl = $this->output->pix_url('examfilter_'.$prefs->examsdepth.'_'.$lang, 'block_userquiz_monitor');
                     $pix = '<img class="userquiz-monitor-exam-pix" src="'.$pixurl.'" title="'.$filterinfo.'" />';
                     return get_string('filtering', 'block_userquiz_monitor').': '.$pix;
                 }
             }
             $filterinfo = get_string('allexamsfilterinfo', 'block_userquiz_monitor');
-            $pixurl = $OUTPUT->pix_url('examfilter_0_'.$lang, 'block_userquiz_monitor');
+            $pixurl = $this->output->pix_url('examfilter_0_'.$lang, 'block_userquiz_monitor');
             $pix = '<img class="userquiz-monitor-exam-pix" src="'.$pixurl.'" title="'.$filterinfo.'" />';
             return get_string('filtering', 'block_userquiz_monitor').': '.$pix;
         } else {
@@ -890,14 +886,14 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                 }
                 $dates->to = userdate(time());
                 $filterinfo = get_string('filterinfo', 'block_userquiz_monitor', $dates);
-                $pixurl = $OUTPUT->pix_url('filter_'.$prefs->resultsdepth.'_'.$lang, 'block_userquiz_monitor');
+                $pixurl = $this->output->pix_url('filter_'.$prefs->resultsdepth.'_'.$lang, 'block_userquiz_monitor');
                 $pix = '<img class="userquiz-monitor-exam-pix" src="'.$pixurl.'" title="'.$filterinfo.'" />';
                 return get_string('filtering', 'block_userquiz_monitor').': '.$pix;
             }
             $dates->from = userdate($absolutestart);
             $dates->to = userdate(time());
             $filterinfo = get_string('filterinfo', 'block_userquiz_monitor', $dates);
-            $pixurl = $OUTPUT->pix_url('filter_0_'.$lang, 'block_userquiz_monitor');
+            $pixurl = $this->output->pix_url('filter_0_'.$lang, 'block_userquiz_monitor');
             $pix = '<img class="userquiz-monitor-exam-pix" src="'.$pixurl.'" title="'.$filterinfo.'" />';
             return get_string('filtering', 'block_userquiz_monitor').': '.$pix;
         }
@@ -959,7 +955,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
      * @param string $list of involved quizzes
      */
     public function total($components, $data, $quizzeslist) {
-        global $USER, $OUTPUT, $COURSE;
+        global $USER, $COURSE;
 
         $commenthist = get_string('commenthist', 'block_userquiz_monitor');
         $totaldescstr = get_string('totaldesc', 'block_userquiz_monitor');
@@ -1001,7 +997,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         $str .= $components['progressbarA'];
         $str .= '</div>';
 
-        $serie1iconurl = $this->get_area_url('serie1icon', $OUTPUT->pix_url('a', 'block_userquiz_monitor'));
+        $serie1iconurl = $this->get_area_url('serie1icon', $this->output->pix_url('a', 'block_userquiz_monitor'));
 
         if (!empty($data['dualserie'])) {
             $str .= '<div class="userquiz-monitor-cell progressbarlabel vertical-centered">';
@@ -1018,7 +1014,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
 
         if (!empty($data['dualserie'])) {
 
-            $serie2iconurl = $this->get_area_url('serie2icon', $OUTPUT->pix_url('c', 'block_userquiz_monitor'));
+            $serie2iconurl = $this->get_area_url('serie2icon', $this->output->pix_url('c', 'block_userquiz_monitor'));
 
             $str .= '<div class="userquiz-monitor-row">';
             $str .= '<div class="userquiz-monitor-cell vertical-centered">';
@@ -1078,7 +1074,6 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
     }
 
     public function category_result($cat) {
-        global $OUTPUT;
 
         $seesubsstr = get_string('more', 'block_userquiz_monitor');
 
@@ -1088,12 +1083,13 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         $str .= '<div class="userquiz-monitor-categorycontainer">'; // Table.
 
         $str .= '<div class="userquiz-monitor-row">'; // Row.
-        $str .= '<div colspan="5" class="userquiz-monitor-cell categoryname">';
+
+        $str .= '<div class="userquiz-monitor-cell categoryname">';
         $str .= $cat->name;
         $str .= '</div>';
         $str .= '</div>'; // Row.
 
-        $str .= '<div class="userquiz-monitor-row">';
+        $str .= '<div class="userquiz-monitor-row">'; // Row
         $str .= '<div class="userquiz-monitor-cell">';
         $str .= '<input type="checkbox"
                         name="cb_pl'.$cat->id.'"
@@ -1109,15 +1105,17 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         $str .= '</div>';
 
         $str .= '<div class="userquiz-monitor-cell">';
-        $pixurl = $this->get_area_url('detailsicon', $OUTPUT->pix_url('detail', 'block_userquiz_monitor'));
+        $pixurl = $this->get_area_url('detailsicon', $this->output->pix_url('detail', 'block_userquiz_monitor'));
         $str .= '<img class="userquiz-monitor-cat-button"
                       title="'.$seesubsstr.'"
                       src="'.$pixurl.'"
                       onclick="'.$cat->jshandler2.'"/>';
         $str .= '</div>';
+
         $str .= '</div>'; // Row.
 
         $str .= '<div class="userquiz-monitor-row">'; // Row.
+
         $str .= '<div class="userquiz-monitor-cell userquiz-monitor-bg ratio">';
         // Blank Cell.
         $str .= '</div>';
@@ -1128,6 +1126,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         $str .= '<div class="userquiz-monitor-cell userquiz-monitor-bg ratio">';
         $str .= get_string('ratio1', 'block_userquiz_monitor');
         $str .= '</div>';
+
         $str .= '</div>'; // Row.
 
         // Ensure cat types are presented in sorted order.
@@ -1148,7 +1147,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                     $str .= '</div>';
                     if (!empty($this->theblock->config->dualserie)) {
                         $str .= '<div class="userquiz-monitor-cell progressbarlabel vertical-centered">';
-                        $pixurl = $this->get_area_url('serie1icon', $OUTPUT->pix_url('a', 'block_userquiz_monitor'));
+                        $pixurl = $this->get_area_url('serie1icon', $this->output->pix_url('a', 'block_userquiz_monitor'));
                         $str .= '<img class="userquiz-monitor->questiontype" src="'.$pixurl.'"/>';
                         $str .= '</div>';
                     }
@@ -1161,7 +1160,8 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
 
                 if ($this->theblock->config->dualserie && ($questiontype == 'C')) {
 
-                    $str .= '<div class="userquiz-monitor-row">';
+                    $str .= '<div class="userquiz-monitor-row">'; // Row.
+
                     $str .= '<div class="userquiz-monitor-cell progressbar vertical-centered">';
                     $str .= '<div id="progressbarcontainerC'.$cat->id.'">';
                     $str .= $cat->progressbarC;
@@ -1169,13 +1169,14 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                     $str .= '</div>';
 
                     $str .= '<div class="userquiz-monitor-cell progressbarlabel vertical-centered">';
-                    $pixurl = $this->get_area_url('serie2icon', $OUTPUT->pix_url('c', 'block_userquiz_monitor'));
+                    $pixurl = $this->get_area_url('serie2icon', $this->output->pix_url('c', 'block_userquiz_monitor'));
                     $str .= '<img class="userquiz-monitor->questiontype" src="'.$pixurl.'" />';
                     $str .= '</div>';
                     $str .= '<div class="userquiz-monitor-cell progressbarlabel vertical-centered">';
                     $str .= '<h4>'.$cat->goodC.'/'.$cat->cptC.'</h4>';
                     $str .= '</div>';
-                    $str .= '</div>';
+
+                    $str .= '</div>'; // Row.
                 }
             }
         }
@@ -1187,7 +1188,6 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
     }
 
     public function exam_main_category($cat, $jshandler) {
-        global $OUTPUT;
 
         $seesubsstr = get_string('more', 'block_userquiz_monitor', $cat->name);
 
@@ -1211,7 +1211,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         $str .= '</div>';
         $str .= '<div class="userquiz-monitor-cell" style="text-align:center;">';
         $str .= '<span style="float:right">';
-        $pixurl = $this->get_area_url('detailsicon', $OUTPUT->pix_url('detail', 'block_userquiz_monitor'));
+        $pixurl = $this->get_area_url('detailsicon', $this->output->pix_url('detail', 'block_userquiz_monitor'));
         $str .= '<img class="userquiz-monitor-cat-button"
                       title="'.$seesubsstr.'"
                       src="'.$pixurl.'"
@@ -1240,13 +1240,13 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                 if ($questiontype == 'A') {
                     $cat->skin = 'A';
                     $cat->progressbar = $this->progress_bar_html_jqw($cat->id, $cat->dataA);
-                    $str .= $this->category_results($cat);
+                    $str .= $this->exam_category_results($cat);
                 }
 
                 if ($this->theblock->config->dualserie && ($questiontype == 'C')) {
                     $cat->skin = 'C';
                     $cat->progressbar = $this->progress_bar_html_jqw($cat->id, $cat->dataC);
-                    $str .= $this->category_results($cat);
+                    $str .= $this->exam_category_results($cat);
                 }
             }
         }
@@ -1303,7 +1303,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
      * @return string HTML fragment
      */
     public function render_action_link(action_link $link, $alternateiconurl = '') {
-        global $CFG, $OUTPUT;
+        global $CFG;
 
         $text = '';
         if ($link->icon) {
@@ -1311,7 +1311,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         }
 
         if ($link->text instanceof renderable) {
-            $text .= $OUTPUT->render($link->text);
+            $text .= $this->output->render($link->text);
         } else {
             $text .= $link->text;
         }
@@ -1334,10 +1334,74 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                 $id = $attributes['id'];
             }
             foreach ($link->actions as $action) {
-                $OUTPUT->add_action_handler($action, $id);
+                $this->output->add_action_handler($action, $id);
             }
         }
 
         return html_writer::tag('a', $text, $attributes);
+    }
+
+    public function training_heading() {
+
+        $title = get_string('testtitle', 'block_userquiz_monitor');
+
+        $str = '<div>'; // Table.
+        $str .= '<div class="userquiz-monitor-row">';
+
+        $str .= '<div class="userquiz-monitor-cell span6 md-col-6">';
+        $str .= $this->output->heading( $title, 1);
+        $str .= '</div>';
+
+        $str .= '<div class="userquiz-monitor-cell span6 md-col-6" style="text-align:right">';
+        $str .= $this->filter_state('training', $this->theblock->instance->id);
+        $str .= '</div>';
+
+        $str .= '</div>';
+        $str .= '</div>'; // Table.
+
+        return $str;
+    }
+
+    public function exam_heading() {
+
+        if (!empty($this->theblock->config->alternateexamheading)) {
+            $title = format_text($this->theblock->config->alternateexamheading);
+        } else {
+            $title = get_string('examtitle', 'block_userquiz_monitor', $this->theblock->config->trainingprogramname);
+        }
+
+        $str = '<div>';
+        $str .= '<div class="userquiz-monitor-row">';
+
+        $str .= '<div class="userquiz-monitor-cell span6 md-col-6">';
+        $str .= $this->output->heading( $title, 1);
+        $str .= '</div>';
+
+        $str .= '<div class="userquiz-monitor-cell span6 md-col-6" style="text-align:right">';
+        $str .= $this->filter_state('exams', $this->theblock->instance->id);
+        $str .= '</div>';
+
+        $str .= '</div>';
+        $str .= '</div>';
+
+        return $str;
+    }
+
+    public function training_second_button($selector) {
+
+        $str = '<div class="userquiz-monitor-bottom-launch">';
+
+        $str .= '<div class="userquiz-monitor-row">';
+        $str .= '<div class="userquiz-monitor-cell span12">';
+        $str .= '<div class="trans100">';
+        $str .= '<div class="selectorcontainers" style="width:100%; font-size : 120%;">';
+        $str .= $selector;
+        $str .= '</div>';
+        $str .= '</div>';
+        $str .= '</div>';
+
+        $str .= '</div>';
+
+        return $str;
     }
 }

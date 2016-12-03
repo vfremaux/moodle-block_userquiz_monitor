@@ -102,7 +102,8 @@ function get_monitortest($courseid, &$response, &$block) {
 
     $graphparams = array (
         'boxheight' => 50,
-        'boxwidth' => 300,
+        /* 'boxwidth' => 300, */
+        'boxwidth' => 160,
         'skin' => 'A',
         'type' => 'global',
         'graphwidth' => $graphwidth,
@@ -114,7 +115,8 @@ function get_monitortest($courseid, &$response, &$block) {
     if (!empty($block->config->dualserie)) {
         $graphparams = array (
             'boxheight' => 50,
-            'boxwidth' => 300,
+            /* 'boxwidth' => 300, */
+            'boxwidth' => 160,
             'skin' => 'C',
             'type' => 'global',
             'graphwidth' => $graphwidth,
@@ -235,7 +237,7 @@ function get_monitortest($courseid, &$response, &$block) {
         $notenum++;
     }
     $response .= '<span class="smallnotes">'.get_string('columnnotesratio', 'block_userquiz_monitor', $notenum).'</span>';
-    $response .= '</div>';
+    $response .= '</div>'; //closing area
 
     $response .= '<div class="userquiz-monitor-area span6">';
     $response .= $renderer->subcat_container();
@@ -243,6 +245,10 @@ function get_monitortest($courseid, &$response, &$block) {
 
     $response .= '</div>'; // Table row.
     $response .= '</div>'; // Training Container Table.
+
+    // Will display only for small screens.
+    $response .= $renderer->training_second_button($selector);
+
     $response .= '</form>';
 
     // Init elements on the page.
