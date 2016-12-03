@@ -60,7 +60,7 @@ function calcul_hist($categoryid, &$counters) {
 
 /**
  * On changes of the current selection, update the question amount choice list
- * @return the 
+ * @return the question amount selector
  */
 function update_selector($courseid, $catidslist, $mode, $rootcat, $quizzeslist = '') {
     global $DB, $PAGE;
@@ -68,7 +68,7 @@ function update_selector($courseid, $catidslist, $mode, $rootcat, $quizzeslist =
     $response = '';
     $options = '';
 
-    $renderer = $PAGE->get_renderer('block_userquiz_monitor');
+    $renderer = $PAGE->get_renderer('block_userquiz_monitor', 'training');
 
     if (!empty($catidslist) && ($catidslist != 'null')) {
         if ($mode == 'mode0') {
@@ -128,7 +128,7 @@ function update_selector($courseid, $catidslist, $mode, $rootcat, $quizzeslist =
                         $options .= '<option value="'.$i.'">'.$i.'</option>';
                     }
                 }
-                $response .= $renderer->training_lauch_gui($options, $quizzeslist);
+                $response .= $renderer->launch_gui($options, $quizzeslist);
             }
         } else {
             $select = "
@@ -157,10 +157,10 @@ function update_selector($courseid, $catidslist, $mode, $rootcat, $quizzeslist =
                 }
             }
 
-            $response .= $renderer->training_lauch_gui($options, $quizzeslist);
+            $response .= $renderer->launch_gui($options, $quizzeslist);
         }
     } else {
-        $response .= $renderer->empty_training_lauch_gui();
+        $response .= $renderer->empty_launch_gui();
     }
 
     return $response;
