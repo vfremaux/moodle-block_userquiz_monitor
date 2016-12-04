@@ -63,7 +63,7 @@ function calcul_hist($categoryid, &$counters) {
  * @return the question amount selector
  */
 function update_selector($courseid, $catidslist, $mode, $rootcat, $quizzeslist = '') {
-    global $DB, $PAGE;
+    global $DB, $PAGE, $CFG;
 
     $response = '';
     $options = '';
