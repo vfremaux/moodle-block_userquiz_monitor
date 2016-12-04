@@ -25,6 +25,7 @@
 // Include files.
 require_once('../../config.php');
 require_once($CFG->dirroot.'/blocks/userquiz_monitor/block_userquiz_monitor_lib.php');
+require_once($CFG->dirroot.'/blocks/userquiz_monitor/renderer.php');
 require_once($CFG->dirroot.'/blocks/userquiz_monitor/classes/output/block_userquiz_monitor_training_renderer.php');
 
 // The current course ID needed to switch language.
