@@ -27,55 +27,48 @@ require_once($CFG->libdir.'/formslib.php');
 
 class PreferenceForm extends moodleform {
 
-    protected $blockid;
-
-    public function __construct($blockid) {
-        $this->blockid = $blockid;
-        parent::__construct();
-    }
-
     public function definition() {
         global $COURSE, $DB;
 
-        $instance = $DB->get_record('block_instances', array('id' => $this->blockid));
-        $theblock = block_instance('userquiz_monitor', $instance);
-
         $mform =& $this->_form;
+
+        $mform->disable_form_change_checker();
 
         $mform->addElement('hidden', 'id', $COURSE->id);
         $mform->setType('id', PARAM_INT);
 
-        $mform->addElement('hidden', 'blockid', $this->blockid);
+        $mform->addElement('hidden', 'blockid');
         $mform->setType('blockid', PARAM_INT);
 
-        $mform->addElement('html', get_string('resultsdepthdesc', 'block_userquiz_monitor'));
+        $mform->addElement('hidden', 'selectedview');
+        $mform->setType('selectedview', PARAM_TEXT);
 
-        if (!empty($theblock->config->trainingenabled)) {
+        $mform->addElement('html', get_string('resultsdepthdesc', 'block_userquiz_monitor'));
+        if (!empty($this->_customdata['blockconfig']->trainingenabled) && ($this->_customdata['mode'] == 'training')) {
             $options = array('0' => get_string('optnofilter', 'block_userquiz_monitor'),
                 '1' => get_string('optoneweek', 'block_userquiz_monitor'),
                 '2' => get_string('opttwoweeks', 'block_userquiz_monitor'),
                 '3' => get_string('optthreeweeks', 'block_userquiz_monitor'),
                 '4' => get_string('optfourweeks', 'block_userquiz_monitor'),
                 '5' => get_string('optfiveweeks', 'block_userquiz_monitor'),
-             );
-            $mform->addElement('select', 'resultsdepth', get_string('resultsdepth', 'block_userquiz_monitor'), $options);
+            );
+            $attrs = array('onchange' => 'this.form.submit();');
+            $mform->addElement('select', 'resultsdepth', get_string('resultsdepth', 'block_userquiz_monitor'), $options, $attrs);
         }
 
-        if (!empty($theblock->config->examenabled)) {
+        if (!empty($this->_customdata['blockconfig']->examenabled) && ($this->_customdata['mode'] == 'examination')) {
             $examoptions = array('0' => get_string('optnofilter', 'block_userquiz_monitor'),
                 '1' => get_string('optoneexam', 'block_userquiz_monitor'),
                 '2' => get_string('opttwoexams', 'block_userquiz_monitor'),
                 '3' => get_string('optthreeexams', 'block_userquiz_monitor'),
                 '4' => get_string('optfourexams', 'block_userquiz_monitor'),
                 '5' => get_string('optfiveexams', 'block_userquiz_monitor'),
-             );
-            $mform->addElement('select', 'examsdepth', get_string('examsdepth', 'block_userquiz_monitor'), $examoptions);
+            );
+            $attrs = array('onchange' => 'this.form.submit();');
+            $mform->addElement('select', 'examsdepth', get_string('examsdepth', 'block_userquiz_monitor'), $examoptions, $attrs);
         } else {
             $mform->addElement('hidden', 'examsdepth', 0);
             $mform->setType('examsdepth', PARAM_INT);
         }
-
-        $mform->addElement('html', '<br/><br/>');
-        $mform->addElement('submit', 'go_btn', get_string('submit'));
     }
 }

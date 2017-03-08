@@ -24,6 +24,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require('../../config.php');
+require_once($CFG->dirroot.'/blocks/userquiz_monitor/block_userquiz_monitor_lib.php');
 
 // Init variables.
 $selectionstr = 0;
@@ -51,32 +52,7 @@ if (!empty($courseid) && !empty($mode)) {
     if ($mode == 'test') {
 
         // Choose the appropriate quiz.
-
-        list($insql, $params) = $DB->get_in_or_equal($theblock->config->trainingquizzes);
-        $params = array_merge(array($courseid), $params);
-
-        $sql = "
-            SELECT
-                count(qs.questionid) as numquestions,
-                qs.quizid
-               FROM
-                {quiz} q,
-                {quiz_slots} qs
-            WHERE
-                q.course = ? AND
-                qs.quizid = q.id AND
-                q.id $insql
-            GROUP BY
-                qs.quizid
-        ";
-
-        $quizes = $DB->get_records_sql($sql, $params);
-
-        if (!isset($quizes[$nbquestions])) {
-            print_error('erroruserquiznoquiz', 'block_userquiz_monitor');
-        }
-
-        $testid = $quizes[$nbquestions]->quizid;
+        $testid = userquiz_monitor_get_quiz_by_numquestions($courseid, $theblock, $nbquestions);
 
         // Retrieve settings checkbox on the left side.
         $cbpl = preg_grep('/^cb_pl/', array_keys($_GET));
@@ -108,6 +84,7 @@ if (!empty($courseid) && !empty($mode)) {
                     $params = array('cmid' => $cm->id,
                                     'setconstraints' => 1,
                                     'constraints' => $selectionstr,
+                                    'forcenew' => 1,
                                     'sesskey' => sesskey());
                     redirect(new moodle_url('/mod/quiz/startattempt.php', $params));
                 } else {

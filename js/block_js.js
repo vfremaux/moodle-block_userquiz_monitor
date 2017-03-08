@@ -24,7 +24,7 @@ function updateselectorplajax(courseid, rootcategory, categoryid, quizzeslist) {
     var url = M.cfg.wwwroot + '/blocks/userquiz_monitor/updateselector.php?' + params;
 
     $.get(url, function(data) {
-        $('#selectorcontainer').html(data);
+        $('.selectorcontainers').html(data);
     }, 'html');
 }
 
@@ -48,7 +48,7 @@ function refresh_selector(categoryid, quizzeslist, rootcategory) {
     var url = M.cfg.wwwroot + "/blocks/userquiz_monitor/ajax/refreshselector.php?" + params;
 
     $.get(url, function(data) {
-        $('#selectorcontainer').html(data);
+        $('.selectorcontainers').html(data);
     }, 'html');
 }
 
@@ -94,12 +94,13 @@ function updateselectorpl(courseid, rootcategory, list, location, mode, quizzesl
     var url = M.cfg.wwwroot + '/blocks/userquiz_monitor/updateselector.php?' + params;
 
     $.get(url, function(data) {
-        $('#selectorcontainer').html(data);
+        $('.selectorcontainers').html(data);
     }, 'html');
 }
 
 /**
- * Display subcategories on the right part of the training dashbord
+ * Display subcategories on the right part of the training dashbord. On narrow screens, 
+ * will route the content to the special container under the category main block.
  */
 function displaytrainingsubcategories(courseid, rootcategory, categoryid, list, quizzeslist, scale, positionheight, blockid){
 
@@ -125,7 +126,14 @@ function displaytrainingsubcategories(courseid, rootcategory, categoryid, list, 
     var url = M.cfg.wwwroot + "/blocks/userquiz_monitor/ajax/subcategoriescontent.php?" + params;
 
     $.post(url, '', function(data) {
-        $('#partright').html(data);
+        if ($('#category-subcatpod-' + categoryid).css('display') == 'block') {
+            $('#category-subcatpod-' + categoryid).html(data);
+            $('#category-subpod').css('visibility', 'hidden');
+            $('#category-subcatpod-' + categoryid).css('visibility', 'visible');
+        } else {
+            $('#displaysubcategories').html(data);
+            $('.tablemonitorcategorycontainer .userquiz-monitor-row').css('display', 'block');
+        }
     }, 'html');
 
     updateselectorplajax(courseid, rootcategory, categoryid, quizzeslist);
@@ -206,6 +214,7 @@ function activedisplayexaminationsubcategories(courseid, categoryid, list, quizi
 
     $.get(url, function(data) {
         $('#displaysubcategories').html(data);
+        $('.tablemonitorcategorycontainer .userquiz-monitor-row').css('display', 'block');
     }, 'html');
 }
 
@@ -263,7 +272,7 @@ function updateselectorprajax(courseid, rootcategory, cats, quizzeslist) {
     var url = M.cfg.wwwroot + '/blocks/userquiz_monitor/updateselector.php?' + params;
 
     $.get(url, function(data) {
-        $('#selectorcontainer').html(data);
+        $('.selectorcontainers').html(data);
     }, 'html');
 }
 
@@ -300,12 +309,17 @@ function show(id) {
 function closepr(button) {
     $('#checkall_pl').prop('checked', false);
     $('#checkall_pl').prop('disabled', false);
-    $('#partright').html('');
-    $('#selectorcontainer').html(button);
+    $('#displaysubcategories').html('');
+    $('#displaysubcategories').css('disaply', 'none');
+    $('.tablemonitorcategorycontainer .userquiz-monitor-row').css('display', 'none');
+    $('.category-subpod').html('');
+    $('.category-subpod').css('visibility', 'hidden');
+    $('.selectorcontainers').html(button);
     for (var j = 0; j < idcategoriespl.length; j++) {
         $('#cbpl' + idcategoriespl[j]).prop('checked', false);
         $('#cbpl' + idcategoriespl[j]).prop('disabled', false);
         $('#divpl' + idcategoriespl[j]).addClass('trans100');
+        $('#divpl' + idcategoriespl[j]).removeClass('trans50');
         $('#progressbarcontainerA' + idcategoriespl[j]).css('visibility', 'visible');
         $('#progressbarcontainerC' + idcategoriespl[j]).css('visibility', 'visible');
     }
@@ -316,6 +330,7 @@ function closeprexam() {
 
     for (var j = 0; j < idcategoriespl.length; j++) {
         $('#divpl' + idcategoriespl[j]).addClass('trans100');
+        $('#divpl' + idcategoriespl[j]).removeClass('trans50');
         $('#progressbarcontainerA' + idcategoriespl[j]).css('visibility', 'visible');
         $('#progressbarcontainerC' + idcategoriespl[j]).css('visibility', 'visible');
     }
@@ -344,4 +359,8 @@ function updateselectorpr(courseid, rootcategory, list, display, quizzeslist) {
 
 function urlencodeurlencode(str) {
     return escape(str.replace(/%/g, '%25').replace(/\+/g, '%2B')).replace(/%25/g, '%');
+}
+
+function sync_training_selectors(selectobj) {
+    $('.selectorsnbquestions').val(selectobj.options[selectobj.selectedIndex].value);
 }
