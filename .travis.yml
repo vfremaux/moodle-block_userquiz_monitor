@@ -8,7 +8,6 @@ cache:
 
 php:
  - 5.6
- - 7.0
 
 env:
  matrix:
@@ -25,6 +24,11 @@ before_install:
 
 install:
 
+  - moodle-plugin-ci add-plugin --branch $MOODLE_BRANCH vfremaux/moodle-report_examtraining
+  - moodle-plugin-ci add-plugin --branch $MOODLE_BRANCH vfremaux/moodle-qtype_randomconstrained
+  - moodle-plugin-ci add-plugin --branch $MOODLE_BRANCH vfremaux/moodle-quizaccess_chooseconstraints
+  - moodle-plugin-ci add-plugin --branch $MOODLE_BRANCH vfremaux/moodle-quizaccess_usernumattempts
+  - moodle-plugin-ci add-plugin --branch $MOODLE_BRANCH vfremaux/moodle-block_userquiz_limits
   - moodle-plugin-ci install
 
 script:

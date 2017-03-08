@@ -90,6 +90,9 @@ function block_userquiz_monitor_get_user_attempts($blockid, $quizzesids, $userid
     return $DB->get_records_sql($sql, $params);
 }
 
+/**
+ * Initializes the overall counter set.
+ */
 function block_userquiz_monitor_init_overall() {
 
     $overall = new StdClass;
@@ -106,6 +109,15 @@ function block_userquiz_monitor_init_overall() {
     return $overall;
 }
 
+/**
+ * Given a top root category for questions, initializes the child root cats
+ * found under this absolute root. Root categories are initialized with counters for
+ * aggregating results. Only the first sublevel is scanned.
+ *
+ * @param int $rootcategory id of the root question category where all the stuff resides.
+ * @param arrayref &$rootcats an array to be feild by the function
+ * @return void;
+ */
 function block_userquiz_monitor_init_rootcats($rootcategory, &$rootcats) {
     global $DB;
 
@@ -142,6 +154,10 @@ function block_userquiz_monitor_init_rootcats($rootcategory, &$rootcats) {
     return;
 }
 
+/**
+ * Gets all exam attempts for a quiz
+ * @param int $quizid the quiz ID.
+ */
 function block_userquiz_monitor_get_exam_attempts($quizid) {
     global $DB, $USER;
 
@@ -163,37 +179,63 @@ function block_userquiz_monitor_get_exam_attempts($quizid) {
     return $DB->get_records_sql($sql, array($USER->id, $quizid));
 }
 
-function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategory, &$rootcats, &$attempts, &$overall) {
+/**
+ * Computes the grades of a set of attempts.
+ * @param arrayref &$userattempts an array of attempts
+ * @param int $rootcategory the id of the root category for all questions
+ * @param arrayref &$rootcats an array of all categories of first level as child of rootcategory
+ * @param arrayref &$attempts the output stats array for each attempts
+ * @param arrayref &$overall the summarized stats across all attempts.
+ * @param string $mode 'training' or 'exam' mode. When training, non answered questions are ignored in stats.
+ */
+function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategory, &$rootcats, &$attempts, &$overall, $mode = 'training') {
     global $USER, $DB;
+    static $qstates = array();
 
     $errormsg = false;
     $rootcatkeys = array_keys($rootcats);
 
     if (!empty($userattempts)) {
         foreach ($userattempts as $ua) {
-            if ($allstates = get_all_user_records($ua->uniqueid, $USER->id, null, true)) {
+            if ($allstates = block_userquizmonitor_get_all_user_records($ua->uniqueid, $USER->id, null, true)) {
 
                 if ($allstates->valid()) {
                     foreach ($allstates as $state) {
+                        if (($mode == 'training') && is_null($state->grade)) {
+                            continue;
+                        }
 
                         // Get question informations.
                         $fields = 'id, defaultmark, category';
                         $question = $DB->get_record_select('question', " id = ? ", array($state->question), $fields);
                         $parent = $DB->get_field('question_categories', 'parent', array('id' => $question->category));
 
-                        if (!$parent) {
-                            // Fix lost states.
-                            continue;
-                        }
+                        if (!array_key_exists($question->id, $qstates)) {
+                            if (!$parent) {
+                                // Fix lost states.
+                                $qstates[$question->id] = false;
+                                continue;
+                            }
 
-                        if (!in_array($parent, $rootcatkeys)) {
-                            // Discard  all results that fall outside the revision tree.
-                            $errormsg = get_string('errorquestionoutsidescope', 'block_userquiz_monitor');
-                            continue;
-                        }
-
-                        while (!in_array($parent, array_keys($rootcats)) && $parent != 0) {
-                            $parent = $DB->get_field('question_categories', 'parent', array('id' => $parent));
+                            while (!in_array($parent, $rootcatkeys) && $parent != 0) {
+                                // Seek for parent in one of our rootcats.
+                                $parent = $DB->get_field('question_categories', 'parent', array('id' => $parent));
+                            }
+    
+                            if (!$parent) {
+                                // We could not find any candidate rootcat.
+                                // Discard  all results that fall outside the revision tree with error message.
+                                $errormsg = get_string('errorquestionoutsidescope', 'block_userquiz_monitor');
+                                // Mark status cache for next results.
+                                $qstates[$question->id] = false;
+                                continue;
+                            }
+                            $qstates[$question->id] = true; // Validate.
+                        } else {
+                            // Question has already been stated for, we can check it in cache.
+                            if (!$qstates[$question->id]) {
+                                continue;
+                            }
                         }
 
                         if (!isset($attempts[$state->uaid][$question->category])) {
@@ -273,6 +315,16 @@ function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategor
     $overall->ratio = ($overall->cpt == 0) ? 0 : round(($overall->good / $overall->cpt ) * 100);
 
     return $errormsg;
+}
+
+function block_userquiz_monitor_is_passing($block, $attemptstats) {
+    $pass = $attemptstats->ratioA >= $block->config->rateAserie;
+
+    if (!empty($block->config->dualserie)) {
+        $pass = $pass && ($attemptstats->ratioC >= $block->config->rateCserie);
+    }
+
+    return $pass;
 }
 
 function block_userquiz_monitor_compute_ratios(&$rootcats) {
