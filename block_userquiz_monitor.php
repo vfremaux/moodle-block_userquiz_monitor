@@ -39,8 +39,16 @@ class block_userquiz_monitor extends block_base {
             $this->config->rateAserie = 85;
         }
 
+        if (empty($this->config->colorAserie)) {
+            $this->config->colorAserie = '#C00000';
+        }
+
         if (empty($this->config->rateCserie)) {
             $this->config->rateCserie = 75;
+        }
+
+        if (empty($this->config->colorCserie)) {
+            $this->config->colorCserie = '#0000C0';
         }
 
         if (!isset($this->config->dualserie)) {
@@ -108,6 +116,9 @@ class block_userquiz_monitor extends block_base {
         return $this->content;
     }
 
+    /**
+     * Draws the GUI
+     */
     public function get_report() {
         global $DB, $COURSE, $CFG, $USER, $SESSION, $OUTPUT, $PAGE;
 
@@ -116,20 +127,20 @@ class block_userquiz_monitor extends block_base {
         include_once($CFG->dirroot.'/blocks/userquiz_monitor/block_userquiz_monitor_lib.php');
         include_once($CFG->dirroot.'/blocks/userquiz_monitor/schedulemonitor.php');
 
-        $renderer = $PAGE->get_renderer('block_userquiz_monitor');
-        $renderer->set_block($this);
-
         // HTML response.
         $response = '';
 
         // Menu establishment.
-        $response = $renderer->tabs();
-        $defaultview = (!empty($SESSION->userquizview)) ? $SESSION->userquizview : 'training';
+        $defaultview = $this->get_active_view();
         $selectedview = optional_param('selectedview', $defaultview, PARAM_TEXT);
 
         // Display schedule.
         // Note : At the moment we do not really know what to do with this.
         if ($selectedview == 'schedule') {
+
+            $renderer = $PAGE->get_renderer('block_userquiz_monitor');
+            $renderer->set_block($this);
+            $response = $renderer->tabs($selectedview);
 
             $title = get_string('reftitle', 'block_userquiz_monitor', $this->config->trainingprogramname);
             $schedule = $OUTPUT->heading($title, 1);
@@ -147,12 +158,13 @@ class block_userquiz_monitor extends block_base {
         // Display test.
         if ($selectedview == 'training') {
 
-            $title = get_string('testtitle', 'block_userquiz_monitor');
-            $training = '<table width="100%"></tr><td>';
-            $training .= $OUTPUT->heading( $title, 1);
-            $training .= '</td><td align="right">';
-            $training .= $renderer->filter_state('training', $this->instance->id);
-            $training .= '</td></tr></table>';
+            require_once($CFG->dirroot.'/blocks/userquiz_monitor/classes/output/block_userquiz_monitor_training_renderer.php');
+            $renderer = $PAGE->get_renderer('block_userquiz_monitor', 'training');
+            $renderer->set_block($this);
+
+            $response = $renderer->tabs($selectedview);
+
+            $training = $renderer->heading();
 
             if ((! empty($this->config->rootcategory)) && (! empty($this->config->trainingquizzes))) {
                 get_monitortest($COURSE->id, $training, $this);
@@ -172,30 +184,73 @@ class block_userquiz_monitor extends block_base {
         }
 
         // Display examination.
-        if ($selectedview == 'examination') {
+        if (in_array($selectedview, array('examination', 'examlaunch', 'examresults', 'examhistory'))) {
 
-            if (!empty($this->config->alternateexamheading)) {
-                $title = format_text($this->config->alternateexamheading);
-            } else {
-                $title = get_string('examtitle', 'block_userquiz_monitor', $this->config->trainingprogramname);
-            }
-            $examination = '<table width="100%"></tr><td>';
-            $examination .= $OUTPUT->heading( $title, 1);
-            $examination .= '</td><td align="right">';
-            $examination .= $renderer->filter_state('exams', $this->instance->id);
-            $examination .= '</td></tr></table>';
+            require_once($CFG->dirroot.'/blocks/userquiz_monitor/classes/output/block_userquiz_monitor_exam_renderer.php');
+            $renderer = $PAGE->get_renderer('block_userquiz_monitor', 'exam');
+            $renderer->set_block($this);
 
-            if (empty($this->config->examinstructions)) {
-                $examination .= get_string('examinstructions', 'block_userquiz_monitor', $this->config->trainingprogramname);
-            } else {
-                $examination .= '<p>';
-                $examination .= format_string($this->config->examinstructions);
-                $examination .= '</p>';
-            }
+            $response = $renderer->tabs($selectedview);
+
+            $examination = $renderer->heading();
 
             if ((!empty($this->config->rootcategory)) && (!empty($this->config->examquiz))) {
-                get_monitorexam($COURSE->id, $examination, $this);
+                switch ($selectedview) {
+                    case 'examlaunch': {
+                        $quizid = @$this->config->examquiz;
+                        $available = userquizmonitor_count_available_attempts($USER->id, $quizid);
+                        $maxattempts = $DB->get_field('qa_usernumattempts_limits', 'maxattempts', array('userid' => $USER->id, 'quizid' => $quizid));
+                        $examination .= $renderer->launch_widget($quizid, 0 + $available, max(0 + $available, 0 + $maxattempts));
+                        break;
+                    }
+
+                    case 'examresults': {
+
+                        include($CFG->dirroot.'/blocks/userquiz_monitor/preferenceForm.php');
+
+                        $preferenceform = new PreferenceForm(null, array('mode' => 'examination', 'blockconfig' => $this->config));
+                        $params = array('userid' => $USER->id, 'blockid' => $this->instance->id);
+                        if ($prefs = $DB->get_record('userquiz_monitor_prefs', $params)) {
+                            $data = clone($prefs);
+                            unset($data->id);
+                        } else {
+                            $data = new StdClass;
+                        }
+                        $data->blockid = $this->instance->id;
+                        $data->selectedview = 'examresults';
+                        $preferenceform->set_data($data);
+
+                        if (!$preferenceform->is_cancelled()) {
+                            if ($data = $preferenceform->get_data()) {
+                                $data->userid = $USER->id;
+                                if (!empty($prefs)) {
+                                    if (!empty($data->examsdepth)) {
+                                        $prefs->examsdepth = 0 + @$data->examsdepth;
+                                    }
+                                    $DB->update_record('userquiz_monitor_prefs', $prefs);
+                                } else {
+                                    unset($data->id);
+                                    $DB->insert_record('userquiz_monitor_prefs', $data);
+                                }
+                            }
+                        }
+
+                        @ob_flush();
+                        ob_start();
+                        $preferenceform->display();
+                        $examination .= ob_get_clean();
+
+                        $examination .= $renderer->results_widget();
+                        break;
+                    }
+
+                    case 'examhistory': {
+                        $examination .= $renderer->history_widget();
+                        break;
+                    }
+                }
             } else {
+                // Setup signals for authors.
                 if (empty($this->config->rootcategory)) {
                     $examination .= get_string('warningchoosecategory', 'block_userquiz_monitor');
                     $examination .= '<br/>';
@@ -209,37 +264,6 @@ class block_userquiz_monitor extends block_base {
             $response .= $examination;
         }
 
-        if ($selectedview == 'preferences') {
-            include($CFG->dirroot.'/blocks/userquiz_monitor/preferenceForm.php');
-
-            $preferenceform = new PreferenceForm($this->instance->id);
-            $params = array('userid' => $USER->id, 'blockid' => $this->instance->id);
-            if ($prefs = $DB->get_record('userquiz_monitor_prefs', $params)) {
-                $data = clone($prefs);
-                unset($data->id);
-                $preferenceform->set_data($data);
-            }
-
-            if (!$preferenceform->is_cancelled()) {
-                if ($data = $preferenceform->get_data()) {
-                    $data->userid = $USER->id;
-                    if (!empty($prefs)) {
-                        $prefs->resultsdepth = 0 + @$data->resultsdepth;
-                        $prefs->examsdepth = 0 + @$data->examsdepth;
-                        $DB->update_record('userquiz_monitor_prefs', $prefs);
-                    } else {
-                        unset($data->id);
-                        $DB->insert_record('userquiz_monitor_prefs', $data);
-                    }
-                }
-            }
-
-            @ob_flush();
-            ob_start();
-            $preferenceform->display();
-            $response .= ob_get_clean();
-        }
-
         return $response;
     }
 
@@ -251,9 +275,38 @@ class block_userquiz_monitor extends block_base {
         $PAGE->requires->jquery_plugin('jqwidgets-bulletchart', 'local_vflibs');
     }
 
+    protected function get_active_view() {
+        global $SESSION;
+
+        // Ensures context conservation in userquiz_monitor.
+        if (empty($SESSION->userquizview) ||
+                (!@$this->config->trainingenabled && $SESSION->userquizview == 'training') ||
+                        (!@$this->config->examenabled && $SESSION->userquizview == 'examination')) {
+            if (!empty($this->config->trainingenabled)) {
+                $SESSION->userquizview = 'training';
+            } else if (!empty($this->config->examenabled)) {
+                $SESSION->userquizview = 'examination';
+            } else if ($selectedview != 'preferences') {
+                if (!empty($this->config->informationpageid) && !isediting()) {
+                    $params = array('id' => $COURSE->id, 'page' => $this->config->informationpageid);
+                    redirect(new moodle_url('/course/view.php', $params));
+                }
+            }
+        }
+
+        if ($this->config->trainingenabled) {
+            $defaultview = 'training';
+        } else {
+            $defaultview = 'examination';
+        }
+
+        return (!empty($SESSION->userquizview)) ? $SESSION->userquizview : $defaultview;
+    }
+
     static public function get_fileareas() {
         return array('statsbuttonicon',
                      'detailsicon',
+                     'closesubsicon',
                      'serie1icon',
                      'serie2icon');
     }

@@ -60,14 +60,15 @@ function calcul_hist($categoryid, &$counters) {
 
 /**
  * On changes of the current selection, update the question amount choice list
+ * @return the question amount selector
  */
 function update_selector($courseid, $catidslist, $mode, $rootcat, $quizzeslist = '') {
-    global $DB, $PAGE;
+    global $DB, $PAGE, $CFG;
 
     $response = '';
     $options = '';
 
-    $renderer = $PAGE->get_renderer('block_userquiz_monitor');
+    $renderer = $PAGE->get_renderer('block_userquiz_monitor', 'training');
 
     if (!empty($catidslist) && ($catidslist != 'null')) {
         if ($mode == 'mode0') {
@@ -127,7 +128,7 @@ function update_selector($courseid, $catidslist, $mode, $rootcat, $quizzeslist =
                         $options .= '<option value="'.$i.'">'.$i.'</option>';
                     }
                 }
-                $response .= $renderer->category_monitor_container($options, $quizzeslist);
+                $response .= $renderer->launch_gui($options, $quizzeslist);
             }
         } else {
             $select = "
@@ -156,10 +157,10 @@ function update_selector($courseid, $catidslist, $mode, $rootcat, $quizzeslist =
                 }
             }
 
-            $response .= $renderer->category_monitor_container($options, $quizzeslist);
+            $response .= $renderer->launch_gui($options, $quizzeslist);
         }
     } else {
-        $response .= $renderer->empty_category_monitor_container();
+        $response .= $renderer->empty_launch_gui();
     }
 
     return $response;
@@ -172,7 +173,7 @@ function update_selector($courseid, $catidslist, $mode, $rootcat, $quizzeslist =
  * @param mixed $grade if 'answered', get all answered questions, whether they have positive grade or not.
  * if 'graded' get all non 0 graded records, if numeric, get records with such grade, get all if not defined
  */
-function get_all_user_records($attemptuniqueid, $userid, $grade = null, $asrecordset = false) {
+function block_userquizmonitor_get_all_user_records($attemptuniqueid, $userid, $grade = null, $asrecordset = false) {
     global $DB;
 
     $gradeclause = '';
@@ -247,4 +248,34 @@ function userquiz_monitor_get_cattreeids($catid, &$catids) {
             $deepness--;
         }
     }
+}
+
+function userquiz_monitor_get_quiz_by_numquestions($courseid, $theblock, $nbquestions) {
+        global $DB;
+
+        list($insql, $params) = $DB->get_in_or_equal($theblock->config->trainingquizzes);
+        $params = array_merge(array($courseid), $params);
+
+        $sql = "
+            SELECT
+                count(qs.questionid) as numquestions,
+                qs.quizid
+               FROM
+                {quiz} q,
+                {quiz_slots} qs
+            WHERE
+                q.course = ? AND
+                qs.quizid = q.id AND
+                q.id $insql
+            GROUP BY
+                qs.quizid
+        ";
+
+        $quizes = $DB->get_records_sql($sql, $params);
+
+        if (!isset($quizes[$nbquestions])) {
+            print_error('erroruserquiznoquiz', 'block_userquiz_monitor');
+        }
+
+        return $quizes[$nbquestions]->quizid;
 }
