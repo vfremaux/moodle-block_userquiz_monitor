@@ -34,8 +34,6 @@ require_once($CFG->dirroot.'/blocks/userquiz_monitor/renderer.php');
 
 class exam_renderer extends \block_userquiz_monitor_renderer {
 
-    protected $block;
-
     protected $course;
 
     protected $settings;
@@ -51,13 +49,16 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
         $str = '<div>';
         $str .= '<div class="userquiz-monitor-row">';
 
-        $str .= '<div class="userquiz-monitor-cell span6 md-col-6">';
-        $str .= $this->output->heading( $title, 1);
+        $str .= '<div class="userquiz-monitor-cell span12 md-col-12">';
+        $str .= $this->output->heading($title, 1);
         $str .= '</div>';
 
+        /*
+        // The results filtering scale
         $str .= '<div class="userquiz-monitor-cell span6 md-col-6" style="text-align:right">';
         $str .= $this->filter_state('exams', $this->theblock->instance->id);
         $str .= '</div>';
+        */
 
         $str .= '</div>';
         $str .= '</div>';
@@ -68,6 +69,10 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
     public function available_attempts($userid, $quizid, $maxdisplay = 0) {
         global $DB;
 
+        $rootcategory = @$this->theblock->config->rootcategory;
+        $overall = block_userquiz_monitor_init_overall();
+        block_userquiz_monitor_init_rootcats($rootcategory, $rootcats);
+
         $nousedattemptsstr = $this->output->notification(get_string('nousedattemptsstr', 'block_userquiz_monitor'));
         $noavailableattemptsstr = get_string('noavailableattemptsstr', 'block_userquiz_monitor');
         $availablestr = get_string('available', 'block_userquiz_monitor');
@@ -75,7 +80,7 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
         $stillavailablestr = get_string('stillavailable', 'block_userquiz_monitor');
 
         $str = '<div style="margin-top:5px" class="trans100" >';
-        $str .= '<div class="userquiz-monitor-container" style="font-size:0.8em">';
+        $str .= '<table style="font-size:0.8em" width="100%">';
 
         // Start printing used attempts.
         $select = "
@@ -88,24 +93,34 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
             $printedellipse = false;
             $usedix = $used;
             foreach ($usedattempts as $usedattempt) {
-                if ($used < $maxdisplay) {
+                $usedattempts = array($usedattempt);
+                $errors = block_userquiz_monitor_compute_all_results($usedattempts, $rootcategory, $rootcats,
+                                                                                   $attempts, $overall);
+
+                $passed = block_userquiz_monitor_is_passing($this->theblock, $overall);
+                if ($passed) {
+                    $passingstr = get_string('examstatepassed', 'block_userquiz_monitor');
+                    $stateicon = 'passed';
+                } else {
+                    $passingstr = get_string('examstatefailed', 'block_userquiz_monitor');
+                    $stateicon = 'failed';
+                }
+                if (!$maxdisplay || ($used < $maxdisplay)) {
                     $attemptsstr = get_string('attempt', 'quiz', $usedix);
                     $usedurl = new moodle_url('/mod/quiz/review.php', array('q' => $quizid, 'attempt' => $usedattempt->id));
                     $attemptdate = '<a href="'.$usedurl.'">'.userdate($usedattempt->timefinish).'</a>';
-                    $iconurl = $this->output->pix_url('usedattempt', 'block_userquiz_monitor');
-                    $str .= '<div class="userquiz-monitor-row">';
-                    $str .= '<div userquiz-monitor-cell">'.$attemptsstr.'</div>';
-                    $str .= '<div userquiz-monitor-cell">'.$attemptdate.'</div>';
-                    $str .= '<div userquiz-monitor-cell"><img src="'.$iconurl.'" /></div>';
-                    $str .= '</div>';
+                    $iconurl = $this->output->pix_url($stateicon, 'block_userquiz_monitor');
+                    $str .= '<tr valign="middle">';
+                    $str .= '<td class="exam-history-attempt">'.$attemptsstr.' '.$attemptdate.'<br/>'.$passingstr.'</td>';
+                    $str .= '<td><img src="'.$iconurl.'" /></td>';
+                    $str .= '</tr>';
                 } else {
                     if (!$printedellipse) {
                         $iconurl = $this->output->pix_url('usedattempt', 'block_userquiz_monitor');
-                        $str .= '<div class="userquiz-monitor-row">';
-                        $str .= '<div class="userquiz-monitor-cell">...</div>';
-                        $str .= '<div class="userquiz-monitor-cell"></div>';
-                        $str .= '<div class="userquiz-monitor-cell"><img src="'.$iconurl.'" /></div>';
-                        $str .= '</div>';
+                        $str .= '<tr valign="top">';
+                        $str .= '<td>...</td>';
+                        $str .= '<td><img src="'.$iconurl.'" /></td>';
+                        $str .= '</tr>';
                         $printedellipse = true;
                     }
                 }
@@ -113,21 +128,21 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
             }
         } else {
             $usedattempts = array();
-            $str .= '<div class="userquiz-monitor-row">';
-            $str .= '<div class="userquiz-monitor-cell">'.$nousedattemptsstr.'</div>';
-            $str .= '</div>';
+            $str .= '<tr>';
+            $str .= '<td>'.$nousedattemptsstr.'</td>';
+            $str .= '</tr';
         }
 
         $limitsenabled = $DB->get_field('qa_usernumattempts', 'enabled', array('quizid' => $quizid));
         if (!$limitsenabled) {
             $iconurl = $this->output->pix_url('availableattempt', 'block_userquiz_monitor');
-            $str .= '<div class="userquiz-monitor-row">';
-            $str .= '<div class="userquiz-monitor-cell">'.$attemptstr.'</div>';
-            $str .= '<div class="userquiz-monitor-cell">'.$availablestr.'</div>';
-            $str .= '<div class="userquiz-monitor-cell"><img src="'.$iconurl.'" /></div>';
-            $str .= '</div>';
+            $str .= '<tr valign="top">';
+            $str .= '<td>'.$attemptstr.' '.$availablestr.'</td>';
+            $str .= '<td><img src="'.$iconurl.'" /></td>';
+            $str .= '</td>';
 
-            $str .= '</div>'; // Table.
+            $str .= '</table>'; // Table.
+
             $str .= '</div>';
             return $str;
         }
@@ -139,33 +154,155 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
                 for ($i = 0; $i < min($maxdisplay, $availableattempts); $i++) {
                     // Display as many available as possible.
                     $iconurl = $this->output->pix_url('availableattempt', 'block_userquiz_monitor');
-                    $str .= '<div class="userquiz-monitor-row">';
-                    $str .= '<div class="userquiz-monitor-cell">'.$attemptstr.'</div>';
-                    $str .= '<div class="userquiz-monitor-cell">'.$availablestr.'</div>';
-                    $str .= '<div class="userquiz-monitor-cell"><img src="'.$iconurl.'" /></div>';
-                    $str .= '</div>';
+                    $str .= '<tr>';
+                    $str .= '<td>'.$attemptstr.' '.$availablestr.'</td>';
+                    $str .= '<td><img src="'.$iconurl.'" /></td>';
+                    $str .= '</tr>';
                     $attemptsleft--;
                 }
                 if ($attemptsleft) {
                     // If we could not display all available.
-                    $str .= '<div class="userquiz-monitor-row">';
-                    $str .= '<div class="userquiz-monitor-cell">'.$attemptsleft.' '.$stillavailablestr.'</div>';
-                    $str .= '<div class="userquiz-monitor-cell"></div>';
-                    $str .= '</div>';
+                    $str .= '<tr valign="top">';
+                    $str .= '<td>'.$attemptsleft.' '.$stillavailablestr.'</td>';
+                    $str .= '</tr>';
                 }
             } else {
-                $str .= '<div class="userquiz-monitor-row">';
-                $str .= '<div class="userquiz-monitor-cell" align="center" style="color:#ff0000">';
+                $str .= '<tr>';
+                $str .= '<td align="center" style="color:#ff0000">';
                 $str .= $noavailableattemptsstr;
-                $str .= '</div>';
-                $str .= '</div>';
+                $str .= '</td>';
+                $str .= '</td>';
             }
         }
 
-        $str .= '</div>'; // Table.
+        $str .= '</table>'; // Table.
         $str .= '</div>';
 
         return $str;
+    }
+
+    public function launch_widget($quizid, $remains, $total) {
+        global $COURSE;
+
+        $str = '<div class="exam-launch-panel">';
+
+        $str .= '<div id="exam-remainings">';
+        $str .= '<h3>'.get_string('remainingattempts', 'block_userquiz_monitor', "$remains / $total").'</h3>';
+        $str .= '</div>';
+
+        if (empty($this->theblock->config->examinstructions)) {
+            $str .= get_string('examinstructions', 'block_userquiz_monitor', $this->theblock->config->trainingprogramname);
+        } else {
+            $str .= '<p>';
+            $str .= format_string($this->theblock->config->examinstructions);
+            $str .= '</p>';
+        }
+
+        $context = \context_system::instance();
+
+        if ($remains || has_capability('moodle/site:config', $context)) {
+            $formurl = new moodle_url('/blocks/userquiz_monitor/userpreset.php');
+            $str .= '<form name="form" method="GET" action="'.$formurl.'">';
+            $str .= '<input type="hidden" name="blockid" value="'.$this->theblock->instance->id.'">';
+            $str .= $this->launch_button($quizid, 'examination');
+            $str .= '</form>';
+        } else {
+            $str .= '<input type="submit" value="'.get_string('runexam', 'block_userquiz_monitor').'"/>';
+        }
+
+        $str .= '</div>';
+
+        return $str;
+    }
+
+    public function results_widget() {
+        global $DB, $USER;
+
+        $total = '';
+
+        $rootcategory = $this->theblock->config->rootcategory;
+        $quizid = @$this->theblock->config->examquiz;
+        $blockid = $this->theblock->instance->id;
+
+        if (empty($quizid)) {
+            return get_string('configwarningmonitor', 'block_userquiz_monitor');
+        }
+
+        // Init variables.
+        $attemptsgraph = '';
+        $errormsg = '';
+        $overall = block_userquiz_monitor_init_overall();
+        $total .= block_userquiz_monitor_init_rootcats($rootcategory, $rootcats);
+        $userattempts = block_userquiz_monitor_get_exam_attempts($quizid);
+
+        // Add time range limit.
+        $userprefs = $DB->get_record('userquiz_monitor_prefs', array('userid' => $USER->id, 'blockid' => $blockid));
+
+        $totalexams = 0;
+
+        if (!empty($userattempts)) {
+
+            if (@$userprefs->examsdepth > 0) {
+                // Remove attempts so we keep the expected number.
+                $totalexams = count($userattempts);
+                while ($totalexams > $userprefs->examsdepth) {
+                    array_shift($userattempts);
+                    $totalexams--;
+                }
+            }
+        }
+
+        $errormsg = block_userquiz_monitor_compute_all_results($userattempts, $rootcategory, $rootcats, $attempts, $overall);
+
+        $maxratio = block_userquiz_monitor_compute_ratios($rootcats);
+
+        $graphwidth = ($overall->ratio * 100) / $maxratio;
+
+        // Prepare results bargaphs.
+        $graphparams = array (
+            'boxheight' => 50,
+            /* 'boxwidth' => 300, */
+            'boxwidth' => '95%',
+            'skin' => 'A',
+            'type' => 'global',
+            'graphwidth' => $graphwidth,
+            'stop' => $this->theblock->config->rateAserie,
+            'successrate' => $overall->ratioA,
+        );
+        $components['progressbarA'] = $this->progress_bar_html_jqw($rootcategory, $graphparams);
+
+        if (!empty($this->theblock->config->dualserie)) {
+            $graphparams = array (
+                'boxheight' => 50,
+                /* 'boxwidth' => 300, */
+                'boxwidth' => '95%',
+                'skin' => 'C',
+                'type' => 'global',
+                'graphwidth' => $graphwidth,
+                'stop' => $this->theblock->config->rateCserie,
+                'successrate' => $overall->ratioC,
+            );
+            $components['progressbarC'] = $this->progress_bar_html_jqw($rootcategory, $graphparams);
+        }
+
+        $data = array('dualserie' => $this->theblock->config->dualserie,
+                      'goodA' => $overall->goodA,
+                      'cptA' => $overall->cptA,
+                      'goodC' => $overall->goodC,
+                      'cptC' => $overall->cptC);
+
+        $total = '<div id="divtotal" style="width:100%;">';
+        $total .= $this->total($components, $data, null, 'exam');
+        $total .= '</div>';
+
+        return $total;
+    }
+
+    public function history_widget() {
+        global $USER;
+
+        $quizid = @$this->theblock->config->examquiz;
+        return $this->available_attempts($USER->id, $quizid, 0);
     }
 
     public function launch_button($quizid, $mode) {
@@ -233,30 +370,6 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
         return $str;
     }
 
-    public function category_results($cat) {
-
-        $str = '';
-
-        $str .= '<div class="userquiz-monitor-row">'; // Row.
-        $str .= '<div class="userquiz-monitor-cell vertical-centered userquiz-cat-progress">';
-        $str .= '<div id="progressbarcontainer'.$cat->skin.$cat->id.'">';
-        $str .= $cat->progressbar;
-        $str .= '</div>';
-        $str .= '</div>';
-        $str .= '<div class="userquiz-monitor-cell vertical-centered">';
-        $pixurl = $this->output->pix_url(core_text::strtolower($cat->skin), 'block_userquiz_monitor');
-        $str .= '<img class="userquiz-monitor-questiontype" src="'.$pixurl.'" />';
-        $str .= '</div>';
-        $str .= '<div class="userquiz-monitor-cell vertical-centered">';
-        $good = 'good'.$cat->skin;
-        $cpt = 'cpt'.$cat->skin;
-        $str .= '<h4>'.$cat->$good.'/'.$cat->$cpt.'</h4>';
-        $str .= '</div>';
-        $str .= '</div>'; // Row.
-
-        return $str;
-    }
-
     public function main_category($cat, $jshandler) {
 
         $seesubsstr = get_string('more', 'block_userquiz_monitor', $cat->name);
@@ -290,17 +403,9 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
         $str .= '</div>';
         $str .= '</div>'; // Row.
 
-        $str .= '<div class="userquiz-monitor-row">'; // Row.
-        $str .= '<div class="userquiz-monitor-cell userquiz-monitor-bg">';
-        // Blank cell.
-        $str .= '</div>';
-        $str .= '<div class="userquiz-monitor-cell userquiz-monitor-bg" style="font-size:0.8em;text-align:center">';
-        $str .= get_string('level1', 'block_userquiz_monitor');
-        $str .= '</div>';
-        $str .= '<div class="userquiz-monitor-cell userquiz-monitor-bg" style="font-size:0.8em; text-align:center">';
-        $str .= get_string('ratio1', 'block_userquiz_monitor');
-        $str .= '</div>';
-        $str .= '</div>'; // Row.
+        $str .= '<table width="100%">';
+
+        $str .= $this->render_bar_head_row('');
 
         if (!empty($cat->questiontypes)) {
             ksort($cat->questiontypes);
@@ -308,18 +413,21 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
 
             foreach ($keys as $questiontype) {
                 if ($questiontype == 'A') {
+                    $serieicon = $this->get_area_url('serie2icon', $this->output->pix_url('a', 'block_userquiz_monitor'));
                     $cat->skin = 'A';
                     $cat->progressbar = $this->progress_bar_html_jqw($cat->id, $cat->dataA);
-                    $str .= $this->category_results($cat);
+                    $str .= $this->render_bar_range_row($cat->progressbar, $cat, $serieicon);
                 }
 
                 if ($this->theblock->config->dualserie && ($questiontype == 'C')) {
+                    $serieicon = $this->get_area_url('serie2icon', $this->output->pix_url('c', 'block_userquiz_monitor'));
                     $cat->skin = 'C';
                     $cat->progressbar = $this->progress_bar_html_jqw($cat->id, $cat->dataC);
-                    $str .= $this->category_results($cat);
+                    $str .= $this->render_bar_range_row($cat->progressbar, $cat, $serieicon);
                 }
             }
         }
+        $str .= '</table>';
 
         $str .= '</div>'; // Table.
         $str .= '</div>';
@@ -373,39 +481,23 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
         $str .= '</div>';
         $str .= '</div>'; // Row.
 
-        $str .= '<div class="userquiz-monitor-row">'; // Row.
-        $str .= '<div class="userquiz-monitor-cell vertical-centered span6 md-col-6">';
-        $str .= '<div>';
-        $str .= $progressbara;
-        $str .= '</div>';
-        $str .= '</div>';
-        if (!empty($this->theblock->config->dualserie)) {
-            $str .= '<div class="userquiz-monitor-cell vertical-centered span3 md-col-3">';
-            $pixurl = $this->get_area_url('serie1icon', $this->output->pix_url('a', 'block_userquiz_monitor'));
-            $str .= '<img class="userquiz-monitor-total-icon" src="'.$pixurl.'" />';
-            $str .= '</div>';
-        }
-        $str .= '<div class="userquiz-monitor-cell vertical-centered span3 md-col-3">';
-        $str .= '<h4>'.$overall->goodA.'/'.$overall->cptA.'</h4>';
-        $str .= '</div>';
-        $str .= '</div>'; // Row.
+        $str .= '<table width="100%">';
+
+        $count = new StdClass();
+        $count->good = $overall->goodA;
+        $count->cpt = $overall->cptA;
+        $serieicon = $this->get_area_url('serie1icon', $this->output->pix_url('a', 'block_userquiz_monitor'));
+        $str .= $renderer->render_bar_range_row($progressbara, $count, $serieicon);
 
         if (!empty($this->theblock->config->dualserie)) {
-            $str .= '<div class="userquiz-monitor-row">'; // Row.
-            $str .= '<div class="userquiz-monitor-cell vertical-centered span6 md-col-6">';
-            $str .= '<div>';
-            $str .= $progressbarc;
-            $str .= '</div>';
-            $str .= '</div>';
-            $str .= '<div class="userquiz-monitor-cell vertical-centered span3 md-col-3">';
-            $pixurl = $this->get_area_url('serie2icon', $this->output->pix_url('c', 'block_userquiz_monitor'));
-            $str .= '<img class="userquiz-monitor-total-icon" src="'.$pixurl.' "/>';
-            $str .= '</div>';
-            $str .= '<div class="userquiz-monitor-cell vertical-centered span3 md-col-3">';
-            $str .= '<h4>'.$overall->goodC.'/'.$overall->cptC.'</h4>';
-            $str .= '</div>';
-            $str .= '</div>'; // Row.
+            $count = new StdClass();
+            $count->good = $overall->goodC;
+            $count->cpt = $overall->cptC;
+            $serieicon = $this->get_area_url('serie2icon', $this->output->pix_url('c', 'block_userquiz_monitor'));
+            $$str .= $renderer->render_bar_range_row($progressbarc, $count, $serieicon);
         }
+
+        $str .= '</table>';
 
         return $str;
     }
