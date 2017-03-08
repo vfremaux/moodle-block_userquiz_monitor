@@ -57,7 +57,7 @@ class training_renderer extends \block_userquiz_monitor_renderer {
 
     public function heading() {
 
-        $title = get_string('testtitle', 'block_userquiz_monitor');
+        $title = get_string('testtitle', 'block_userquiz_monitor', $this->theblock->config->trainingprogramname);
 
         $str = '<div>'; // Table.
         $str .= '<div class="userquiz-monitor-row">';
@@ -66,14 +66,23 @@ class training_renderer extends \block_userquiz_monitor_renderer {
         $str .= $this->output->heading( $title, 1);
         $str .= '</div>';
 
+        /*
         $str .= '<div class="userquiz-monitor-cell span6 md-col-6" style="text-align:right">';
         $str .= $this->filter_state('training', $this->theblock->instance->id);
+        $str .= '</div>';
+        */
+        $str .= '<div class="userquiz-monitor-cell span6 md-col-6" style="text-align:right">';
+        $str .= $this->filter_form('training');
         $str .= '</div>';
 
         $str .= '</div>';
         $str .= '</div>'; // Table.
 
         return $str;
+    }
+
+    public function filter_form() {
+        return block_user_quiz_monitor_training_filter_form($this->theblock);
     }
 
     public function global_monitor($total, $selector) {
@@ -84,6 +93,14 @@ class training_renderer extends \block_userquiz_monitor_renderer {
 
         $str .= '<div>'; // Table.
         $str .= '<div class="userquiz-monitor-row">'; // Row.
+
+        $str .= '<div class="userquiz-monitor-cell userquiz-cat-progress span9">';
+        $str .= '<h1>'.$totalstr.' '.$this->output->help_icon('total', 'block_userquiz_monitor', false).'</h1>';
+        $str .= '<div class="trans100">';
+        $str .= $total;
+        $str .= '</div>';
+        $str .= '</div>';
+
         $str .= '<div class="userquiz-monitor-cell span3">';
 
         $helpicon = $this->output->help_icon('launch', 'block_userquiz_monitor', false);
@@ -96,12 +113,6 @@ class training_renderer extends \block_userquiz_monitor_renderer {
         $str .= '</div>';
         $str .= '</div>';
 
-        $str .= '<div class="userquiz-monitor-cell userquiz-cat-progress span9">';
-        $str .= '<h1>'.$totalstr.' '.$this->output->help_icon('total', 'block_userquiz_monitor', false).'</h1>';
-        $str .= '<div class="trans100">';
-        $str .= $total;
-        $str .= '</div>';
-        $str .= '</div>';
         $str .= '</div>'; // Row.
         $str .= '</div>'; // Table.
 
@@ -149,20 +160,9 @@ class training_renderer extends \block_userquiz_monitor_renderer {
 
         $str .= '</div>'; // Row.
 
-        $str .= '<div class="userquiz-monitor-row">'; // Row.
-
-        $str .= '<div class="userquiz-monitor-cell userquiz-monitor-bg ratio">';
-        // Blank Cell.
-        $str .= '</div>';
-        if (!empty($this->theblock->config->dualserie)) {
-            $level1str = get_string('level1', 'block_userquiz_monitor');
-            $str .= '<div class="userquiz-monitor-cell userquiz-monitor-bg level">'.$level1str.'</div>';
-        }
-        $str .= '<div class="userquiz-monitor-cell userquiz-monitor-bg ratio">';
-        $str .= get_string('ratio1', 'block_userquiz_monitor');
-        $str .= '</div>';
-
-        $str .= '</div>'; // Row.
+        $str .= '<div class="category-bargraph">'; // Not a row. Must collapse
+        $str .= '<table width="100%">';
+        $str .= $this->render_bar_head_row('');
 
         // Ensure cat types are presented in sorted order.
         ksort($cat->questiontypes);
@@ -172,52 +172,36 @@ class training_renderer extends \block_userquiz_monitor_renderer {
             foreach ($keys as $questiontype) {
 
                 if ($questiontype == 'A') {
-
-                    $str .= '<div class="userquiz-monitor-row">';
-
-                    $str .= '<div class="userquiz-monitor-cell progressbar vertical-centered">';
-                    $str .= '<div id="progressbarcontainerC'.$cat->id.'">';
-                    $str .= $cat->progressbarA;
-                    $str .= '</div>';
-                    $str .= '</div>';
-                    if (!empty($this->theblock->config->dualserie)) {
-                        $str .= '<div class="userquiz-monitor-cell progressbarlabel vertical-centered">';
-                        $pixurl = $this->get_area_url('serie1icon', $this->output->pix_url('a', 'block_userquiz_monitor'));
-                        $str .= '<img class="userquiz-monitor->questiontype" src="'.$pixurl.'"/>';
-                        $str .= '</div>';
-                    }
-                    $str .= '<div class="userquiz-monitor-cell progressbarlabel vertical-centered">';
-                    $str .= '<h4>'.$cat->goodA.'/'.$cat->cptA.'</h4>';
-                    $str .= '</div>';
-
-                    $str .= '</div>'; // Row.
+                    $serieicon = $this->get_area_url('serie1icon', $this->output->pix_url('a', 'block_userquiz_monitor'));
+                    $catcounts = new  \StdClass;
+                    $catcounts->good = $cat->goodA;
+                    $catcounts->cpt = $cat->cptA;
+                    $str .= $this->render_bar_range_row($cat->progressbarA, $catcounts, $serieicon);
                 }
 
                 if ($this->theblock->config->dualserie && ($questiontype == 'C')) {
-
-                    $str .= '<div class="userquiz-monitor-row">'; // Row.
-
-                    $str .= '<div class="userquiz-monitor-cell progressbar vertical-centered">';
-                    $str .= '<div id="progressbarcontainerC'.$cat->id.'">';
-                    $str .= $cat->progressbarC;
-                    $str .= '</div>';
-                    $str .= '</div>';
-
-                    $str .= '<div class="userquiz-monitor-cell progressbarlabel vertical-centered">';
-                    $pixurl = $this->get_area_url('serie2icon', $this->output->pix_url('c', 'block_userquiz_monitor'));
-                    $str .= '<img class="userquiz-monitor->questiontype" src="'.$pixurl.'" />';
-                    $str .= '</div>';
-                    $str .= '<div class="userquiz-monitor-cell progressbarlabel vertical-centered">';
-                    $str .= '<h4>'.$cat->goodC.'/'.$cat->cptC.'</h4>';
-                    $str .= '</div>';
-
-                    $str .= '</div>'; // Row.
+                    $serieicon = $this->get_area_url('serie2icon', $this->output->pix_url('c', 'block_userquiz_monitor'));
+                    $catcounts = new \StdClass;
+                    $catcounts->good = $cat->goodC;
+                    $catcounts->cpt = $cat->cptC;
+                    $str .= $this->render_bar_range_row($cat->progressbarC, $catcounts, $serieicon);
                 }
             }
         }
 
+        $str .= '</table>';
+        $str .= '</div>'; // Not a Row.
+
         $str .= '</div>'; // Table.
         $str .= '</div>';
+
+        /*
+         * Invisible subcat cat instance container for narrow screens.
+         * In narrow screens we need to route the ajax return of subcats reload
+         * in this container.
+         */
+        $str .= '<div id="category-subcatpod-'.$cat->id.'" class="category-subpod" style="visibility:hidden">'; // Not a Row
+        $str .= '</div>'; // Not a Row.
 
         return $str;
     }

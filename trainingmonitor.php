@@ -103,7 +103,7 @@ function get_monitortest($courseid, &$response, &$block) {
     $graphparams = array (
         'boxheight' => 50,
         /* 'boxwidth' => 300, */
-        'boxwidth' => 160,
+        'boxwidth' => '95%',
         'skin' => 'A',
         'type' => 'global',
         'graphwidth' => $graphwidth,
@@ -116,7 +116,7 @@ function get_monitortest($courseid, &$response, &$block) {
         $graphparams = array (
             'boxheight' => 50,
             /* 'boxwidth' => 300, */
-            'boxwidth' => 160,
+            'boxwidth' => '95%',
             'skin' => 'C',
             'type' => 'global',
             'graphwidth' => $graphwidth,
@@ -201,7 +201,7 @@ function get_monitortest($courseid, &$response, &$block) {
 
         $data = array (
             'boxheight' => 50,
-            'boxwidth' => 160,
+            'boxwidth' => '95%',
             'type' => 'local',
             'skin' => 'A',
             'graphwidth' => $graphwidth,
@@ -213,7 +213,7 @@ function get_monitortest($courseid, &$response, &$block) {
         if ($block->config->dualserie) {
             $data = array (
                 'boxheight' => 50,
-                'boxwidth' => 160,
+                'boxwidth' => '95%',
                 'type' => 'local',
                 'skin' => 'C',
                 'graphwidth' => $graphwidth,
@@ -247,10 +247,50 @@ function get_monitortest($courseid, &$response, &$block) {
     $response .= '</div>'; // Training Container Table.
 
     // Will display only for small screens.
-    $response .= $renderer->training_second_button($selector);
+    // $response .= $renderer->training_second_button($selector);
 
     $response .= '</form>';
 
     // Init elements on the page.
     $response .= '<script type="text/javascript"> initelements();</script>';
+}
+
+function block_user_quiz_monitor_training_filter_form(&$block) {
+    global $DB, $CFG, $USER;
+
+    include($CFG->dirroot.'/blocks/userquiz_monitor/preferenceForm.php');
+
+    $preferenceform = new PreferenceForm(null, array('mode' => 'training', 'blockconfig' => $block->config));
+    $params = array('userid' => $USER->id, 'blockid' => $block->instance->id);
+    if ($prefs = $DB->get_record('userquiz_monitor_prefs', $params)) {
+        $data = clone($prefs);
+        unset($data->id);
+    } else {
+        $data = new StdClass;
+    }
+    $data->blockid = $block->instance->id;
+    $data->selectedview = 'training';
+    $preferenceform->set_data($data);
+
+    if (!$preferenceform->is_cancelled()) {
+        if ($data = $preferenceform->get_data()) {
+            $data->userid = $USER->id;
+            if (!empty($prefs)) {
+                if (!empty($data->examsdepth)) {
+                    $prefs->examsdepth = 0 + @$data->examsdepth;
+                }
+                $DB->update_record('userquiz_monitor_prefs', $prefs);
+            } else {
+                unset($data->id);
+                $DB->insert_record('userquiz_monitor_prefs', $data);
+            }
+        }
+    }
+
+    @ob_flush();
+    ob_start();
+    $preferenceform->display();
+    $str = ob_get_clean();
+
+    return $str;
 }

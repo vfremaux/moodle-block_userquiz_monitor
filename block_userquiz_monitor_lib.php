@@ -173,7 +173,7 @@ function update_selector($courseid, $catidslist, $mode, $rootcat, $quizzeslist =
  * @param mixed $grade if 'answered', get all answered questions, whether they have positive grade or not.
  * if 'graded' get all non 0 graded records, if numeric, get records with such grade, get all if not defined
  */
-function get_all_user_records($attemptuniqueid, $userid, $grade = null, $asrecordset = false) {
+function block_userquizmonitor_get_all_user_records($attemptuniqueid, $userid, $grade = null, $asrecordset = false) {
     global $DB;
 
     $gradeclause = '';
