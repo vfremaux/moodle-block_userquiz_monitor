@@ -32,6 +32,19 @@ require_once($CFG->dirroot.'/blocks/userquiz_monitor/locallib.php');
  */
 class block_userquiz_monitor_edit_form extends block_edit_form {
 
+    public $imgfilepickerattrs;
+
+    public function __construct($url, $block, $page) {
+        global $COURSE;
+
+        $this->imgfilepickerattrs = array('maxfiles' => 1,
+                                       'subdirs' => false,
+                                       'maxbytes' => $COURSE->maxbytes,
+                                       'accepted_types' => array('.jpg', '.gif', '.png'));
+
+        parent::__construct($url, $block, $page);
+    }
+
     protected function specific_definition($mform) {
         global $DB, $COURSE;
 
@@ -60,6 +73,11 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
         $mform->addElement('text', 'config_rateAserie', $label);
         $mform->setType('config_rateAserie', PARAM_INT);
 
+        $label = get_string('configcolorAserie', 'block_userquiz_monitor');
+        $mform->addElement('text', 'config_colorAserie', $label);
+        $mform->setType('config_colorAserie', PARAM_TEXT);
+        $mform->setDefault('config_colorAserie', '#C00000');
+
         $label = get_string('configdualserie', 'block_userquiz_monitor');
         $mform->addElement('advcheckbox', 'config_dualserie', $label);
         $mform->setType('config_dualserie', PARAM_BOOL);
@@ -68,6 +86,11 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
         $mform->addElement('text', 'config_rateCserie', $label);
         $mform->disabledIf('config_rateCserie', 'config_dualserie', 0);
         $mform->setType('config_rateCserie', PARAM_INT);
+
+        $label = get_string('configcolorCserie', 'block_userquiz_monitor');
+        $mform->addElement('text', 'config_colorCserie', $label);
+        $mform->setType('config_colorCserie', PARAM_TEXT);
+        $mform->setDefault('config_colorCserie', '#0000C0');
 
         // Configuration for training system.
 
@@ -123,10 +146,8 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
 
         $mform->addElement('header', 'configheader3', get_string('graphicassets', 'block_userquiz_monitor'));
 
-        $imgfpickerattributes = array('maxbytes' => $COURSE->maxbytes, 'accepted_types' => array('.jpg', '.gif', '.png'));
-
         $group = array();
-        $group[0] = & $mform->createElement('filepicker', 'statsbuttonicon', '', $imgfpickerattributes);
+        $group[0] = & $mform->createElement('filepicker', 'statsbuttonicon', '', $this->imgfilepickerattrs);
         $group[1] = & $mform->createElement('advcheckbox', 'clearstatsbuttonicon', '');
 
         $label = get_string('statsbuttonicon', 'block_userquiz_monitor');
@@ -134,7 +155,7 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
         $mform->addGroup($group, 'config_grstatsbuttonicon', $label, $separators, ' ', false);
 
         $group = array();
-        $group[0] = & $mform->createElement('filepicker', 'detailsicon', '', $imgfpickerattributes);
+        $group[0] = & $mform->createElement('filepicker', 'detailsicon', '', $this->imgfilepickerattrs);
         $group[1] = & $mform->createElement('advcheckbox', 'cleardetailsicon', '');
 
         $label = get_string('detailsicon', 'block_userquiz_monitor');
@@ -142,7 +163,15 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
         $mform->addGroup($group, 'config_grdetailsicon', $label, $separators, ' ', false);
 
         $group = array();
-        $group[0] = & $mform->createElement('filepicker', 'serie1icon', '', $imgfpickerattributes);
+        $group[0] = & $mform->createElement('filepicker', 'closesubsicon', '', $this->imgfilepickerattrs);
+        $group[1] = & $mform->createElement('advcheckbox', 'clearclosesubsicon', '');
+
+        $label = get_string('closesubsicon', 'block_userquiz_monitor');
+        $separators = array(get_string('clear', 'block_userquiz_monitor').'&nbsp;:&nbsp;');
+        $mform->addGroup($group, 'config_grclosesubsicon', $label, $separators, ' ', false);
+
+        $group = array();
+        $group[0] = & $mform->createElement('filepicker', 'serie1icon', '', $this->imgfilepickerattrs);
         $group[1] = & $mform->createElement('advcheckbox', 'clearserie1icon', '');
 
         $label = get_string('serie1icon', 'block_userquiz_monitor');
@@ -150,7 +179,7 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
         $mform->addGroup($group, 'config_grserie1icon', $label, $separators, ' ', false);
 
         $group = array();
-        $group[0] = & $mform->createElement('filepicker', 'serie2icon', '', $imgfpickerattributes);
+        $group[0] = & $mform->createElement('filepicker', 'serie2icon', '', $this->imgfilepickerattrs);
         $group[1] = & $mform->createElement('advcheckbox', 'clearserie2icon', '');
 
         $label = get_string('serie2icon', 'block_userquiz_monitor');
@@ -162,7 +191,7 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
         $mform->setType('config_localcss', PARAM_TEXT);
     }
 
-    public function set_data($defaults, &$files = null) {
+    public function set_data($defaults) {
         global $COURSE;
 
         if (!empty($this->block->config) && is_object($this->block->config)) {
@@ -199,7 +228,7 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
 
         // Have to delete text here, otherwise parent::set_data will empty content of editor.
         unset($this->block->config->examinstructions);
-        parent::set_data($defaults, $files);
+
         // Restore text.
         if (!isset($this->block->config)) {
             $this->block->config = new StdClass();
@@ -215,22 +244,29 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
 
         $draftitemid = file_get_submitted_draft_itemid('statsbuttonicon');
         file_prepare_draft_area($draftitemid, $context->id, 'block_userquiz_monitor', 'statsbuttonicon', 0,
-                                array('subdirs' => 0, 'maxbytes' => $COURSE->maxbytes, 'maxfiles' => 1));
-        $defaults->grstatsbuttonicon = array('statsbuttonicon' => $draftitemid);
+                                $this->imgfilepickerattrs);
+        $defaults->config_grstatsbuttonicon = array('statsbuttonicon' => $draftitemid);
 
         $draftitemid = file_get_submitted_draft_itemid('detailsicon');
         file_prepare_draft_area($draftitemid, $context->id, 'block_userquiz_monitor', 'detailsicon', 0,
-                                array('subdirs' => 0, 'maxbytes' => $COURSE->maxbytes, 'maxfiles' => 1));
-        $defaults->grdetailsicon = array('detailsicon' => $draftitemid);
+                                $this->imgfilepickerattrs);
+        $defaults->config_grdetailsicon = array('detailsicon' => $draftitemid);
+
+        $draftitemid = file_get_submitted_draft_itemid('closesubsicon');
+        file_prepare_draft_area($draftitemid, $context->id, 'block_userquiz_monitor', 'closesubsicon', 0,
+                                $this->imgfilepickerattrs);
+        $defaults->config_grclosesubsicon = array('closesubsicon' => $draftitemid);
 
         $draftitemid = file_get_submitted_draft_itemid('serie1icon');
         file_prepare_draft_area($draftitemid, $context->id, 'block_userquiz_monitor', 'serie1icon', 0,
-                                array('subdirs' => 0, 'maxbytes' => $COURSE->maxbytes, 'maxfiles' => 1));
-        $defaults->grserie1icon = array('serie1icon' => $draftitemid);
+                                $this->imgfilepickerattrs);
+        $defaults->config_grserie1icon = array('serie1icon' => $draftitemid);
 
         $draftitemid = file_get_submitted_draft_itemid('serie2icon');
         file_prepare_draft_area($draftitemid, $context->id, 'block_userquiz_monitor', 'serie2icon', 0,
-                                array('subdirs' => 0, 'maxbytes' => $COURSE->maxbytes, 'maxfiles' => 1));
-        $defaults->grserie2icon = array('serie2icon' => $draftitemid);
+                                $this->imgfilepickerattrs);
+        $defaults->config_grserie2icon = array('serie2icon' => $draftitemid);
+
+        parent::set_data($defaults);
     }
 }
