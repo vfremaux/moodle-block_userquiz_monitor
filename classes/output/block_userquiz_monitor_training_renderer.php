@@ -147,6 +147,7 @@ class training_renderer extends \block_userquiz_monitor_renderer {
         $str .= '</div>';
 
         $str .= '<div class="userquiz-monitor-cell">';
+
         // Blank cell.
         $str .= '</div>';
 
@@ -160,7 +161,7 @@ class training_renderer extends \block_userquiz_monitor_renderer {
 
         $str .= '</div>'; // Row.
 
-        $str .= '<div class="category-bargraph">'; // Not a row. Must collapse
+        $str .= '<div class="category-bargraph">'; // Not a row. Must collapse.
         $str .= '<table width="100%">';
         $str .= $this->render_bar_head_row('');
 
