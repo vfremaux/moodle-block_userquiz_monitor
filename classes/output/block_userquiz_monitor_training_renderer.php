@@ -27,6 +27,8 @@ namespace block_userquiz_monitor\output;
 
 use \moodle_url;
 
+require_once($CFG->dirroot.'/blocks/userquiz_monitor/renderer.php');
+
 defined('MOODLE_INTERNAL') || die();
 
 class training_renderer extends \block_userquiz_monitor_renderer {
@@ -62,7 +64,7 @@ class training_renderer extends \block_userquiz_monitor_renderer {
         $str = '<div>'; // Table.
         $str .= '<div class="userquiz-monitor-row">';
 
-        $str .= '<div class="userquiz-monitor-cell span6 md-col-6">';
+        $str .= '<div class="userquiz-monitor-cell span5 md-col-5">';
         $str .= $this->output->heading( $title, 1);
         $str .= '</div>';
 
@@ -71,7 +73,7 @@ class training_renderer extends \block_userquiz_monitor_renderer {
         $str .= $this->filter_state('training', $this->theblock->instance->id);
         $str .= '</div>';
         */
-        $str .= '<div class="userquiz-monitor-cell span6 md-col-6" style="text-align:right">';
+        $str .= '<div class="userquiz-monitor-cell span7 md-col-7" style="text-align:right">';
         $str .= $this->filter_form('training');
         $str .= '</div>';
 
