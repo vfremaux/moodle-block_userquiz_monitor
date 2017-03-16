@@ -130,7 +130,7 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
             $usedattempts = array();
             $str .= '<tr>';
             $str .= '<td>'.$nousedattemptsstr.'</td>';
-            $str .= '</tr';
+            $str .= '</tr>';
         }
 
         $limitsenabled = $DB->get_field('qa_usernumattempts', 'enabled', array('quizid' => $quizid));
@@ -140,6 +140,7 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
             $str .= '<td>'.$attemptstr.' '.$availablestr.'</td>';
             $str .= '<td><img src="'.$iconurl.'" /></td>';
             $str .= '</td>';
+            $str .= '</tr>';
 
             $str .= '</table>'; // Table.
 
