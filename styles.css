@@ -526,3 +526,12 @@ img.userquiz-monitor-questiontype {
 .html-gauge-value {
     height: 4px;
 }
+
+@media all and (min-width: 801px) {
+    #displaysubcategories {
+        -webkit-transition: top 0.5s;
+        -webkit-transition-timing-function: ease-out;
+        transition: top 0.5s;
+        transition-timing-function: ease-out;
+    }
+}

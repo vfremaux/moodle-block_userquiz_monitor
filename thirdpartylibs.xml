@@ -14,4 +14,18 @@
     <version>1.6</version>
     <licenseversion>2005</licenseversion>
   </library>
+  <library>
+    <location>__customscripts</location>
+    <name>Customscripting code</name>
+    <license>GPL</license>
+    <version>3.0</version>
+    <licenseversion>3.0</licenseversion>
+  </library>
+  <library>
+    <location>__reference</location>
+    <name>Moodle core references</name>
+    <license>GPL</license>
+    <version>3.0</version>
+    <licenseversion>3.0</licenseversion>
+  </library>
 </libraries>

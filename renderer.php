@@ -755,7 +755,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         }
 
         $str .= '<div class="trans100">';
-        $str .= '<div class="userquiz-monitor-categorycontainer">';
+        $str .= '<div class="userquiz-monitor-categorycontainer" id="userquiz-select-all">';
         $str .= '<div class="userquiz-monitor-row">';
         $str .= '<div class="userquiz-monitor-cell" style="width:59%;">';
         $str .= '<input type="checkbox"

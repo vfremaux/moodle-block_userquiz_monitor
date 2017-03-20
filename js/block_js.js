@@ -134,6 +134,13 @@ function displaytrainingsubcategories(courseid, rootcategory, categoryid, list, 
             $('#displaysubcategories').html(data);
             $('.tablemonitorcategorycontainer .userquiz-monitor-row').css('display', 'block');
         }
+        // Get top pos of the left block:
+        var origtop = Math.round($('#userquiz-select-all').offset().top);
+        var leftpostop = Math.round($('#divpl' + categoryid).offset().top);
+
+        $('#displaysubcategories').css('position', 'relative');
+        $('#displaysubcategories').css('top', leftpostop - origtop);
+
     }, 'html');
 
     updateselectorplajax(courseid, rootcategory, categoryid, quizzeslist);
