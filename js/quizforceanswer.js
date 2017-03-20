@@ -4,7 +4,7 @@
  * - having single question per page
  * - being linnked to an enabling userquiz_monitor panel.
  */
-// jshint undef:false unused:false
+// jshint undef:false, unused:false
 /* globals $ */
 
 $(document).ready( function() {
