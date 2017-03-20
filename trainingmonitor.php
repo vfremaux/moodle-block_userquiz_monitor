@@ -238,7 +238,7 @@ function get_monitortest($courseid, &$response, &$block) {
         $notenum++;
     }
     $response .= '<span class="smallnotes">'.get_string('columnnotesratio', 'block_userquiz_monitor', $notenum).'</span>';
-    $response .= '</div>'; //Closing area.
+    $response .= '</div>'; // Closing area.
 
     $response .= '<div class="userquiz-monitor-area span6">';
     $response .= $renderer->category_detail_container();

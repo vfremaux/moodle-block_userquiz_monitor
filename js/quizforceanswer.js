@@ -4,7 +4,7 @@
  * - having single question per page
  * - being linnked to an enabling userquiz_monitor panel.
  */
-
+// jshint global $:false undef:false unused:false
 $(document).ready( function() {
 
     // Disables end button.

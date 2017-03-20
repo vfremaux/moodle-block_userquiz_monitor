@@ -99,7 +99,7 @@ function updateselectorpl(courseid, rootcategory, list, location, mode, quizzesl
 }
 
 /**
- * Display subcategories on the right part of the training dashbord. On narrow screens, 
+ * Display subcategories on the right part of the training dashbord. On narrow screens,
  * will route the content to the special container under the category main block.
  */
 function displaytrainingsubcategories(courseid, rootcategory, categoryid, list, quizzeslist, scale, positionheight, blockid){

@@ -27,9 +27,9 @@ namespace block_userquiz_monitor\output;
 
 use \moodle_url;
 
-require_once($CFG->dirroot.'/blocks/userquiz_monitor/renderer.php');
-
 defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot.'/blocks/userquiz_monitor/renderer.php');
 
 class training_renderer extends \block_userquiz_monitor_renderer {
 

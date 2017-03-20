@@ -26,7 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Seeks for an instance of a userquiz_monitor block that would be attached to 
+ * Seeks for an instance of a userquiz_monitor block that would be attached to
  * this attempt.
  *
  * @param int $quizid
@@ -64,7 +64,7 @@ function block_userquiz_monitor_check_has_quiz($course, $quizid, $mode = 'exam')
                 break;
             }
 
-            default: {
+            default:
                 $quizconfigarr = explode(',', $config->trainingquizzes);
                 if (!empty($config->examquiz)) {
                     if ($quizid == $config->examquiz) {
@@ -72,7 +72,6 @@ function block_userquiz_monitor_check_has_quiz($course, $quizid, $mode = 'exam')
                         return $config;
                     }
                 }
-            }
         }
 
         if (!empty($quizconfigarr)) {

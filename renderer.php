@@ -113,17 +113,17 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
 
         $data['id'] = $id;
 
-        $str = '<div class="html-bar-gauge" style="width: '.$data['boxwidth'].'; height: '.$data['boxheight'].'">';
-        $stylestr = 'width: '.$data['successrate'].'%;
-                     position:relative;
-                     top: '.$valuebartop.'px;
-                     background-color: '.$barcolor.';
-                     color: #fff;
-        ';
-        $str .= '<div class="html-gauge-value '.$data['skin'].'" style="'.$stylestr.'"></div>';
+        $str = '<div class="html-gauge-container" style="width: '.$data['boxwidth'].'; height: '.$data['boxheight'].'">';
         $str .= '<div class="html-gauge-value-label '.$data['skin'].'">'.$data['successrate'].' %</div>';
-        $str .= '<div class="html-gauge-targetvalue '.$data['skin'].';background-color: '.$barcolor.'"></div>';
-        $str .= '<div class="html-gauge-targetvalue-label '.$data['skin'].'">'.$data['stop'].' %</div>';
+        $str .= '<table width="100%" height="4px">';
+        $str .= '<tr>';
+        $str .= '<td class="html-gauge-valuebar '.$data['skin'].'" style="background-color: '.$barcolor.'" width="'.$data['successrate'].'%"></td>';
+        $remains = 100 - $data['successrate'];
+        $str .= '<td class="html-gauge-remainbar '.$data['skin'].'" style="background-color: #b0b0b0" width="'.$remains.'%"></td>';
+        $str .= '</tr>';
+        $str .= '</table>';
+        $str .= '<div class="html-gauge-targetvalue-label '.$data['skin'].'" style="color: '.$barcolor.';left:'.$data['stop'].'%">'.$data['stop'].' %</div>';
+        $str .= '<div class="html-gauge-targetvalue-mark '.$data['skin'].'" style="background-color: '.$barcolor.';left:'.$data['stop'].'%"></div>';
         $str .= '</div>';
 
         return $str;
