@@ -6,7 +6,6 @@
  */
 // jshint undef:false unused:false
 /* globals $ */
-/* globals jQuery */
 
 $(document).ready( function() {
 
