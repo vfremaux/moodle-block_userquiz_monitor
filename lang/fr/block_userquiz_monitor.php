@@ -53,11 +53,17 @@ $string['configexamenabled'] = 'Activation de l\'examen';
 $string['configexamhidescoringinterface'] = 'Cacher l\'interface de scoring de l\'examen.<br/>';
 $string['configexaminstructions'] = 'Instructions pour les examens';
 $string['configexamtab'] = 'Onglet pour le dispositif d\'examen';
+$string['configgaugerenderer'] = 'Rendu des jauges';
+$string['fullhtml'] = 'HTML brut';
+$string['gd'] = 'Générateur Php GD';
+$string['jqw'] = 'JQWidget';
+$string['flash'] = 'Objet Flash';
 $string['configinformationpageid'] = 'Identifiant de la page d\'accueil du cours. <br/>';
 $string['configcolorAserie'] = 'Couleur jauge première série';
 $string['configcolorCserie'] = 'Couleur jauge deuxième série';
 $string['configrateAserie'] = 'Seuil de réussite première série (A)';
 $string['configrateCserie'] = 'Seuil de réussite deuxième série (C)';
+$string['configquizforceanswer'] = 'Forcer la réponse';
 $string['configrootcategory'] = 'Catégorie parente des choix de contraintes';
 $string['configtest'] = 'Ajouter les tests constituants le dispositif d\'entraînement';
 $string['configtrainingprogramname'] = 'Nom du programme d\'entraînement (entre dans la composition des titres et labels)';
@@ -191,3 +197,5 @@ $string['examinstructionsdefault'] = '<p><b>L\'examen blanc simule les condition
 <li>En fonction des options de votre pack vous pouvez disposer d\'un nombre d\'examens limité&nbsp;:
 <b>entraînez-vous donc suffisamment au préalable</b> pour pouvoir profiter de chaque examen blanc.</li>
 </ul>';
+
+$string['configquizforceanswer_help'] = 'Si activé, l\'utilisateur doit répondre à la question (modifier la réponse) avant de continuer. Ceci ne fonctionne que sur des tests à "une question par page".';

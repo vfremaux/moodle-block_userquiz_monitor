@@ -46,7 +46,7 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
     }
 
     protected function specific_definition($mform) {
-        global $DB, $COURSE;
+        global $DB, $COURSE, $CFG;
 
         // Fields for editing HTML block title and contents.
         $mform->addElement('header', 'configheader', get_string('generalsettings', 'block_userquiz_monitor'));
@@ -110,6 +110,10 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
         $mform->addElement('select', 'config_rootcategory', $label, $categorymenu);
         $mform->setType('config_rootcategory', PARAM_INT);
 
+        $label = get_string('configquizforceanswer', 'block_userquiz_monitor');
+        $mform->addElement('advcheckbox', 'config_trainingforceanswer', $label);
+        $mform->addHelpButton('config_trainingforceanswer', 'configquizforceanswer', 'block_userquiz_monitor');
+
         // Configuration for exam system.
 
         $mform->addElement('header', 'configheader2', get_string('examsettings', 'block_userquiz_monitor'));
@@ -142,9 +146,23 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
         $label = get_string('configexamdeadend', 'block_userquiz_monitor');
         $mform->addElement('advcheckbox', 'config_examdeadend', $label);
 
+        $label = get_string('configquizforceanswer', 'block_userquiz_monitor');
+        $mform->addElement('advcheckbox', 'config_examforceanswer', $label);
+        $mform->addHelpButton('config_examforceanswer', 'configquizforceanswer', 'block_userquiz_monitor');
+
         // Other configurations.
 
         $mform->addElement('header', 'configheader3', get_string('graphicassets', 'block_userquiz_monitor'));
+
+        $rendereroptions = array('html' => get_string('fullhtml', 'block_userquiz_monitor'),
+                            'gd' => get_string('gd', 'block_userquiz_monitor'),
+                            'flash' => get_string('flash', 'block_userquiz_monitor'));
+        if (is_dir($CFG->dirroot.'/local/vflibs')) {
+            $rendereroptions['jqw'] = get_string('jqw', 'block_userquiz_monitor');
+        }
+        $label = get_string('configgaugerenderer', 'block_userquiz_monitor');
+        $select = $mform->addElement('select', 'config_gaugerenderer', $label, $rendereroptions);
+        $mform->setDefault('config_gaugerenderer', 'jqw');
 
         $group = array();
         $group[0] = & $mform->createElement('filepicker', 'statsbuttonicon', '', $this->imgfilepickerattrs);

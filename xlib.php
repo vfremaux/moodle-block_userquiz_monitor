@@ -26,13 +26,16 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Cheks an attempt to see if it is bound to any usermonitor examquiz and
- * checks userquiz monitor config for returning immediately to course.
+ * Seeks for an instance of a userquiz_monitor block that would be attached to
+ * this attempt.
+ *
+ * @param int $quizid
+ * @param string $mode
+ * @return object the matching block configuration, or false.
  */
-function check_userquiz_monitor_review_applicability($attemptobj) {
+function block_userquiz_monitor_check_has_quiz($course, $quizid, $mode = 'exam') {
     global $DB;
 
-    $course = $attemptobj->get_course();
     $context = context_course::instance($course->id);
 
     // Get all candidates userquiz monitors in course.
@@ -44,16 +47,76 @@ function check_userquiz_monitor_review_applicability($attemptobj) {
 
     // Check config and if current quiz is the exam quiz.
     foreach ($uqmbs as $uqm) {
+
         $config = unserialize(base64_decode($uqm->configdata));
-        if ($attemptobj->get_quizid() == $config->examquiz) {
-            if ($config->directreturn) {
-                if ($config->examdeadend) {
-                    $params = array('id' => $course->id, 'blockid' => $uqm->id);
-                    redirect(new moodle_url('/blocks/userquiz_monitor/examfinish.php', $params));
-                } else {
-                    redirect(new moodle_url('/course/view.php', array('id' => $course->id)));
+
+        switch ($mode) {
+            case ('exam'): {
+                if ($quizid == $config->examquiz) {
+                    $config->mode = 'exam';
+                    return $config;
                 }
+                break;
             }
+
+            case ('training'): {
+                $quizconfigarr = explode(',', $config->trainingquizzes);
+                break;
+            }
+
+            default:
+                $quizconfigarr = explode(',', $config->trainingquizzes);
+                if (!empty($config->examquiz)) {
+                    if ($quizid == $config->examquiz) {
+                        $config->mode = 'exam';
+                        return $config;
+                    }
+                }
+        }
+
+        if (!empty($quizconfigarr)) {
+            if (in_array($quizid, $quizconfigarr)) {
+                $config->mode = 'training';
+                return $config;
+            }
+        }
+    }
+    return false;
+}
+
+/**
+ * Cheks an attempt to see if it is bound to any usermonitor examquiz and
+ * checks userquiz monitor config for returning immediately to course.
+ */
+function check_userquiz_monitor_review_applicability($attemptobj) {
+
+    $course = $attemptobj->get_course();
+
+    if ($config = block_userquiz_monitor_check_has_quiz($course, $attemptobj->get_quizid())) {
+        if ($config->directreturn) {
+            if ($config->examdeadend) {
+                $params = array('id' => $course->id, 'blockid' => $uqm->id);
+                redirect(new moodle_url('/blocks/userquiz_monitor/examfinish.php', $params));
+            } else {
+                redirect(new moodle_url('/course/view.php', array('id' => $course->id)));
+            }
+        }
+    }
+}
+
+/**
+ * Adds Jquery form control for single question quizzes
+ */
+function block_userquiz_monitor_attempt_adds($attemptobj) {
+    global $PAGE;
+
+    $course = $attemptobj->get_course();
+
+    if ($config = block_userquiz_monitor_check_has_quiz($course, $attemptobj->get_quizid())) {
+        if (($config->mode == 'exam' && !empty($config->examforceanswer)) ||
+                ($config->mode == 'training' && !empty($config->trainingforceanswer))) {
+            $PAGE->requires->jquery();
+            $PAGE->requires->js('/blocks/userquiz_monitor/js/quizforceanswer.js');
         }
     }
 }

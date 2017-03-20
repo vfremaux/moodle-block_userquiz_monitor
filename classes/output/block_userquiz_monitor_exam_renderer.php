@@ -220,6 +220,7 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
         global $DB, $USER;
 
         $total = '';
+        $gaugerendererfunc = $this->gaugerendererfunc;
 
         $rootcategory = $this->theblock->config->rootcategory;
         $quizid = @$this->theblock->config->examquiz;
@@ -270,7 +271,7 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
             'stop' => $this->theblock->config->rateAserie,
             'successrate' => $overall->ratioA,
         );
-        $components['progressbarA'] = $this->progress_bar_html_jqw($rootcategory, $graphparams);
+        $components['progressbarA'] = $this->$gaugerendererfunc($rootcategory, $graphparams);
 
         if (!empty($this->theblock->config->dualserie)) {
             $graphparams = array (
@@ -283,7 +284,7 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
                 'stop' => $this->theblock->config->rateCserie,
                 'successrate' => $overall->ratioC,
             );
-            $components['progressbarC'] = $this->progress_bar_html_jqw($rootcategory, $graphparams);
+            $components['progressbarC'] = $this->$gaugerendererfunc($rootcategory, $graphparams);
         }
 
         $data = array('dualserie' => $this->theblock->config->dualserie,
@@ -374,6 +375,7 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
     public function main_category($cat, $jshandler) {
 
         $seesubsstr = get_string('more', 'block_userquiz_monitor', $cat->name);
+        $gaugerendererfunc = $this->gaugerendererfunc;
 
         $str = '';
 
@@ -416,14 +418,14 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
                 if ($questiontype == 'A') {
                     $serieicon = $this->get_area_url('serie2icon', $this->output->pix_url('a', 'block_userquiz_monitor'));
                     $cat->skin = 'A';
-                    $cat->progressbar = $this->progress_bar_html_jqw($cat->id, $cat->dataA);
+                    $cat->progressbar = $this->$gaugerendererfunc($cat->id, $cat->dataA);
                     $str .= $this->render_bar_range_row($cat->progressbar, $cat, $serieicon);
                 }
 
                 if ($this->theblock->config->dualserie && ($questiontype == 'C')) {
                     $serieicon = $this->get_area_url('serie2icon', $this->output->pix_url('c', 'block_userquiz_monitor'));
                     $cat->skin = 'C';
-                    $cat->progressbar = $this->progress_bar_html_jqw($cat->id, $cat->dataC);
+                    $cat->progressbar = $this->$gaugerendererfunc($cat->id, $cat->dataC);
                     $str .= $this->render_bar_range_row($cat->progressbar, $cat, $serieicon);
                 }
             }
@@ -438,6 +440,7 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
 
     public function total_progress($overall, $rootcategory) {
 
+        $gaugerendererfunc = $this->gaugerendererfunc;
         $graphwidth = 100;
 
         $data = array (
@@ -450,7 +453,7 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
             'successrate' => $overall->ratioA,
         );
 
-        $progressbara = $this->progress_bar_html_jqw($rootcategory, $data);
+        $progressbara = $this->$gaugerendererfunc($rootcategory, $data);
 
         if (!empty($this->theblock->config->dualserie)) {
             $data = array (
@@ -462,7 +465,7 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
                 'stop' => $this->theblock->config->rateCserie,
                 'successrate' => $overall->ratioC,
             );
-            $progressbarc = $this->progress_bar_html_jqw($rootcategory, $data);
+            $progressbarc = $this->$gaugerendererfunc($rootcategory, $data);
         }
 
         $str = '';
