@@ -221,7 +221,7 @@ function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategor
                                 // Seek for parent in one of our rootcats.
                                 $parent = $DB->get_field('question_categories', 'parent', array('id' => $parent));
                             }
-    
+
                             if (!$parent) {
                                 // We could not find any candidate rootcat.
                                 // Discard  all results that fall outside the revision tree with error message.
