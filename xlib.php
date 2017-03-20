@@ -91,7 +91,7 @@ function block_userquiz_monitor_check_has_quiz($course, $quizid, $mode = 'exam')
 function check_userquiz_monitor_review_applicability($attemptobj) {
 
     $course = $attemptobj->get_course();
- 
+
     if ($config = block_userquiz_monitor_check_has_quiz($course, $attemptobj->get_quizid())) {
         if ($config->directreturn) {
             if ($config->examdeadend) {
