@@ -425,74 +425,90 @@ img.userquiz-monitor-questiontype {
 
     /* This may have an effect on all site in all themes */
     #page-mod-quiz-attempt #block-region-side-pre {
-        display:none;
+        display: none;
     }
 
     .category-subpod {
-        display:block;
+        display: block;
     }
 
     .tablemonitorcategorycontainer {
-        display:none;
+        display: none;
     }
 
     .exam-launch-panel {
-        width:100%;
+        width: 100%;
     }
 }
 
 @media all and (min-width: 801px) {
     .category-subpod {
-        display:none;
+        display: none;
     }
 }
 
 .jqx-bulletchart-range-horizontal {
-    height:40% !important;
-    top:7px;
+    height: 40% !important;
+    top: 7px;
 }
 
 .jqx-bulletchart-target {
-    width:2px !important;
+    width: 2px !important;
 }
 
 .exam-launch-panel {
-    width:40%;
-    padding:10px;
+    width: 40%;
+    padding: 10px;
     background-color:#f0f0f0;
 }
 
 .exam-history-attempt {
-    padding:3px;
+    padding: 3px;
 }
 
 .trans50 .category-bargraph {
-    height:0px;
-    max-height:0px;
-    overflow:hidden;
+    height: 0;
+    max-height: 0;
+    overflow: hidden;
     -webkit-transition: max-height 1s, height 1s;
     transition: max-height 1s, height 1s;
 }
 
 .category-subpod {
-    margin:10px auto 5px auto;
-    padding:3px;
-    border:2px solid #a0a0a0;
-    border-radius:8px;
-    -moz-border-radius:8px;
-    width:90%;
+    margin: 10px auto 5px auto;
+    padding: 3px;
+    border: 2px solid #a0a0a0;
+    border-radius: 8px;
+    -moz-border-radius: 8px;
+    width: 90%;
 }
 
 /* Global rules the may affect all platform */
 
 #page-mod-quiz-attempt .info {
-    display:none;
+    display: none;
+}
+
+.que .content {
+    margin:2px 0;
 }
 
 #page-mod-quiz-attempt #block-region-side-pre {
-    display:none;
+    display: none;
 }
 
 #mod_quiz_navblock {
-    display:none;
+    display: none;
+}
+
+.html-bar-gauge {
+}
+
+.html-bar-targetvalue {
+    height: 24px;
+    width: 2px;
+}
+
+.html-gauge-value {
+    height: 4px;
 }

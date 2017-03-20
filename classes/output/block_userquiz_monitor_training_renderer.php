@@ -33,8 +33,6 @@ defined('MOODLE_INTERNAL') || die();
 
 class training_renderer extends \block_userquiz_monitor_renderer {
 
-    protected $block;
-
     protected $course;
 
     protected $settings;

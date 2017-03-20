@@ -44,6 +44,7 @@ function get_monitortest($courseid, &$response, &$block) {
     $quizzesids = @$block->config->trainingquizzes;
     $blockid = $block->instance->id;
     $renderer->set_block($block);
+    $gaugerendererfunc = $renderer->get_gauge_renderer();
 
     // Init variables.
     $quizzeslist = '';
@@ -110,7 +111,7 @@ function get_monitortest($courseid, &$response, &$block) {
         'stop' => $block->config->rateAserie,
         'successrate' => $overall->ratioA,
     );
-    $components['progressbarA'] = $renderer->progress_bar_html_jqw($rootcategory, $graphparams);
+    $components['progressbarA'] = $renderer->$gaugerendererfunc($rootcategory, $graphparams);
 
     if (!empty($block->config->dualserie)) {
         $graphparams = array (
@@ -123,7 +124,7 @@ function get_monitortest($courseid, &$response, &$block) {
             'stop' => $block->config->rateCserie,
             'successrate' => $overall->ratioC,
         );
-        $components['progressbarC'] = $renderer->progress_bar_html_jqw($rootcategory, $graphparams);
+        $components['progressbarC'] = $renderer->$gaugerendererfunc($rootcategory, $graphparams);
     }
 
     $data = array('dualserie' => $block->config->dualserie,
@@ -208,7 +209,7 @@ function get_monitortest($courseid, &$response, &$block) {
             'stop' => $block->config->rateAserie,
             'successrate' => $cat->ratioA,
         );
-        $cat->progressbarA = $renderer->progress_bar_html_jqw($cat->id, $data);
+        $cat->progressbarA = $renderer->$gaugerendererfunc($cat->id, $data);
 
         if ($block->config->dualserie) {
             $data = array (
@@ -220,7 +221,7 @@ function get_monitortest($courseid, &$response, &$block) {
                 'stop' => $block->config->rateCserie,
                 'successrate' => $cat->ratioC,
             );
-            $cat->progressbarC = $renderer->progress_bar_html_jqw($cat->id, $data);
+            $cat->progressbarC = $renderer->$gaugerendererfunc($cat->id, $data);
         }
 
         $cat->jshandler1 = 'updateselectorpl(\''.$courseid.'\',\''.$rootcategory.'\', idcategoriespl,';
