@@ -54,6 +54,7 @@ class PreferenceForm extends moodleform {
             );
             $attrs = array('onchange' => 'this.form.submit();');
             $mform->addElement('select', 'resultsdepth', get_string('resultsdepth', 'block_userquiz_monitor'), $options, $attrs);
+            $mform->addHelpButton('resultsdepth', 'resultsdepth', 'block_userquiz_monitor');
         }
 
         if (!empty($this->_customdata['blockconfig']->examenabled) && ($this->_customdata['mode'] == 'examination')) {

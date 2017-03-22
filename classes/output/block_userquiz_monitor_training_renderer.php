@@ -82,7 +82,7 @@ class training_renderer extends \block_userquiz_monitor_renderer {
     }
 
     public function filter_form() {
-        return block_user_quiz_monitor_training_filter_form($this->theblock);
+        return block_userquiz_monitor_training_filter_form($this->theblock);
     }
 
     public function global_monitor($total, $selector) {

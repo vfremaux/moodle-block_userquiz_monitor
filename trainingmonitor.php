@@ -256,7 +256,7 @@ function get_monitortest($courseid, &$response, &$block) {
     $response .= '<script type="text/javascript"> initelements();</script>';
 }
 
-function block_user_quiz_monitor_training_filter_form(&$block) {
+function block_userquiz_monitor_training_filter_form(&$block) {
     global $DB, $CFG, $USER;
 
     include($CFG->dirroot.'/blocks/userquiz_monitor/preferenceForm.php');
