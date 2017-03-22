@@ -27,13 +27,11 @@ namespace block_userquiz_monitor\output;
 
 use \moodle_url;
 
-require_once($CFG->dirroot.'/blocks/userquiz_monitor/renderer.php');
-
 defined('MOODLE_INTERNAL') || die();
 
-class training_renderer extends \block_userquiz_monitor_renderer {
+require_once($CFG->dirroot.'/blocks/userquiz_monitor/renderer.php');
 
-    protected $block;
+class training_renderer extends \block_userquiz_monitor_renderer {
 
     protected $course;
 
@@ -109,7 +107,7 @@ class training_renderer extends \block_userquiz_monitor_renderer {
         $str .= '<h1>'.get_string('runtest', 'block_userquiz_monitor').' '.$helpicon.'</h1>';
 
         $str .= '<div class="trans100">';
-        $str .= '<div class="selectorcontainers" style="width:100%; font-size : 120%;">';
+        $str .= '<div id="userquiz-training-selector" class="selectorcontainers" style="width:100%; font-size : 120%;">';
         $str .= $selector;
         $str .= '</div>';
         $str .= '</div>';
@@ -236,7 +234,7 @@ class training_renderer extends \block_userquiz_monitor_renderer {
                              <input type="hidden" name="mode" value="test"/>
                              <input type="hidden" name="courseid" value="'.$COURSE->id.'"/>
                              <input type="hidden" name="quizzeslist" value="'.$quizzeslist.'"/>
-                             <input type="submit" value="'.$runteststr.'" id="submit"/>
+                             <input type="submit" class="enabled" value="'.$runteststr.'" id="submit"/>
                          </div>
                      </div>
                 </div>';
@@ -260,7 +258,7 @@ class training_renderer extends \block_userquiz_monitor_renderer {
                         <div class="userquiz-monitor-cell">
                             <input type="hidden" name="mode" value="test"/>
                             <input type="hidden" name="courseid" value="'.$COURSE->id.'"/>
-                            <input type="submit" value="'.$runteststr.'" id="submit" disabled />
+                            <input type="submit" class="disabled" value="'.$runteststr.'" id="submit" disabled />
                         </div>
                     </div>
                 </div>';

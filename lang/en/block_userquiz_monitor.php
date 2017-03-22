@@ -44,6 +44,11 @@ $string['commenthist'] = 'Results history:&ensp;';
 $string['configdirectreturn'] = 'Direct return to course after attempt';
 $string['configdualserie'] = 'Enable second question serie';
 $string['configdualseries'] = 'Dual type test type (A and C)';
+$string['configgaugerenderer'] = 'Gauge renderer';
+$string['fullhtml'] = 'Full html';
+$string['gd'] = 'Php GD Generator';
+$string['jqw'] = 'JQWidget';
+$string['flash'] = 'Flash';
 $string['configexam'] = 'Add belonging quizzes examinations';
 $string['configexamalternatecaption'] = 'Alternative title of the exam content page';
 $string['configexamdeadend'] = 'Examination is dead end after submitting (direct return enabled)';
@@ -55,6 +60,9 @@ $string['configexamtab'] = 'Title of the examination';
 $string['configinformationpageid'] = 'information course page identifier.<br/>';
 $string['configcolorAserie'] = 'First serie gauge color';
 $string['configcolorCserie'] = 'Second serie gauge color';
+$string['configquiznobackwards'] = 'Forbid going backwards on quiz';
+$string['configprotectcopy'] = 'Protect against content copy';
+$string['configquizforceanswer'] = 'Force answer';
 $string['configrateAserie'] = 'First serie threshold (% on A type)';
 $string['configrateCserie'] = 'Second serie threshold (% on C type)';
 $string['configrootcategory'] = 'Parent category for choice';
@@ -175,3 +183,5 @@ $string['totalexam_help'] = '
 
 Results are compiled across all your examination attemps on the selected period.
 ';
+
+$string['configquizforceanswer_help'] = 'If enabled, the corresponding quiz will force the user to answer by changing asnwer content. This only works in "single question per page forme"';

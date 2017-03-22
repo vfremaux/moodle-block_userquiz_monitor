@@ -62,6 +62,7 @@ switch ($step) {
         break;
 
     case 2:
+        $report = userquiz_build_course();
         echo $renderer->build_build();
         $nextstep = 3;
         break;
@@ -73,6 +74,6 @@ switch ($step) {
 
 }
 
-echo $renderer->build_nextstep($nexstep);
+echo $renderer->build_nextstep_link($nexstep);
 
 echo $OUTPUT->footer();

@@ -25,35 +25,49 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot.'/blocks/userquiz_monitor/locallib.php');
+
 /**
  * Cheks an attempt to see if it is bound to any usermonitor examquiz and
  * checks userquiz monitor config for returning immediately to course.
  */
 function check_userquiz_monitor_review_applicability($attemptobj) {
-    global $DB;
 
     $course = $attemptobj->get_course();
-    $context = context_course::instance($course->id);
 
-    // Get all candidates userquiz monitors in course.
-    $params = array('blockname' => 'userquiz_monitor', 'parentcontextid' => $context->id);
-    $uqmbs = $DB->get_records('block_instances', $params, 'id, configdata');
-    if (empty($uqmbs)) {
-        return;
-    }
-
-    // Check config and if current quiz is the exam quiz.
-    foreach ($uqmbs as $uqm) {
-        $config = unserialize(base64_decode($uqm->configdata));
-        if ($attemptobj->get_quizid() == $config->examquiz) {
-            if ($config->directreturn) {
-                if ($config->examdeadend) {
-                    $params = array('id' => $course->id, 'blockid' => $uqm->id);
-                    redirect(new moodle_url('/blocks/userquiz_monitor/examfinish.php', $params));
-                } else {
-                    redirect(new moodle_url('/course/view.php', array('id' => $course->id)));
-                }
+    if ($config = block_userquiz_monitor_check_has_quiz($course, $attemptobj->get_quizid())) {
+        if ($config->directreturn && ($config->mode == 'exam')) {
+            if ($config->examdeadend) {
+                $params = array('id' => $course->id, 'blockid' => $uqm->id);
+                redirect(new moodle_url('/blocks/userquiz_monitor/examfinish.php', $params));
+            } else {
+                redirect(new moodle_url('/course/view.php', array('id' => $course->id)));
             }
+        }
+    }
+}
+
+/**
+ * Adds Jquery form control for single question quizzes
+ */
+function block_userquiz_monitor_attempt_adds($attemptobj) {
+    global $PAGE;
+
+    $course = $attemptobj->get_course();
+
+    $PAGE->requires->jquery();
+    $config = block_userquiz_monitor_check_has_quiz($course, $attemptobj->get_quizid());
+    if ($config) {
+        if (($config->mode == 'exam' && !empty($config->examforceanswer)) ||
+                ($config->mode == 'training' && !empty($config->trainingforceanswer))) {
+            $PAGE->requires->js('/blocks/userquiz_monitor/js/quizforceanswer.js');
+        }
+        if (($config->mode == 'exam' && !empty($config->examnobackwards)) ||
+                ($config->mode == 'training' && !empty($config->trainingnobackwards))) {
+            $PAGE->requires->js('/blocks/userquiz_monitor/js/quiznobackwards.js');
+        }
+        if ($config->protectcopy) {
+            $PAGE->requires->js('/blocks/userquiz_monitor/js/quizprotectcopy.js');
         }
     }
 }

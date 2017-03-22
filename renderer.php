@@ -29,11 +29,38 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
 
     protected $theblock;
 
+    protected $gaugerendererfunc;
+
     /**
      * Loads the block instance into the controller.
      */
     public function set_block($bi) {
         $this->theblock = $bi;
+
+        switch (@$this->theblock->config->gaugerenderer) {
+            case 'html': {
+                $this->gaugerendererfunc = 'progress_bar_html';
+                break;
+            }
+
+            case 'flash': {
+                $this->gaugerendererfunc = 'progress_bar_flash';
+                break;
+            }
+
+            case 'gd': {
+                $this->gaugerendererfunc = 'progress_bar_html_gd';
+                break;
+            }
+
+            default:
+                $this->gaugerendererfunc = 'progress_bar_html_jqw';
+        }
+
+    }
+
+    public function get_gauge_renderer() {
+        return $this->gaugerendererfunc;
     }
 
     /**
@@ -73,6 +100,39 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
      * Display the progress bar
      */
     public function progress_bar_html($id, $data) {
+
+        $data['successrate'] = 40;
+
+        if ($data['skin'] == 'A') {
+            $barcolor = $this->theblock->config->colorAserie;
+        } else {
+            $barcolor = $this->theblock->config->colorCserie;
+        }
+
+        $valuebartop = $data['boxheight'] / 2 - 2;
+
+        $data['id'] = $id;
+
+        $str = '<div class="html-gauge-container" style="width: '.$data['boxwidth'].'; height: '.$data['boxheight'].'">';
+        $str .= '<div class="html-gauge-value-label '.$data['skin'].'">'.$data['successrate'].' %</div>';
+        $str .= '<table width="100%" height="4px">';
+        $str .= '<tr>';
+        $str .= '<td class="html-gauge-valuebar '.$data['skin'].'" style="background-color: '.$barcolor.'" width="'.$data['successrate'].'%"></td>';
+        $remains = 100 - $data['successrate'];
+        $str .= '<td class="html-gauge-remainbar '.$data['skin'].'" style="background-color: #b0b0b0" width="'.$remains.'%"></td>';
+        $str .= '</tr>';
+        $str .= '</table>';
+        $str .= '<div class="html-gauge-targetvalue-label '.$data['skin'].'" style="color: '.$barcolor.';left:'.$data['stop'].'%">'.$data['stop'].' %</div>';
+        $str .= '<div class="html-gauge-targetvalue-mark '.$data['skin'].'" style="background-color: '.$barcolor.';left:'.$data['stop'].'%"></div>';
+        $str .= '</div>';
+
+        return $str;
+    }
+
+    /**
+     * Display the progress bar
+     */
+    public function progress_bar_flash($id, $data) {
 
         $testdata = urlencode(json_encode($data));
         $data['id'] = $id;
@@ -193,6 +253,10 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         global $USER, $DB;
 
         $blockid = $this->theblock->instance->id;
+        $gaugerenderfunc = $this->gaugerendererfunc;
+        if (empty($gaugerenderfunc)) {
+            throw new coding_exception('Renderers functions were called before renderer has block being setup');
+        }
 
         // Init variables.
         $str = '';
@@ -429,7 +493,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                             'stop' => $this->theblock->config->rateAserie,
                             'successrate' => $subcat->ratioA,
                         );
-                        $progressbar = $this->progress_bar_html_jqw($subcat->id, $data);
+                        $progressbar = $this->$gaugerenderfunc($subcat->id, $data);
 
                         $serieicon = $this->get_area_url('serie1icon', $this->output->pix_url('a', 'block_userquiz_monitor'));
                         $catcounts = new StdClass;
@@ -447,7 +511,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                             'stop' => $this->theblock->config->rateCserie,
                             'successrate' => $subcat->ratioC,
                         );
-                        $progressbar = $this->progress_bar_html_jqw($subcat->id, $data);
+                        $progressbar = $this->$gaugerenderfunc($subcat->id, $data);
 
                         $serieicon = $this->get_area_url('serie2icon', $this->output->pix_url('c', 'block_userquiz_monitor'));
                         $catcounts = new StdClass;
@@ -691,7 +755,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         }
 
         $str .= '<div class="trans100">';
-        $str .= '<div class="userquiz-monitor-categorycontainer">';
+        $str .= '<div class="userquiz-monitor-categorycontainer" id="userquiz-select-all">';
         $str .= '<div class="userquiz-monitor-row">';
         $str .= '<div class="userquiz-monitor-cell" style="width:59%;">';
         $str .= '<input type="checkbox"

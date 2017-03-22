@@ -251,31 +251,31 @@ function userquiz_monitor_get_cattreeids($catid, &$catids) {
 }
 
 function userquiz_monitor_get_quiz_by_numquestions($courseid, $theblock, $nbquestions) {
-        global $DB;
+    global $DB;
 
-        list($insql, $params) = $DB->get_in_or_equal($theblock->config->trainingquizzes);
-        $params = array_merge(array($courseid), $params);
+    list($insql, $params) = $DB->get_in_or_equal($theblock->config->trainingquizzes);
+    $params = array_merge(array($courseid), $params);
 
-        $sql = "
-            SELECT
-                count(qs.questionid) as numquestions,
-                qs.quizid
-               FROM
-                {quiz} q,
-                {quiz_slots} qs
-            WHERE
-                q.course = ? AND
-                qs.quizid = q.id AND
-                q.id $insql
-            GROUP BY
-                qs.quizid
-        ";
+    $sql = "
+        SELECT
+            count(qs.questionid) as numquestions,
+            qs.quizid
+           FROM
+            {quiz} q,
+            {quiz_slots} qs
+        WHERE
+            q.course = ? AND
+            qs.quizid = q.id AND
+            q.id $insql
+        GROUP BY
+            qs.quizid
+    ";
 
-        $quizes = $DB->get_records_sql($sql, $params);
+    $quizes = $DB->get_records_sql($sql, $params);
 
-        if (!isset($quizes[$nbquestions])) {
-            print_error('erroruserquiznoquiz', 'block_userquiz_monitor');
-        }
+    if (!isset($quizes[$nbquestions])) {
+        print_error('erroruserquiznoquiz', 'block_userquiz_monitor');
+    }
 
-        return $quizes[$nbquestions]->quizid;
+    return $quizes[$nbquestions]->quizid;
 }

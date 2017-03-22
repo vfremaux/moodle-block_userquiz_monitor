@@ -221,7 +221,7 @@ function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategor
                                 // Seek for parent in one of our rootcats.
                                 $parent = $DB->get_field('question_categories', 'parent', array('id' => $parent));
                             }
-    
+
                             if (!$parent) {
                                 // We could not find any candidate rootcat.
                                 // Discard  all results that fall outside the revision tree with error message.
@@ -363,4 +363,58 @@ function block_userquiz_monitor_compute_ratios(&$rootcats) {
     }
 
     return $maxratio;
+}
+
+/**
+ * Seeks for an instance of a userquiz_monitor block that would be attached to
+ * this attempt.
+ *
+ * @param int $quizid
+ * @param string $mode
+ * @return object the matching block configuration, or false.
+ */
+function block_userquiz_monitor_check_has_quiz($course, $quizid) {
+    global $DB;
+
+    $context = context_course::instance($course->id);
+
+    // Get all candidates userquiz monitors in course.
+    $params = array('blockname' => 'userquiz_monitor', 'parentcontextid' => $context->id);
+    $uqmbs = $DB->get_records('block_instances', $params, 'id, configdata');
+    if (empty($uqmbs)) {
+        return;
+    }
+
+    // Check config and if current quiz is the exam quiz.
+    foreach ($uqmbs as $uqm) {
+
+        $config = unserialize(base64_decode($uqm->configdata));
+
+        if ($quizid == $config->examquiz) {
+            $config->mode = 'exam';
+            return $config;
+        }
+
+        if (!empty($config->trainingquizzes)) {
+            if (in_array($quizid, $config->trainingquizzes)) {
+                $config->mode = 'training';
+                return $config;
+            }
+        }
+    }
+    return false;
+}
+
+/**
+ * Build scenario in a course.
+ */
+function userquiz_build_course() {
+    global $COURSE;
+
+    if ($COURSE->format == 'page') {
+        userquiz_build_pages();
+    }
+
+    userquiz_add_quizzes();
+
 }
