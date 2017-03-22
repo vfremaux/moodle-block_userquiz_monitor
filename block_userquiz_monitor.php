@@ -123,7 +123,6 @@ class block_userquiz_monitor extends block_base {
         global $DB, $COURSE, $CFG, $USER, $SESSION, $OUTPUT, $PAGE;
 
         include_once($CFG->dirroot.'/blocks/userquiz_monitor/trainingmonitor.php');
-        include_once($CFG->dirroot.'/blocks/userquiz_monitor/exammonitor.php');
         include_once($CFG->dirroot.'/blocks/userquiz_monitor/block_userquiz_monitor_lib.php');
         include_once($CFG->dirroot.'/blocks/userquiz_monitor/schedulemonitor.php');
 
