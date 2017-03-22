@@ -92,6 +92,9 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
         $mform->setType('config_colorCserie', PARAM_TEXT);
         $mform->setDefault('config_colorCserie', '#0000C0');
 
+        $label = get_string('configprotectcopy', 'block_userquiz_monitor');
+        $mform->addElement('advcheckbox', 'config_protectcopy', $label);
+
         // Configuration for training system.
 
         $mform->addElement('header', 'configheader1', get_string('trainingsettings', 'block_userquiz_monitor'));
@@ -113,6 +116,9 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
         $label = get_string('configquizforceanswer', 'block_userquiz_monitor');
         $mform->addElement('advcheckbox', 'config_trainingforceanswer', $label);
         $mform->addHelpButton('config_trainingforceanswer', 'configquizforceanswer', 'block_userquiz_monitor');
+
+        $label = get_string('configquiznobackwards', 'block_userquiz_monitor');
+        $mform->addElement('advcheckbox', 'config_trainingnobackwards', $label);
 
         // Configuration for exam system.
 
@@ -149,6 +155,9 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
         $label = get_string('configquizforceanswer', 'block_userquiz_monitor');
         $mform->addElement('advcheckbox', 'config_examforceanswer', $label);
         $mform->addHelpButton('config_examforceanswer', 'configquizforceanswer', 'block_userquiz_monitor');
+
+        $label = get_string('configquiznobackwards', 'block_userquiz_monitor');
+        $mform->addElement('advcheckbox', 'config_examnobackwards', $label);
 
         // Other configurations.
 

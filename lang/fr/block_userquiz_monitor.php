@@ -63,6 +63,8 @@ $string['configcolorAserie'] = 'Couleur jauge première série';
 $string['configcolorCserie'] = 'Couleur jauge deuxième série';
 $string['configrateAserie'] = 'Seuil de réussite première série (A)';
 $string['configrateCserie'] = 'Seuil de réussite deuxième série (C)';
+$string['configquiznobackwards'] = 'Empêcher le retour en arrière dans le quiz';
+$string['configprotectcopy'] = 'Protégrer contre la copie de contenu';
 $string['configquizforceanswer'] = 'Forcer la réponse';
 $string['configrootcategory'] = 'Catégorie parente des choix de contraintes';
 $string['configtest'] = 'Ajouter les tests constituants le dispositif d\'entraînement';
@@ -173,7 +175,7 @@ Pour lancer un entrainement, vous devez sélectionner les catégories
 ci-dessous et choisir le nombre de questions que vous voulez lancer.
 ';
 
-$string['total'] = 'Score global';
+$string['total'] = 'Résultats';
 $string['total_help'] = '
 * Progression globale
 
