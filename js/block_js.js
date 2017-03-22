@@ -99,7 +99,7 @@ function updateselectorpl(courseid, rootcategory, list, location, mode, quizzesl
 }
 
 /**
- * Display subcategories on the right part of the training dashbord. On narrow screens, 
+ * Display subcategories on the right part of the training dashbord. On narrow screens,
  * will route the content to the special container under the category main block.
  */
 function displaytrainingsubcategories(courseid, rootcategory, categoryid, list, quizzeslist, scale, positionheight, blockid){
@@ -134,6 +134,13 @@ function displaytrainingsubcategories(courseid, rootcategory, categoryid, list, 
             $('#displaysubcategories').html(data);
             $('.tablemonitorcategorycontainer .userquiz-monitor-row').css('display', 'block');
         }
+        // Get top pos of the left block:
+        var origtop = Math.round($('#userquiz-select-all').offset().top);
+        var leftpostop = Math.round($('#divpl' + categoryid).offset().top);
+
+        $('#displaysubcategories').css('position', 'relative');
+        $('#displaysubcategories').css('top', leftpostop - origtop);
+
     }, 'html');
 
     updateselectorplajax(courseid, rootcategory, categoryid, quizzeslist);
