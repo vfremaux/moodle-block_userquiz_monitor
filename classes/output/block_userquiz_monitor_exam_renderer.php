@@ -95,7 +95,7 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
             foreach ($usedattempts as $usedattempt) {
                 $usedattempts = array($usedattempt);
                 $errors = block_userquiz_monitor_compute_all_results($usedattempts, $rootcategory, $rootcats,
-                                                                                   $attempts, $overall);
+                                                                                   $attempts, $overall, 'exam');
 
                 $passed = block_userquiz_monitor_is_passing($this->theblock, $overall);
                 if ($passed) {
