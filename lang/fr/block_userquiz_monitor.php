@@ -79,7 +79,7 @@ $string['errorquestionoutsidescope'] = 'Certaines questions tirées dans les exa
 $string['erroruserquiznoquiz'] = 'Il n\'y a aucun test disponible avec ce nombre de questions. Il s\'agit probablement d\'une erreur de configuration du plateau de révision.';
 $string['examination'] = 'Ici se trouve la partie examen';
 $string['examinstructions'] = 'Instructions pour l\'examen<br/>(Remplace le texte par défaut si non vide)';
-$string['examsdepth'] = 'Profondeur des examens&nbsp;:&ensp;';
+$string['examsdepth'] = 'Calcul de la moyenne&nbsp;:&ensp;';
 $string['examsenabled'] = 'Activer les examens';
 $string['examend'] = 'Fin d\'examen blanc';
 $string['examfinishmessage'] = 'Bravo %%FIRSTNAME%% ! vous avez terminé votre examen au programme %%PROGRAMNAME%%. Vous pourrez voir les résultats sur votre tableau de bord d\'entrainement.';
@@ -138,8 +138,7 @@ $string['reset'] = 'Remise à zéro';
 $string['resetinfo1'] = 'Réinitialisation effectuée';
 $string['resetinfo2'] = 'Impossible de réinitialiser vos les résultats';
 $string['resetinfo3'] = 'Aucune tentative n\'est à supprimer.';
-$string['resultsdepth'] = 'Profondeur des résultats&nbsp;:&ensp;';
-$string['resultsdepthdesc'] = '<b>Profondeur des résultats (semaines) : </b> Avec ce réglage, vous pouvez indiquer sur combien de semaines passées à partir de la date courante vous souhaitez afficher vos complations de progression. Ceci permet d\'éliminer quelques uns des premiers résultats qui pourraient fausser l\'affichage de votre progression réelle';
+$string['resultsdepth'] = 'Calcul de la moyenne&nbsp;:&ensp;';
 $string['runexam'] = 'Lancer un examen';
 $string['runtest'] = 'Lancer un entraînement';
 $string['runtraininghelp'] = 'Sélectionnez des catégories ou sous-catégories dans le tableau ci-dessous puis choisissez la taille de votre questionnaire&nbsp:&ensp;';
@@ -192,7 +191,8 @@ Ces résultats sont calculés sur la totalité des rubriques et vous
 indiquent votre taux de réussite moyen aux examens blancs.
 ';
 
-$string['examinstructionsdefault'] = '<p><b>L\'examen blanc simule les conditions réelles de l\'examen {$a} : 100 questions et temps limité à 3 heures.</b></p>
+$string['examinstructionsdefault'] = '<p><b>L\'examen blanc simule les conditions réelles de l\'examen {$a} : 100
+questions et temps limité à 3 heures.</b></p>
 <ul>
 <li><b>Répondez à toutes les questions</b> ou votre tentative sera peu significative et risquera de fausser votre évaluation.</li>
 <li><b>Prévoyez donc un temps suffisant</b> pour terminer l\'examen sans être dérangé.</li>
@@ -200,4 +200,9 @@ $string['examinstructionsdefault'] = '<p><b>L\'examen blanc simule les condition
 <b>entraînez-vous donc suffisamment au préalable</b> pour pouvoir profiter de chaque examen blanc.</li>
 </ul>';
 
-$string['configquizforceanswer_help'] = 'Si activé, l\'utilisateur doit répondre à la question (modifier la réponse) avant de continuer. Ceci ne fonctionne que sur des tests à "une question par page".';
+$string['configquizforceanswer_help'] = 'Si activé, l\'utilisateur doit répondre à la question (modifier la réponse) avant de continuer.
+Ceci ne fonctionne que sur des tests à "une question par page".';
+
+$string['resultsdepth_help'] = '<b>Calcul de la moyenne (semaines) : </b> Avec ce réglage, vous pouvez indiquer sur combien de
+semaines passées à partir de la date courante vous souhaitez afficher vos complations de progression. Ceci permet d\'éliminer quelques
+uns des premiers résultats qui pourraient fausser l\'affichage de votre progression réelle';

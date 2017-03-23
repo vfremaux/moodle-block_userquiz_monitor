@@ -139,7 +139,6 @@ $string['resetinfo1'] = 'Reset done';
 $string['resetinfo2'] = 'Impossible to reset your training results';
 $string['resetinfo3'] = 'No attempt to remove.';
 $string['resultsdepth'] = 'Depth of view';
-$string['resultsdepthdesc'] = 'Choose how long in the past you want results to be considered in calculation';
 $string['runexam'] = 'Run an assessment';
 $string['runtest'] = 'Run a training';
 $string['runtraininghelp'] = 'Select categories or subcategories in the following table than choose the size of your quiz attempt:';
@@ -184,4 +183,7 @@ $string['totalexam_help'] = '
 Results are compiled across all your examination attemps on the selected period.
 ';
 
-$string['configquizforceanswer_help'] = 'If enabled, the corresponding quiz will force the user to answer by changing asnwer content. This only works in "single question per page forme"';
+$string['configquizforceanswer_help'] = 'If enabled, the corresponding quiz will force the user to answer by changing asnwer
+content. This only works in "single question per page forme"';
+
+$string['resultsdepth_help'] = 'Choose how long in the past you want results to be considered in calculation';
