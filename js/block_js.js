@@ -126,20 +126,32 @@ function displaytrainingsubcategories(courseid, rootcategory, categoryid, list, 
     var url = M.cfg.wwwroot + "/blocks/userquiz_monitor/ajax/subcategoriescontent.php?" + params;
 
     $.post(url, '', function(data) {
-        if ($('#category-subcatpod-' + categoryid).css('display') == 'block') {
+        if ($('#category-subpod-switch').css('visibility') === 'visible') {
+            // Narrow layout has switched on.
+            // Hide everyone.
+            $('.category-subpod').css('visibility', 'hidden');
+            $('.category-subpod').css('display', 'none');
+            // Show which we want.
             $('#category-subcatpod-' + categoryid).html(data);
-            $('#category-subpod').css('visibility', 'hidden');
             $('#category-subcatpod-' + categoryid).css('visibility', 'visible');
+            $('#category-subcatpod-' + categoryid).css('display', 'block');
+            $('#divpl' + categoryid)[0].scrollIntoView();
+            window.scrollBy(0, -40);
         } else {
+            // Ensure all narrow screen divs are gone.
+            $('.category-subpod').css('visibility', 'hidden');
+            $('.category-subpod').css('display', 'none');
+
             $('#displaysubcategories').html(data);
             $('.tablemonitorcategorycontainer .userquiz-monitor-row').css('display', 'block');
-        }
-        // Get top pos of the left block:
-        var origtop = Math.round($('#userquiz-select-all').offset().top);
-        var leftpostop = Math.round($('#divpl' + categoryid).offset().top);
 
-        $('#displaysubcategories').css('position', 'relative');
-        $('#displaysubcategories').css('top', leftpostop - origtop);
+            // Get top pos of the left block.
+            var origtop = Math.round($('#userquiz-select-all').offset().top);
+            var leftpostop = Math.round($('#divpl' + categoryid).offset().top);
+    
+            $('#displaysubcategories').css('position', 'relative');
+            $('#displaysubcategories').css('top', leftpostop - origtop);
+        }
 
     }, 'html');
 
@@ -321,6 +333,7 @@ function closepr(button) {
     $('.tablemonitorcategorycontainer .userquiz-monitor-row').css('display', 'none');
     $('.category-subpod').html('');
     $('.category-subpod').css('visibility', 'hidden');
+    $('.category-subpod').css('display', 'none');
     $('.selectorcontainers').html(button);
     for (var j = 0; j < idcategoriespl.length; j++) {
         $('#cbpl' + idcategoriespl[j]).prop('checked', false);

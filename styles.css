@@ -403,6 +403,10 @@ img.userquiz-monitor-questiontype {
     }
 }
 
+#userquiz-subpod-switch {
+    display: none;
+}
+
 @media all and (max-width: 800px) {
 
     #page-content div[role="main"] {
@@ -428,11 +432,17 @@ img.userquiz-monitor-questiontype {
         display: none;
     }
 
-    .category-subpod {
-        display: block;
+    /* We use this switch to drive js behaviour to switch
+    between plain screen and mobile narrow screen devices */
+    #userquiz-subpod-switch {
+        visibility: visible;
     }
 
     .tablemonitorcategorycontainer {
+        display: none;
+    }
+
+    #displaysubcategories {
         display: none;
     }
 
@@ -442,8 +452,21 @@ img.userquiz-monitor-questiontype {
 }
 
 @media all and (min-width: 801px) {
-    .category-subpod {
+    /* We use this switch to drive js behaviour to switch
+    between plain screen and mobile narrow screen devices */
+    #userquiz-subpod-switch {
+        visibility: hidden;
+    }
+
+    .userquiz-subpod {
         display: none;
+    }
+
+    #displaysubcategories {
+        -webkit-transition: top 0.5s;
+        -webkit-transition-timing-function: ease-out;
+        transition: top 0.5s;
+        transition-timing-function: ease-out;
     }
 }
 
@@ -525,13 +548,4 @@ img.userquiz-monitor-questiontype {
 
 .html-gauge-value {
     height: 4px;
-}
-
-@media all and (min-width: 801px) {
-    #displaysubcategories {
-        -webkit-transition: top 0.5s;
-        -webkit-transition-timing-function: ease-out;
-        transition: top 0.5s;
-        transition-timing-function: ease-out;
-    }
 }

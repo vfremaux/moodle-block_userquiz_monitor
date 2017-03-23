@@ -43,7 +43,7 @@ class PreferenceForm extends moodleform {
         $mform->addElement('hidden', 'selectedview');
         $mform->setType('selectedview', PARAM_TEXT);
 
-        $mform->addElement('html', get_string('resultsdepthdesc', 'block_userquiz_monitor'));
+        $mform->addElement('html', get_string('resultsdepth_help', 'block_userquiz_monitor'));
         if (!empty($this->_customdata['blockconfig']->trainingenabled) && ($this->_customdata['mode'] == 'training')) {
             $options = array('0' => get_string('optnofilter', 'block_userquiz_monitor'),
                 '1' => get_string('optoneweek', 'block_userquiz_monitor'),
