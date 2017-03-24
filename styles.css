@@ -467,6 +467,11 @@ img.userquiz-monitor-questiontype {
         -webkit-transition-timing-function: ease-out;
         transition: top 0.5s;
         transition-timing-function: ease-out;
+        display: block;
+    }
+
+    .userquiz-subpod {
+        display:none;
     }
 }
 
