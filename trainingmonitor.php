@@ -78,7 +78,7 @@ function get_monitortest($courseid, &$response, &$block) {
     $scripts = get_js_scripts(array_keys($rootcats));
     $response .= $scripts;
     $formurl = new moodle_url('/blocks/userquiz_monitor/userpreset.php');
-    $response .= '<div id="category-subpod-switch"></div>';
+    $response .= '<div id="userquiz-subpod-switch"></div>';
     $response .= '<form name="form" method="GET" action="'.$formurl.'">';
     $response .= '<input type="hidden" name="blockid" value="'.$block->instance->id.'">';
 
