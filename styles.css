@@ -554,3 +554,11 @@ img.userquiz-monitor-questiontype {
 .html-gauge-value {
     height: 4px;
 }
+
+.select-all {
+    font-size: 1.3em;
+}
+
+.userquiz-exam-detail-button {
+    max-height: 30px;
+}
