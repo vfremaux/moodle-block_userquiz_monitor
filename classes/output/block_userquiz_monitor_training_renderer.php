@@ -130,6 +130,14 @@ class training_renderer extends \block_userquiz_monitor_renderer {
 
         $str .= '<div class="userquiz-monitor-row">'; // Row.
 
+        $str .= '<div class="userquiz-monitor-cell categorychoice">';
+        $str .= '<input type="checkbox"
+                        name="cb_pl'.$cat->id.'"
+                        id="cbpl'.$cat->id.'"
+                        onclick="'.$cat->jshandler1.'"
+                        style="padding-left:2px;" />';
+        $str .= '</div>';
+
         $str .= '<div class="userquiz-monitor-cell categoryname">';
         $str .= $cat->name;
         $str .= '</div>';
@@ -137,11 +145,6 @@ class training_renderer extends \block_userquiz_monitor_renderer {
 
         $str .= '<div class="userquiz-monitor-row">'; // Row
         $str .= '<div class="userquiz-monitor-cell">';
-        $str .= '<input type="checkbox"
-                        name="cb_pl'.$cat->id.'"
-                        id="cbpl'.$cat->id.'"
-                        onclick="'.$cat->jshandler1.'"
-                        style="padding-left:2px;" />';
         $str .= $cat->accessorieslink;
         $str .= '<input type="hidden" name="h_cb_pl'.$cat->id.'" value="h_cb_pl'.$cat->id.'"/>';
         $str .= '</div>';

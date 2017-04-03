@@ -130,8 +130,7 @@ class block_userquiz_monitor extends block_base {
         $response = '';
 
         // Menu establishment.
-        $defaultview = $this->get_active_view();
-        $selectedview = optional_param('selectedview', $defaultview, PARAM_TEXT);
+        $selectedview = $this->get_active_view();
 
         // Display schedule.
         // Note : At the moment we do not really know what to do with this.
@@ -197,7 +196,7 @@ class block_userquiz_monitor extends block_base {
                 switch ($selectedview) {
                     case 'examlaunch': {
                         $quizid = @$this->config->examquiz;
-                        $available = userquizmonitor_count_available_attempts($USER->id, $quizid);
+                        $available = block_userquiz_monitor_count_available_attempts($USER->id, $quizid);
                         $maxattempts = $DB->get_field('qa_usernumattempts_limits', 'maxattempts', array('userid' => $USER->id, 'quizid' => $quizid));
                         $examination .= $renderer->launch_widget($quizid, 0 + $available, max(0 + $available, 0 + $maxattempts));
                         break;
@@ -275,31 +274,28 @@ class block_userquiz_monitor extends block_base {
     }
 
     protected function get_active_view() {
-        global $SESSION;
+        global $SESSION, $USER, $COURSE;
+
+        $selectedview = optional_param('selectedview', $SESSION->userquizview, PARAM_TEXT);
 
         // Ensures context conservation in userquiz_monitor.
-        if (empty($SESSION->userquizview) ||
-                (!@$this->config->trainingenabled && $SESSION->userquizview == 'training') ||
-                        (!@$this->config->examenabled && $SESSION->userquizview == 'examination')) {
-            if (!empty($this->config->trainingenabled)) {
-                $SESSION->userquizview = 'training';
-            } else if (!empty($this->config->examenabled)) {
-                $SESSION->userquizview = 'examination';
-            } else if ($selectedview != 'preferences') {
-                if (!empty($this->config->informationpageid) && !isediting()) {
-                    $params = array('id' => $COURSE->id, 'page' => $this->config->informationpageid);
-                    redirect(new moodle_url('/course/view.php', $params));
-                }
-            }
+        if (!@$this->config->examenabled && $selectedview == 'examination') {
+            $selectedview = 'training';
         }
 
-        if ($this->config->trainingenabled) {
-            $defaultview = 'training';
-        } else {
-            $defaultview = 'examination';
+        if (!@$this->config->trainingenabled && $SESSION->userquizview == 'training') {
+            $selectedview = 'examination';
         }
 
-        return (!empty($SESSION->userquizview)) ? $SESSION->userquizview : $defaultview;
+        /*
+        if (!empty($this->config->informationpageid)) {
+            $params = array('id' => $COURSE->id, 'page' => $this->config->informationpageid);
+            redirect(new moodle_url('/course/view.php', $params));
+        }
+        */
+
+        $SESSION->userquizview = $selectedview;
+        return $selectedview;
     }
 
     static public function get_fileareas() {

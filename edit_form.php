@@ -120,6 +120,9 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
         $label = get_string('configquiznobackwards', 'block_userquiz_monitor');
         $mform->addElement('advcheckbox', 'config_trainingnobackwards', $label);
 
+        $label = get_string('configshowhistory', 'block_userquiz_monitor');
+        $mform->addElement('advcheckbox', 'config_trainingshowhistory', $label, '', 0);
+
         // Configuration for exam system.
 
         $mform->addElement('header', 'configheader2', get_string('examsettings', 'block_userquiz_monitor'));
