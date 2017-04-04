@@ -467,6 +467,11 @@ img.userquiz-monitor-questiontype {
         -webkit-transition-timing-function: ease-out;
         transition: top 0.5s;
         transition-timing-function: ease-out;
+        display: block;
+    }
+
+    .userquiz-subpod {
+        display:none;
     }
 }
 
@@ -548,4 +553,12 @@ img.userquiz-monitor-questiontype {
 
 .html-gauge-value {
     height: 4px;
+}
+
+.select-all {
+    font-size: 1.3em;
+}
+
+.userquiz-exam-detail-button {
+    max-height: 30px;
 }

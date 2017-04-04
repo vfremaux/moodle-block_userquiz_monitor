@@ -78,28 +78,32 @@ function get_monitortest($courseid, &$response, &$block) {
     $scripts = get_js_scripts(array_keys($rootcats));
     $response .= $scripts;
     $formurl = new moodle_url('/blocks/userquiz_monitor/userpreset.php');
-    $response .= '<div id="category-subpod-switch"></div>';
+    $response .= '<div id="userquiz-subpod-switch"></div>';
     $response .= '<form name="form" method="GET" action="'.$formurl.'">';
     $response .= '<input type="hidden" name="blockid" value="'.$block->instance->id.'">';
 
-    if (!empty($userattempts)) {
-        $params = calcul_hist($rootcategory, $attempts);
-        $params = array('mode' => 'displayhist',
-                        'datetype' => 'short',
-                        'action' => 'Get_Stats',
-                        'type' => 'category',
-                        'param' => $params);
-        $popuplink = new moodle_url('/blocks/userquiz_monitor/popup.php', $params);
-        $action = new popup_action('click', $popuplink, 'ratings', array('height' => 400, 'width' => 600));
-        $label = get_string('hist', 'block_userquiz_monitor');
-        $pixicon = new pix_icon('graph', $label, 'block_userquiz_monitor', array('class' => 'userquiz-monitor-cat-button'));
-        $link = new action_link($popuplink, '', $action, array(), $pixicon);
-        $alternateurl = $renderer->get_area_url('statsbuttonicon', '');
-        $components['accessorieslink'] = $renderer->render_action_link($link, $alternateurl);
+    if ($block->config->trainingshowhistory) {
+        if (!empty($userattempts)) {
+            $params = calcul_hist($rootcategory, $attempts);
+            $params = array('mode' => 'displayhist',
+                            'datetype' => 'short',
+                            'action' => 'Get_Stats',
+                            'type' => 'category',
+                            'param' => $params);
+            $popuplink = new moodle_url('/blocks/userquiz_monitor/popup.php', $params);
+            $action = new popup_action('click', $popuplink, 'ratings', array('height' => 400, 'width' => 600));
+            $label = get_string('hist', 'block_userquiz_monitor');
+            $pixicon = new pix_icon('graph', $label, 'block_userquiz_monitor', array('class' => 'userquiz-monitor-cat-button'));
+            $link = new action_link($popuplink, '', $action, array(), $pixicon);
+            $alternateurl = $renderer->get_area_url('statsbuttonicon', '');
+            $components['accessorieslink'] = $renderer->render_action_link($link, $alternateurl);
+        } else {
+            $title = get_string('hist', 'block_userquiz_monitor');
+            $pixurl = $renderer->get_area_url('statsbuttonicon', $OUTPUT->pix_url('graph', 'block_userquiz_monitor'));
+            $components['accessorieslink'] = '<img class="userquiz-monitor-cat-button"  title="'.$title.'" src="'.$pixurl.'"/>';
+        }
     } else {
-        $title = get_string('hist', 'block_userquiz_monitor');
-        $pixurl = $renderer->get_area_url('statsbuttonicon', $OUTPUT->pix_url('graph', 'block_userquiz_monitor'));
-        $components['accessorieslink'] = '<img class="userquiz-monitor-cat-button"  title="'.$title.'" src="'.$pixurl.'"/>';
+        $components['accessorieslink'] = '';
     }
 
     $graphparams = array (
@@ -181,24 +185,28 @@ function get_monitortest($courseid, &$response, &$block) {
             $response .= $renderer->program_headline(@$block->config->trainingprogramname, $jshandler);
         }
 
-        if (!empty($userattempts)) {
-            $params = array('mode' => 'displayhist',
-                            'datetype' => 'long',
-                            'action' => 'Get_Stats',
-                            'type' => 'category',
-                            'param' => $params);
-            $popuplink = new moodle_url('/blocks/userquiz_monitor/popup.php', $params);
-            $params = array('height' => 400, 'width' => 600);
-            $action = new popup_action('click', $popuplink, 'ratings', $params);
-            $label = get_string('hist', 'block_userquiz_monitor');
-            $pixicon = new pix_icon('graph', $label, 'block_userquiz_monitor', array('class' => 'userquiz-monitor-cat-button'));
-            $link = new action_link($popuplink, '', $action, array(), $pixicon);
-            $alternateurl = $renderer->get_area_url('statsbuttonicon', '');
-            $cat->accessorieslink = $renderer->render_action_link($link, $alternateurl);
+        if ($block->config->trainingshowhistory) {
+            if (!empty($userattempts)) {
+                $params = array('mode' => 'displayhist',
+                                'datetype' => 'long',
+                                'action' => 'Get_Stats',
+                                'type' => 'category',
+                                'param' => $params);
+                $popuplink = new moodle_url('/blocks/userquiz_monitor/popup.php', $params);
+                $params = array('height' => 400, 'width' => 600);
+                $action = new popup_action('click', $popuplink, 'ratings', $params);
+                $label = get_string('hist', 'block_userquiz_monitor');
+                $pixicon = new pix_icon('graph', $label, 'block_userquiz_monitor', array('class' => 'userquiz-monitor-cat-button'));
+                $link = new action_link($popuplink, '', $action, array(), $pixicon);
+                $alternateurl = $renderer->get_area_url('statsbuttonicon', '');
+                $cat->accessorieslink = $renderer->render_action_link($link, $alternateurl);
+            } else {
+                $title = get_string('hist', 'block_userquiz_monitor');
+                $pixurl = $renderer->get_area_url('statsbuttonicon', $OUTPUT->pix_url('graph', 'block_userquiz_monitor'));
+                $cat->accessorieslink = '<img class="userquiz-monitor-cat-button shadow" title="'.$title.'" src="'.$pixurl.'" />';
+            }
         } else {
-            $title = get_string('hist', 'block_userquiz_monitor');
-            $pixurl = $renderer->get_area_url('statsbuttonicon', $OUTPUT->pix_url('graph', 'block_userquiz_monitor'));
-            $cat->accessorieslink = '<img class="userquiz-monitor-cat-button shadow" title="'.$title.'" src="'.$pixurl.'" />';
+            $cat->accessorieslink = '';
         }
 
         $data = array (

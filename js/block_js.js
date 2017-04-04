@@ -126,7 +126,7 @@ function displaytrainingsubcategories(courseid, rootcategory, categoryid, list, 
     var url = M.cfg.wwwroot + "/blocks/userquiz_monitor/ajax/subcategoriescontent.php?" + params;
 
     $.post(url, '', function(data) {
-        if ($('#category-subpod-switch').css('visibility') === 'visible') {
+        if ($('#userquiz-subpod-switch').css('visibility') === 'visible') {
             // Narrow layout has switched on.
             // Hide everyone.
             $('.category-subpod').css('visibility', 'hidden');
