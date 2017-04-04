@@ -25,6 +25,7 @@
  */
 require('../../config.php');
 require_once($CFG->dirroot.'/blocks/userquiz_monitor/block_userquiz_monitor_lib.php');
+require_once($CFG->dirroot.'/blocks/userquiz_monitor/locallib.php');
 
 // Init variables.
 $selectionstr = 0;
@@ -52,7 +53,7 @@ if (!empty($courseid) && !empty($mode)) {
     if ($mode == 'test') {
 
         // Choose the appropriate quiz.
-        $testid = userquiz_monitor_get_quiz_by_numquestions($courseid, $theblock, $nbquestions);
+        $testid = block_userquiz_monitor_get_quiz_by_numquestions($courseid, $theblock, $nbquestions);
 
         // Retrieve settings checkbox on the left side.
         $cbpl = preg_grep('/^cb_pl/', array_keys($_GET));

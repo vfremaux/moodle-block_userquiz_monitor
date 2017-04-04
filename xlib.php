@@ -38,7 +38,7 @@ function check_userquiz_monitor_review_applicability($attemptobj) {
     if ($config = block_userquiz_monitor_check_has_quiz($course, $attemptobj->get_quizid())) {
         if ($config->directreturn && ($config->mode == 'exam')) {
             if ($config->examdeadend) {
-                $params = array('id' => $course->id, 'blockid' => $uqm->id);
+                $params = array('id' => $course->id, 'blockid' => $config->uqm->id);
                 redirect(new moodle_url('/blocks/userquiz_monitor/examfinish.php', $params));
             } else {
                 redirect(new moodle_url('/course/view.php', array('id' => $course->id)));

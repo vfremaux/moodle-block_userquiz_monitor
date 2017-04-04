@@ -53,6 +53,7 @@ $string['configexamenabled'] = 'Activation de l\'examen';
 $string['configexamhidescoringinterface'] = 'Cacher l\'interface de scoring de l\'examen.<br/>';
 $string['configexaminstructions'] = 'Instructions pour les examens';
 $string['configexamtab'] = 'Onglet pour le dispositif d\'examen';
+$string['configshowhistory'] = 'Afficher les historiques';
 $string['configgaugerenderer'] = 'Rendu des jauges';
 $string['fullhtml'] = 'HTML brut';
 $string['gd'] = 'Générateur Php GD';
