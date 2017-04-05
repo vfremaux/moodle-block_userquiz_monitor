@@ -564,5 +564,6 @@ img.userquiz-monitor-questiontype {
 }
 
 .userquiz-monitor-cat-button.active {
-    background-color: #20a020;
+    background-color: #20a020 !important;
+    background-image: none !important;
 }
