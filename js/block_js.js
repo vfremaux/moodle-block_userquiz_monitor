@@ -110,6 +110,7 @@ function displaytrainingsubcategories(courseid, rootcategory, categoryid, list, 
             $('#divpl' + list[i]).removeClass('trans50');
             $('#cbpl' + list[i]).prop('checked', true);
             $('#cbpl' + list[i]).prop('disabled', true);
+            $('#userquiz-subcat-open' + list[i]).addClass('active');
         } else {
             $('#divpl' + list[i]).addClass('trans50');
             $('#divpl' + list[i]).removeClass('trans100');
@@ -117,6 +118,7 @@ function displaytrainingsubcategories(courseid, rootcategory, categoryid, list, 
             $('#cbpl' + list[i]).prop('disabled', true);
             $('#progressbarcontainerA' + list[i]).css('visibility', 'hidden');
             $('#progressbarcontainerC' + list[i]).css('visibility', 'hidden');
+            $('#userquiz-subcat-open' + list[i]).removeClass('active');
         }
     }
 

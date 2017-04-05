@@ -296,8 +296,8 @@ div.errorcontainer {
 
 .userquiz-monitor-category.level,
 .userquiz-monitor-category.ratio{
-    background-color:#D9E1D6; 
-    font-size:0.8em; 
+    background-color:#D9E1D6;
+    font-size:0.8em;
     color:#658EA0;
 }
 
@@ -561,4 +561,8 @@ img.userquiz-monitor-questiontype {
 
 .userquiz-exam-detail-button {
     max-height: 30px;
+}
+
+.userquiz-monitor-cat-button.active {
+    background-color: #20a020;
 }
