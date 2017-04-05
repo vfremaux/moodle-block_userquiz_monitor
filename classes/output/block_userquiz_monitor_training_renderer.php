@@ -155,11 +155,21 @@ class training_renderer extends \block_userquiz_monitor_renderer {
         $str .= '</div>';
 
         $str .= '<div class="userquiz-monitor-cell">';
-        $pixurl = $this->get_area_url('detailsicon', $this->output->pix_url('detail', 'block_userquiz_monitor'));
-        $str .= '<img class="userquiz-monitor-cat-button"
-                      title="'.$seesubsstr.'"
-                      src="'.$pixurl.'"
-                      onclick="'.$cat->jshandler2.'"/>';
+        $pixurl = $this->get_area_url('detailsicon');
+        if ($pixurl) {
+            $str .= '<img class="userquiz-monitor-cat-button"
+                          title="'.$seesubsstr.'"
+                          src="'.$pixurl.'"
+                          onclick="'.$cat->jshandler2.'"/>';
+        } else {
+            // If no detail image loaded keep a single button.
+            $str .= '<input type="button"
+                          id="userquiz-subcat-open'.$cat->id.'"
+                          class="userquiz-monitor-cat-button btn"
+                          title="'.$seesubsstr.'"
+                          value="'.$seesubsstr.'"
+                          onclick="'.$cat->jshandler2.'"/>';
+        }
         $str .= '</div>';
 
         $str .= '</div>'; // Row.
