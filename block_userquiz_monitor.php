@@ -276,6 +276,10 @@ class block_userquiz_monitor extends block_base {
     protected function get_active_view() {
         global $SESSION, $USER, $COURSE;
 
+        if (empty($SESSION->userquizview)) {
+            $SESSION->userquizview = 'training';
+        }
+
         $selectedview = optional_param('selectedview', $SESSION->userquizview, PARAM_TEXT);
 
         // Ensures context conservation in userquiz_monitor.

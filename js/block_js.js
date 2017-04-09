@@ -110,6 +110,7 @@ function displaytrainingsubcategories(courseid, rootcategory, categoryid, list, 
             $('#divpl' + list[i]).removeClass('trans50');
             $('#cbpl' + list[i]).prop('checked', true);
             $('#cbpl' + list[i]).prop('disabled', true);
+            $('#userquiz-subcat-open' + list[i]).addClass('active');
         } else {
             $('#divpl' + list[i]).addClass('trans50');
             $('#divpl' + list[i]).removeClass('trans100');
@@ -117,6 +118,7 @@ function displaytrainingsubcategories(courseid, rootcategory, categoryid, list, 
             $('#cbpl' + list[i]).prop('disabled', true);
             $('#progressbarcontainerA' + list[i]).css('visibility', 'hidden');
             $('#progressbarcontainerC' + list[i]).css('visibility', 'hidden');
+            $('#userquiz-subcat-open' + list[i]).removeClass('active');
         }
     }
 
@@ -329,7 +331,7 @@ function closepr(button) {
     $('#checkall_pl').prop('checked', false);
     $('#checkall_pl').prop('disabled', false);
     $('#displaysubcategories').html('');
-    $('#displaysubcategories').css('disaply', 'none');
+    $('#displaysubcategories').css('display', 'none');
     $('.tablemonitorcategorycontainer .userquiz-monitor-row').css('display', 'none');
     $('.category-subpod').html('');
     $('.category-subpod').css('visibility', 'hidden');
@@ -340,6 +342,7 @@ function closepr(button) {
         $('#cbpl' + idcategoriespl[j]).prop('disabled', false);
         $('#divpl' + idcategoriespl[j]).addClass('trans100');
         $('#divpl' + idcategoriespl[j]).removeClass('trans50');
+        $('#userquiz-subcat-open' + idcategoriespl[j]).removeClass('active');
         $('#progressbarcontainerA' + idcategoriespl[j]).css('visibility', 'visible');
         $('#progressbarcontainerC' + idcategoriespl[j]).css('visibility', 'visible');
     }

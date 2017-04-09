@@ -384,12 +384,24 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
 
             $maxratio = 0;
             foreach (array_keys($subcats) as $subcatid) {
-                $ratioc = $subcats[$subcatid]->goodC / $subcats[$subcatid]->cptC;
-                $subcats[$subcatid]->ratioC = ($subcats[$subcatid]->cptC == 0) ? 0 : round($ratioc * 100);
-                $ratioa = $subcats[$subcatid]->goodA / $subcats[$subcatid]->cptA;
-                $subcats[$subcatid]->ratioA = ($subcats[$subcatid]->cptA == 0) ? 0 : round($ratioa * 100);
-                $ratio = $subcats[$subcatid]->good / $subcats[$subcatid]->cpt;
-                $subcats[$subcatid]->ratio = ($subcats[$subcatid]->cpt == 0) ? 0 : round($ratio * 100);
+                if ($subcats[$subcatid]->cptC) {
+                    $ratioc = $subcats[$subcatid]->goodC / $subcats[$subcatid]->cptC;
+                } else {
+                    $ratioc = 0;
+                }
+                $subcats[$subcatid]->ratioC = round($ratioc * 100);
+                if ($subcats[$subcatid]->cptA) {
+                    $ratioa = $subcats[$subcatid]->goodA / $subcats[$subcatid]->cptA;
+                } else {
+                    $ratioa = 0;
+                }
+                $subcats[$subcatid]->ratioA = round($ratioa * 100);
+                if ($subcats[$subcatid]->cpt) {
+                    $ratio = $subcats[$subcatid]->good / $subcats[$subcatid]->cpt;
+                } else {
+                    $ratio = 0;
+                }
+                $subcats[$subcatid]->ratio = round($ratio * 100);
                 if ($maxratio < $subcats[$subcatid]->ratio) {
                     $maxratio = $subcats[$subcatid]->ratio;
                 }
