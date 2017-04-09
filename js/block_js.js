@@ -331,7 +331,7 @@ function closepr(button) {
     $('#checkall_pl').prop('checked', false);
     $('#checkall_pl').prop('disabled', false);
     $('#displaysubcategories').html('');
-    $('#displaysubcategories').css('disaply', 'none');
+    $('#displaysubcategories').css('display', 'none');
     $('.tablemonitorcategorycontainer .userquiz-monitor-row').css('display', 'none');
     $('.category-subpod').html('');
     $('.category-subpod').css('visibility', 'hidden');
@@ -342,6 +342,7 @@ function closepr(button) {
         $('#cbpl' + idcategoriespl[j]).prop('disabled', false);
         $('#divpl' + idcategoriespl[j]).addClass('trans100');
         $('#divpl' + idcategoriespl[j]).removeClass('trans50');
+        $('#userquiz-subcat-open' + idcategoriespl[j]).removeClass('active');
         $('#progressbarcontainerA' + idcategoriespl[j]).css('visibility', 'visible');
         $('#progressbarcontainerC' + idcategoriespl[j]).css('visibility', 'visible');
     }
