@@ -138,6 +138,7 @@ if (!empty($courseid) && !empty($mode)) {
     }
 
     if ($mode == 'examination') {
-        redirect(new moodle_url('/mod/quiz/attempt.php', array('q' => $theblock->config->examquiz)));
+        $cm = get_coursemodule_from_instance('quiz', $theblock->config->examquiz);
+        redirect(new moodle_url('/mod/quiz/startattempt.php', array('cmid' => $cm->id, 'forcenew' => true, 'sesskey' => sesskey())));
     }
 }
