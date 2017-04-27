@@ -43,7 +43,6 @@ class PreferenceForm extends moodleform {
         $mform->addElement('hidden', 'selectedview');
         $mform->setType('selectedview', PARAM_TEXT);
 
-        $mform->addElement('html', get_string('resultsdepth_help', 'block_userquiz_monitor'));
         if (!empty($this->_customdata['blockconfig']->trainingenabled) && ($this->_customdata['mode'] == 'training')) {
             $options = array('0' => get_string('optnofilter', 'block_userquiz_monitor'),
                 '1' => get_string('optoneweek', 'block_userquiz_monitor'),
@@ -55,6 +54,7 @@ class PreferenceForm extends moodleform {
             $attrs = array('onchange' => 'this.form.submit();');
             $mform->addElement('select', 'resultsdepth', get_string('resultsdepth', 'block_userquiz_monitor'), $options, $attrs);
             $mform->addHelpButton('resultsdepth', 'resultsdepth', 'block_userquiz_monitor');
+            $mform->setDefault('resultsdepth', 0);
         }
 
         if (!empty($this->_customdata['blockconfig']->examenabled) && ($this->_customdata['mode'] == 'examination')) {
@@ -67,6 +67,7 @@ class PreferenceForm extends moodleform {
             );
             $attrs = array('onchange' => 'this.form.submit();');
             $mform->addElement('select', 'examsdepth', get_string('examsdepth', 'block_userquiz_monitor'), $examoptions, $attrs);
+            $mform->setDefault('examsdepth', 0);
         } else {
             $mform->addElement('hidden', 'examsdepth', 0);
             $mform->setType('examsdepth', PARAM_INT);

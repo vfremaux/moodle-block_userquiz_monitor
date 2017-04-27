@@ -426,9 +426,11 @@ img.userquiz-monitor-questiontype {
     }
 
     /* This may have an effect on all site in all themes */
+    /*
     #page-mod-quiz-attempt #block-region-side-pre {
         display: none;
     }
+    */
 
     /* We use this switch to drive js behaviour to switch
     between plain screen and mobile narrow screen devices */
@@ -519,6 +521,7 @@ img.userquiz-monitor-questiontype {
     margin: 2px 0;
 }
 
+/*
 #page-mod-quiz-attempt #block-region-side-pre {
     display: none;
 }
@@ -526,6 +529,7 @@ img.userquiz-monitor-questiontype {
 #mod_quiz_navblock {
     display: none;
 }
+*/
 
 .userquiz-cat-progress > div.html-gauge-container,
 .html-gauge-container {
@@ -564,4 +568,21 @@ img.userquiz-monitor-questiontype {
 .userquiz-monitor-cat-button.active {
     background-color: #20a020 !important;
     background-image: none !important;
+}
+
+input.dimmed,
+input.dimmed:hover{
+    opacity: 50%;
+    -moz-opactiy: 50%;
+}
+
+input.active{
+    background-color: #10a010 !important;
+    background-image: none !important;
+}
+
+td.detail-container {
+    text-align: right;
+    width: 100px;
+    padding: 8px;
 }
