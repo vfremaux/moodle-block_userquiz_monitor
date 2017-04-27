@@ -197,7 +197,8 @@ class block_userquiz_monitor extends block_base {
                     case 'examlaunch': {
                         $quizid = @$this->config->examquiz;
                         $available = block_userquiz_monitor_count_available_attempts($USER->id, $quizid);
-                        $maxattempts = $DB->get_field('qa_usernumattempts_limits', 'maxattempts', array('userid' => $USER->id, 'quizid' => $quizid));
+                        $params = array('userid' => $USER->id, 'quizid' => $quizid);
+                        $maxattempts = $DB->get_field('qa_usernumattempts_limits', 'maxattempts', $params);
                         $examination .= $renderer->launch_widget($quizid, 0 + $available, max(0 + $available, 0 + $maxattempts));
                         break;
                     }
@@ -222,9 +223,7 @@ class block_userquiz_monitor extends block_base {
                             if ($data = $preferenceform->get_data()) {
                                 $data->userid = $USER->id;
                                 if (!empty($prefs)) {
-                                    if (!empty($data->examsdepth)) {
-                                        $prefs->examsdepth = 0 + @$data->examsdepth;
-                                    }
+                                    $prefs->examsdepth = 0 + @$data->examsdepth;
                                     $DB->update_record('userquiz_monitor_prefs', $prefs);
                                 } else {
                                     unset($data->id);
@@ -276,18 +275,18 @@ class block_userquiz_monitor extends block_base {
     protected function get_active_view() {
         global $SESSION, $USER, $COURSE;
 
-        if (empty($SESSION->userquizview)) {
-            $SESSION->userquizview = 'training';
+        if (!in_array(@$SESSION->userquizview[$COURSE->id], array('training', 'examination'))) {
+            $SESSION->userquizview[$COURSE->id] = 'training';
         }
 
-        $selectedview = optional_param('selectedview', $SESSION->userquizview, PARAM_TEXT);
+        $selectedview = optional_param('selectedview', $SESSION->userquizview[$COURSE->id], PARAM_TEXT);
 
         // Ensures context conservation in userquiz_monitor.
-        if (!@$this->config->examenabled && $selectedview == 'examination') {
+        if (!@$this->config->examenabled && (empty($selectedview) || $selectedview == 'examination')) {
             $selectedview = 'training';
         }
 
-        if (!@$this->config->trainingenabled && $SESSION->userquizview == 'training') {
+        if (!@$this->config->trainingenabled && (empty($selectedview) || $selectedview == 'training')) {
             $selectedview = 'examination';
         }
 
@@ -298,7 +297,7 @@ class block_userquiz_monitor extends block_base {
         }
         */
 
-        $SESSION->userquizview = $selectedview;
+        $SESSION->userquizview[$COURSE->id] = $selectedview;
         return $selectedview;
     }
 
