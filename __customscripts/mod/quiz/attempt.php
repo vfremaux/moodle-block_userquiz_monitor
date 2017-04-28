@@ -22,10 +22,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// Customscript type : CUSTOM_SCRIPT_REPLACEMENT.
-
+// CUSTOMSCRIPT.
 // require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+require_once($CFG->dirroot . '/blocks/userquiz_monitor/xlib.php');
 
 // Look for old-style URLs, such as may be in the logs, and redirect them to startattemtp.php.
 if ($id = optional_param('id', 0, PARAM_INT)) {
@@ -119,14 +119,28 @@ if (!$attemptobj->set_currentpage($page)) {
     redirect($attemptobj->start_attempt_url(null, $attemptobj->get_currentpage()));
 }
 
+$uqconfig = block_userquiz_monitor_check_has_quiz_ext($attemptobj->get_course(), $attemptobj->get_quizid());
+
 // Initialise the JavaScript.
 $headtags = $attemptobj->get_html_head_contributions($page);
 $PAGE->requires->js_init_call('M.mod_quiz.init_attempt_form', null, false, quiz_get_js_module());
 
 // Arrange for the navigation to be displayed in the first region on the page.
-$navbc = $attemptobj->get_navigation_panel($output, 'quiz_attempt_nav_panel', $page);
-$regions = $PAGE->blocks->get_regions();
-$PAGE->blocks->add_fake_block($navbc, reset($regions));
+if (empty($uqconfig)) {
+    $navbc = $attemptobj->get_navigation_panel($output, 'quiz_attempt_nav_panel', $page);
+    $regions = $PAGE->blocks->get_regions();
+    $PAGE->blocks->add_fake_block($navbc, reset($regions));
+} else {
+    $bc = new block_contents();
+    $bc->attributes['id'] = 'mod_quiz_questioninfo';
+    $bc->attributes['role'] = 'info';
+    $bc->attributes['aria-labelledby'] = 'mod_quiz_questioninfo_title';
+    $bc->title = get_string('question').$output->question_num($attemptobj);
+    $bc->content = $output->quiz_progress_indicator($attemptobj);
+    $bc->content .= $output->question_refs($slots, $attemptobj);
+    $regions = $PAGE->blocks->get_regions();
+    $PAGE->blocks->add_fake_block($bc, reset($regions));
+}
 
 $title = get_string('attempt', 'quiz', $attemptobj->get_attempt_number());
 $headtags = $attemptobj->get_html_head_contributions($page);
