@@ -71,3 +71,7 @@ function block_userquiz_monitor_attempt_adds($attemptobj) {
         }
     }
 }
+
+function block_userquiz_monitor_check_has_quiz_ext($course, $quizid) {
+    return block_userquiz_monitor_check_has_quiz($course, $quizid);
+}

@@ -28,9 +28,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// Customscript type : CUSTOM_SCRIPT_REPLACEMENT.
+// Customscript type : CUSTOMSCRIPT_CHANGE.
 
-// require_once(__DIR__ . '/../../config.php');
+// require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
 // Remember the current time as the time any responses were submitted
@@ -57,7 +57,6 @@ if (is_dir($CFG->dirroot.'/blocks/userquiz_monitor')) {
     $config = block_userquiz_monitor_check_has_quiz($course, $attemptobj->get_quizid());
 }
 // CHANGE-.
-
 // Set $nexturl now.
 if ($next) {
     $page = $nextpage;
@@ -113,7 +112,7 @@ if ($status == quiz_attempt::OVERDUE) {
     } else {
         redirect($attemptobj->review_url());
     }
-    // CHANGE-.
 }
 
 die;
+// CHANGE-.
