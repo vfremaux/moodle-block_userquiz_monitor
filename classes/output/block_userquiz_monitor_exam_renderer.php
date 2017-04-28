@@ -72,6 +72,8 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
     public function available_attempts($userid, $quizid, $maxdisplay = 0) {
         global $DB;
 
+        $gaugerendererfunc = $this->gaugerendererfunc;
+
         $rootcategory = @$this->theblock->config->rootcategory;
         $overall = block_userquiz_monitor_init_overall();
         block_userquiz_monitor_init_rootcats($rootcategory, $rootcats);
@@ -92,6 +94,9 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
         ";
 
         if ($usedattempts = $DB->get_records_select('quiz_attempts', $select, array($userid, $quizid), 'timefinish DESC')) {
+
+            $maxratio = block_userquiz_monitor_compute_ratios($rootcats);
+
             $used = count($usedattempts);
             $printedellipse = false;
             $usedix = $used;
@@ -115,11 +120,65 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
                     $iconurl = $this->output->pix_url($stateicon, 'block_userquiz_monitor');
                     $str .= '<td><img src="'.$iconurl.'" /></td>';
                     $usedurl = new moodle_url('/mod/quiz/review.php', array('q' => $quizid, 'attempt' => $usedattempt->id));
-                    $detailedbuttonurl = $this->get_area_url('detailsicon', $this->output->pix_url('detail', 'block_userquiz_monitor'));
-                    $detailedbutton = '<img src="'.$detailedbuttonurl.'" class="userquiz-exam-detail-button" />';
+
+                    $seedetailsstr = get_string('seedetails', 'block_userquiz_monitor');
+                    $pixurl = $this->get_area_url('detailsicon');
+                    if ($pixurl) {
+                        $detailbutton = '<img class="userquiz-monitor-cat-button"
+                                      title="'.$seedetailsstr.'"
+                                      src="'.$pixurl.'"/>';
+                    } else {
+                        // If no detail image loaded keep a single button.
+                        $detailedbutton = '<input type="button"
+                                      class="userquiz-monitor-cat-button btn"
+                                      title="'.$seedetailsstr.'"
+                                      value="'.$seedetailsstr.'"/>';
+                    }
                     $attemptdetail = '<a href="'.$usedurl.'">'.$detailedbutton.'</a>';
-                    $str .= '<td>'.$attemptdetail.'</td>';
+                    $str .= '<td class="detail-container">'.$attemptdetail.'</td>';
                     $str .= '</tr>';
+
+                    $str .= '<tr>';
+                    $str .= '<td colspan="3">';
+
+                    $graphwidth = ($overall->ratio * 100) / $maxratio;
+            
+                    // Prepare results bargaphs.
+                    $graphparams = array (
+                        'boxheight' => 50,
+                        'boxwidth' => '95%',
+                        'skin' => 'A',
+                        'type' => 'global',
+                        'graphwidth' => $graphwidth,
+                        'stop' => $this->theblock->config->rateAserie,
+                        'successrate' => $overall->ratioA,
+                    );
+                    $components['progressbarA'] = $this->$gaugerendererfunc($rootcategory, $graphparams);
+            
+                    if (!empty($this->theblock->config->dualserie)) {
+                        $graphparams = array (
+                            'boxheight' => 50,
+                            /* 'boxwidth' => 300, */
+                            'boxwidth' => '95%',
+                            'skin' => 'C',
+                            'type' => 'global',
+                            'graphwidth' => $graphwidth,
+                            'stop' => $this->theblock->config->rateCserie,
+                            'successrate' => $overall->ratioC,
+                        );
+                        $components['progressbarC'] = $this->$gaugerendererfunc($rootcategory, $graphparams);
+                    }
+            
+                    $data = array('dualserie' => $this->theblock->config->dualserie,
+                                  'goodA' => $overall->goodA,
+                                  'cptA' => $overall->cptA,
+                                  'goodC' => $overall->goodC,
+                                  'cptC' => $overall->cptC);
+
+                    $str .= $this->total_graph($components, $data);
+                    $str .= '</td>';
+                    $str .= '</tr>';
+
                 } else {
                     if (!$printedellipse) {
                         $iconurl = $this->output->pix_url('usedattempt', 'block_userquiz_monitor');
@@ -215,7 +274,7 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
             $str .= $this->launch_button($quizid, 'examination');
             $str .= '</form>';
         } else {
-            $str .= '<input type="submit" value="'.get_string('runexam', 'block_userquiz_monitor').'"/>';
+            $str .= '<button class="dimmed" type="submit" value="'.get_string('runexam', 'block_userquiz_monitor').'"/>';
         }
 
         $str .= '</div>';
@@ -330,7 +389,7 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
                 <input type="hidden" name="quizid" value="'.$quizid.'"/>
                 <input type="hidden" name="mode" value="'.$mode.'"/>
                 <input type="hidden" name="courseid" value="'.$COURSE->id.'"/>
-                <input type="submit" value="'.get_string('runexam', 'block_userquiz_monitor').'"/>
+                <input class="active" type="submit" value="'.get_string('runexam', 'block_userquiz_monitor').'"/>
             </div>
         ';
         return $str;

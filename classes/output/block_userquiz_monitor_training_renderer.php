@@ -92,7 +92,7 @@ class training_renderer extends \block_userquiz_monitor_renderer {
         $str = '';
 
         $str .= '<div>'; // Table.
-        $str .= '<div class="userquiz-monitor-row">'; // Row.
+        $str .= '<div class="">'; // Row.
 
         $str .= '<div class="userquiz-monitor-cell userquiz-cat-progress span9">';
         $str .= '<h1>'.$totalstr.' '.$this->output->help_icon('total', 'block_userquiz_monitor', false).'</h1>';

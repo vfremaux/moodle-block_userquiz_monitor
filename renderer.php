@@ -263,7 +263,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         $quizzeslist = str_replace(',', "','", $quizzeslist);
 
         $fields = 'id, name, parent';
-        if ($subcats = $DB->get_records('question_categories', array('parent' => $categoryid), 'sortorder, id', $fields )) {
+        if ($subcats = $DB->get_records('question_categories', array('parent' => $categoryid), 'sortorder', $fields )) {
 
             // Prepare aggregators.
             foreach ($subcats as $subcatid => $subcat) {
@@ -543,7 +543,8 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
             $str .= get_string('level1', 'block_userquiz_monitor');
             $str .= '</td>';
         }
-        $str .= '<td class="userquiz-monitor-bg">';
+        $str .= '<td class="userquiz-monitor-bg" style="text-align:center;">';
+        $str .= get_string('score', 'block_userquiz_monitor');
         $str .= '</td>';
 
         $str .= '<td class="userquiz-monitor-bg" style="text-align:center;font-size:0.8em;">';
@@ -653,34 +654,38 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
          * $label = get_string('menuamfref', 'block_userquiz_monitor', $conf->trainingprogramname);
          * $rows[0][] = new tabobject('schedule', "view.php?id=".$COURSE->id."&selectedview=schedule", $label);
          */
+        $activated = null;
         if (!empty($conf->trainingenabled)) {
+
+            if (empty($conf->examenabled)) {
+                // No tabs at all if only training.
+                return;
+            }
+
             $taburl = new moodle_url('/course/view.php', array('id' => $COURSE->id, 'selectedview' => 'training'));
             $rows[0][] = new tabobject('training', $taburl, get_string('menutest', 'block_userquiz_monitor'));
 
-            $activated = null;
-            if (!empty($conf->examenabled)) {
-                $examtab = get_string('menuexamination', 'block_userquiz_monitor');
-                $taburl = new moodle_url('/course/view.php', array('id' => $COURSE->id, 'selectedview' => 'examination'));
-                $rows[0][] = new tabobject('examination', $taburl, $examtab);
-    
-                if (in_array($selectedview, array('examination', 'examlaunch', 'examresults', 'examhistory'))) {
-                    $activated = array('examination');
-                    if ($selectedview == 'examination') {
-                        $selectedview = 'examlaunch'; // The default.
-                    }
-    
-                    $examtab = get_string('menuexamlaunch', 'block_userquiz_monitor');
-                    $taburl = new moodle_url('/course/view.php', array('id' => $COURSE->id, 'selectedview' => 'examlaunch'));
-                    $rows[1][] = new tabobject('examlaunch', $taburl, $examtab);
-    
-                    $examtab = get_string('menuexamresults', 'block_userquiz_monitor');
-                    $taburl = new moodle_url('/course/view.php', array('id' => $COURSE->id, 'selectedview' => 'examresults'));
-                    $rows[1][] = new tabobject('examresults', $taburl, $examtab);
-    
-                    $examtab = get_string('menuexamhistories', 'block_userquiz_monitor');
-                    $taburl = new moodle_url('/course/view.php', array('id' => $COURSE->id, 'selectedview' => 'examhistory'));
-                    $rows[1][] = new tabobject('examhistory', $taburl, $examtab);
+            $examtab = get_string('menuexamination', 'block_userquiz_monitor');
+            $taburl = new moodle_url('/course/view.php', array('id' => $COURSE->id, 'selectedview' => 'examination'));
+            $rows[0][] = new tabobject('examination', $taburl, $examtab);
+
+            if (in_array($selectedview, array('examination', 'examlaunch', 'examresults', 'examhistory'))) {
+                $activated = array('examination');
+                if ($selectedview == 'examination') {
+                    $selectedview = 'examlaunch'; // The default.
                 }
+
+                $examtab = get_string('menuexamlaunch', 'block_userquiz_monitor');
+                $taburl = new moodle_url('/course/view.php', array('id' => $COURSE->id, 'selectedview' => 'examlaunch'));
+                $rows[1][] = new tabobject('examlaunch', $taburl, $examtab);
+
+                $examtab = get_string('menuexamresults', 'block_userquiz_monitor');
+                $taburl = new moodle_url('/course/view.php', array('id' => $COURSE->id, 'selectedview' => 'examresults'));
+                $rows[1][] = new tabobject('examresults', $taburl, $examtab);
+
+                $examtab = get_string('menuexamhistories', 'block_userquiz_monitor');
+                $taburl = new moodle_url('/course/view.php', array('id' => $COURSE->id, 'selectedview' => 'examhistory'));
+                $rows[1][] = new tabobject('examhistory', $taburl, $examtab);
             }
         } else {
             // If only exam enabled, print exam tabs at first level.
@@ -736,6 +741,16 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         $str .= '</div>';
         $str .= '</div>'; // Row.
 
+        $str = $this->total_graph($components, $data);
+        $str .= '</div>';
+
+        return $str;
+    }
+
+    public function total_graph($components, $data) {
+
+        $str = '';
+
         $str .= '<table width="100%">';
         $str .= $this->render_bar_head_row('');
 
@@ -755,7 +770,6 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         }
 
         $str .= '</table>';
-        $str .= '</div>';
 
         return $str;
     }
