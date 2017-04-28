@@ -28,8 +28,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// Customscript type : CUSTOM_SCRIPT_REPLACEMENT.
-
 // require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
