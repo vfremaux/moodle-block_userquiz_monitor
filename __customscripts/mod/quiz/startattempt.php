@@ -26,6 +26,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+// Customscript type : CUSTOMSCRIPT_REPLACE.
+
 // require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
@@ -72,7 +74,6 @@ if ($forcenew) {
             array('quiz' => $quizobj->get_quizid(), 'userid' => $USER->id));
 }
 // CHANGE-.
-
 // Validate permissions for creating a new attempt and start a new preview attempt if required.
 list($currentattemptid, $attemptnumber, $lastattempt, $messages, $page) =
     quiz_validate_new_attempt($quizobj, $accessmanager, $forcenew, $page, true);
@@ -122,4 +123,6 @@ $attempt = quiz_prepare_and_start_new_attempt($quizobj, $attemptnumber, $lastatt
 
 // Redirect to the attempt page.
 redirect($quizobj->attempt_url($attempt->id, $page));
+//CHANGE+.
 die;
+// CHANGE-.

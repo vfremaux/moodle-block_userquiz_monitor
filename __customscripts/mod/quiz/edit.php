@@ -39,6 +39,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+// Customscript type : CUSTOMSCRIPT_CHANGE.
+
 // require_once(__DIR__.'/../../config.php');
 require_once($CFG->dirroot.'/mod/quiz/locallib.php');
 require_once($CFG->dirroot.'/mod/quiz/addrandomform.php');
@@ -181,7 +183,9 @@ $questionbank->process_actions($thispageurl, $cm);
 $PAGE->set_pagelayout('incourse');
 $PAGE->set_pagetype('mod-quiz-edit');
 
+// CHANGE+.
 $output = $PAGE->get_renderer('mod_quiz', 'edit_constrained');
+// CHANGE-.
 
 $PAGE->set_title(get_string('editingquizx', 'quiz', format_string($quiz->name)));
 $PAGE->set_heading($course->fullname);
@@ -216,5 +220,6 @@ echo $output->edit_page($quizobj, $structure, $contexts, $thispageurl, $pagevars
 echo html_writer::end_tag('div');
 
 echo $OUTPUT->footer();
-
+// CHANGE+.
 die;
+// CHANGE-.
