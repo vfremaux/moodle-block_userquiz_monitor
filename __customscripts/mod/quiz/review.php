@@ -25,7 +25,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+// Customscript type : CUSTOMSCRIPT_REPLACE.
 
+// require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
 
@@ -61,7 +63,6 @@ if (is_dir($CFG->dirroot.'/blocks/userquiz_monitor')) {
     // check_userquiz_monitor_review_applicability($attemptobj);
 }
 // CHANGE-.
-
 // Create an object to manage all the other (non-roles) access rules.
 $accessmanager = $attemptobj->get_access_manager(time());
 $accessmanager->setup_attempt_page($PAGE);
@@ -259,6 +260,7 @@ if ($showall) {
 
 $output = $PAGE->get_renderer('mod_quiz');
 
+// CHANGE+.
 $uqconfig = null;
 if (is_dir($CFG->dirroot.'/blocks/userquiz_monitor')) {
     include_once($CFG->dirroot . '/blocks/userquiz_monitor/xlib.php');
@@ -273,10 +275,12 @@ if (empty($uqconfig)) {
     $regions = $PAGE->blocks->get_regions();
     $PAGE->blocks->add_fake_block($navbc, reset($regions));
 }
+// CHANGE-.
 
-echo $output->review_page($attemptobj, $slots, $page, $showall, $lastpage, $options, $summarydata, $uqconfig);
+echo $output->review_page($attemptobj, $slots, $page, $showall, $lastpage, $options, $summarydata);
 
 // Trigger an event for this review.
 $attemptobj->fire_attempt_reviewed_event();
-
+// CHANGE+.
 die();
+// CHANGE-.

@@ -22,6 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+// Customscript type : CUSTOMSCRIPT_REPLACE.
 
 // require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
@@ -81,6 +82,7 @@ if (empty($attemptobj->get_quiz()->showblocks)) {
     $PAGE->blocks->show_only_fake_blocks();
 }
 
+// CHANGE+.
 $uqconfig = null;
 if (is_dir($CFG->dirroot.'/blocks/userquiz_monitor')) {
     include_once($CFG->dirroot.'/blocks/userquiz_monitor/xlib.php');
@@ -92,6 +94,7 @@ if (empty($uqconfig)) {
     $regions = $PAGE->blocks->get_regions();
     $PAGE->blocks->add_fake_block($navbc, reset($regions));
 }
+// CHANGE-.
 
 $PAGE->navbar->add(get_string('summaryofattempt', 'quiz'));
 $PAGE->set_title($attemptobj->get_quiz_name());
@@ -102,4 +105,6 @@ echo $output->summary_page($attemptobj, $displayoptions);
 
 // Log this page view.
 $attemptobj->fire_attempt_summary_viewed_event();
+// CHANGE+.
 die;
+// CHANGE-.

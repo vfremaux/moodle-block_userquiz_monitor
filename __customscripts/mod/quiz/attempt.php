@@ -22,10 +22,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// CUSTOMSCRIPT.
+// Customscript type : CUSTOMSCRIPT_REPLACE.
+
 // require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
-require_once($CFG->dirroot . '/blocks/userquiz_monitor/xlib.php');
 
 // Look for old-style URLs, such as may be in the logs, and redirect them to startattemtp.php.
 if ($id = optional_param('id', 0, PARAM_INT)) {
@@ -50,6 +50,7 @@ $PAGE->set_url($attemptobj->attempt_url(null, $page));
 if (is_dir($CFG->dirroot.'/blocks/userquiz_monitor')) {
     include_once($CFG->dirroot.'/blocks/userquiz_monitor/xlib.php');
     block_userquiz_monitor_attempt_adds($attemptobj);
+    $uqconfig = block_userquiz_monitor_check_has_quiz_ext($attemptobj->get_course(), $attemptobj->get_quizid());
 }
 // CHANGE-.
 
@@ -119,13 +120,12 @@ if (!$attemptobj->set_currentpage($page)) {
     redirect($attemptobj->start_attempt_url(null, $attemptobj->get_currentpage()));
 }
 
-$uqconfig = block_userquiz_monitor_check_has_quiz_ext($attemptobj->get_course(), $attemptobj->get_quizid());
-
 // Initialise the JavaScript.
 $headtags = $attemptobj->get_html_head_contributions($page);
 $PAGE->requires->js_init_call('M.mod_quiz.init_attempt_form', null, false, quiz_get_js_module());
 
 // Arrange for the navigation to be displayed in the first region on the page.
+// CHANGE+.
 if (empty($uqconfig)) {
     $navbc = $attemptobj->get_navigation_panel($output, 'quiz_attempt_nav_panel', $page);
     $regions = $PAGE->blocks->get_regions();
@@ -141,6 +141,7 @@ if (empty($uqconfig)) {
     $regions = $PAGE->blocks->get_regions();
     $PAGE->blocks->add_fake_block($bc, reset($regions));
 }
+//CHANGE-.
 
 $title = get_string('attempt', 'quiz', $attemptobj->get_attempt_number());
 $headtags = $attemptobj->get_html_head_contributions($page);
@@ -154,4 +155,6 @@ if ($attemptobj->is_last_page($page)) {
 }
 
 echo $output->attempt_page($attemptobj, $page, $accessmanager, $messages, $slots, $id, $nextpage);
+// CHANGE+.
 die;
+// CHANGE-.
