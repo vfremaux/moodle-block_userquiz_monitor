@@ -174,6 +174,23 @@ class training_renderer extends \block_userquiz_monitor_renderer {
 
         $str .= '</div>'; // Row.
 
+        if (optional_param('qdebug', false, PARAM_BOOL)) {
+            $str .= '<div class="qdebug"><pre>';
+            if (!empty($cat->questions['A'])) {
+                $str .= 'A questions'."\n";
+                foreach ($cat->questions['A'] as $catid => $catqs) {
+                    $str .= $catid.' => '.implode(', ', $catqs)."\n";
+                }
+            }
+            if (!empty($cat->questions['C'])) {
+                $str .= 'C questions'."\n";
+                foreach ($cat->questions['C'] as $catid => $catqs) {
+                    $str .= $catid.' => '.implode(', ', $catqs)."\n";
+                }
+            }
+            $str .= '</pre></div>';
+        }
+
         $str .= '<div class="category-bargraph">'; // Not a row. Must collapse.
         $str .= '<table width="100%">';
         $str .= $this->render_bar_head_row('');

@@ -142,14 +142,30 @@ function block_userquiz_monitor_init_rootcats($rootcategory, &$rootcats) {
         $cattreelist = block_userquiz_monitor_get_cattreeids($cat->id, $catidarr);
         $cattreelist = implode("','", $catidarr);
 
-        $select = " category IN ('$cattreelist') AND defaultmark = 1000 ";
+        $select = " category IN ('$cattreelist') AND defaultmark = 1000 AND qtype NOT LIKE 'random%' ";
         if ($DB->record_exists_select('question', $select, array())) {
             $rootcats[$catid]->questiontypes['C'] = 1;
         }
-        $select = " category IN ('$cattreelist') AND defaultmark = 1 ";
+        if (optional_param('qdebug', false, PARAM_BOOL)) {
+            if ($questions = $DB->get_records_select('question', $select, array(), 'id', 'id,category')) {
+                foreach ($questions as $q) {
+                    $rootcats[$catid]->questions['C'][$q->category][] = $q->id;
+                }
+            }
+        }
+
+        $select = " category IN ('$cattreelist') AND defaultmark = 1 AND qtype NOT LIKE 'random%' ";
         if ($DB->record_exists_select('question', $select, array())) {
             $rootcats[$catid]->questiontypes['A'] = 1;
         }
+        if (optional_param('qdebug', false, PARAM_BOOL)) {
+            if ($questions = $DB->get_records_select('question', $select, array(), 'id', 'id,category')) {
+                foreach ($questions as $q) {
+                    $rootcats[$catid]->questions['A'][$q->category][] = $q->id;
+                }
+            }
+        }
+
     }
     return;
 }

@@ -436,11 +436,11 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                     if ($mode == "training") {
                         $jshandler = 'updateselectorpr('.$courseid.','.$rootcategory.', \''.$subcategoriesids.'\', \'all\'';
                         $jshandler .= ', \''.$quizzesliststring.'\');';
-                        $cb = '<input type="checkbox"
+                        $cb = '<table><tr><td><input type="checkbox"
                                name="checkall_pr"
                                id="checkall_pr"
                                onclick="'.$jshandler.'"
-                               style="padding-left:2px;" /> <span class="select-all">'.get_string('selectallcb', 'block_userquiz_monitor').'</span>';
+                               style="padding-left:2px;" /> <span class="select-all">'.get_string('selectallcb', 'block_userquiz_monitor').'</span></td></tr></table>';
                     }
 
                     $str .= '<div class="trans100 subcategory-cancel" id="divpr">';
@@ -459,11 +459,12 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                     $jshandler = 'updateselectorpr('.$courseid.', '.$rootcategory.',';
                     $jshandler .= ' \''.$subcategoriesids.'\', \'none\', \''.$quizzesliststring.'\')';
                     $cb = '
-                        <input type="checkbox"
+                        <table><tr><td><input type="checkbox"
                           name="cbpr'.$subcat->id.'"
                           id="cbpr'.$subcat->id.'"
+                          class="cbpr"
                           onclick="'.$jshandler.'"
-                          style="padding-left:2px;" />
+                          style="padding-left:2px;" /></td></tr></table>
                     ';
                 }
 
