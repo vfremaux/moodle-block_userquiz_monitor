@@ -79,7 +79,8 @@ function get_monitortest($courseid, &$response, &$block) {
     $response .= $scripts;
     $formurl = new moodle_url('/blocks/userquiz_monitor/userpreset.php');
     $response .= '<div id="userquiz-subpod-switch"></div>';
-    $response .= '<form name="form" method="GET" action="'.$formurl.'">';
+    $jshandler = 'form_submit(this)';
+    $response .= '<form name="form" method="GET" action="'.$formurl.'" onsubmit="'.$jshandler.'">';
     $response .= '<input type="hidden" name="blockid" value="'.$block->instance->id.'">';
 
     if ($block->config->trainingshowhistory) {

@@ -281,6 +281,7 @@ echo $output->review_page($attemptobj, $slots, $page, $showall, $lastpage, $opti
 
 // Trigger an event for this review.
 $attemptobj->fire_attempt_reviewed_event();
+
 // CHANGE+.
 die();
 // CHANGE-.
