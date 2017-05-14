@@ -65,6 +65,11 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
             $categorymenu = block_userquiz_monitor_get_categories_for_root();
         }
 
+        $label = get_string('configrootcategory', 'block_userquiz_monitor');
+        $mform->addElement('select', 'config_rootcategory', $label, $categorymenu);
+        $mform->setType('config_rootcategory', PARAM_INT);
+        $mform->addHelpButton('config_rootcategory', 'configrootcategory', 'block_userquiz_monitor');
+
         $label = get_string('configinformationpageid', 'block_userquiz_monitor');
         $mform->addElement('text', 'config_informationpageid', $label);
         $mform->setType('config_informationpageid', PARAM_INT);
@@ -109,16 +114,15 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
         $select = $mform->addElement('select', 'config_trainingquizzes', $label, $quizzeslist);
         $select->setMultiple(true);
 
-        $label = get_string('configrootcategory', 'block_userquiz_monitor');
-        $mform->addElement('select', 'config_rootcategory', $label, $categorymenu);
-        $mform->setType('config_rootcategory', PARAM_INT);
-
         $label = get_string('configquizforceanswer', 'block_userquiz_monitor');
         $mform->addElement('advcheckbox', 'config_trainingforceanswer', $label);
         $mform->addHelpButton('config_trainingforceanswer', 'configquizforceanswer', 'block_userquiz_monitor');
 
         $label = get_string('configquiznobackwards', 'block_userquiz_monitor');
         $mform->addElement('advcheckbox', 'config_trainingnobackwards', $label);
+
+        $label = get_string('configshowhistory', 'block_userquiz_monitor');
+        $mform->addElement('advcheckbox', 'config_trainingshowhistory', $label, '', 0);
 
         // Configuration for exam system.
 

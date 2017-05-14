@@ -139,17 +139,33 @@ function block_userquiz_monitor_init_rootcats($rootcategory, &$rootcats) {
         $rootcats[$catid]->questiontypes = array();
 
         $catidarr = array($cat->id);
-        $cattreelist = userquiz_monitor_get_cattreeids($cat->id, $catidarr);
+        $cattreelist = block_userquiz_monitor_get_cattreeids($cat->id, $catidarr);
         $cattreelist = implode("','", $catidarr);
 
-        $select = " category IN ('$cattreelist') AND defaultmark = 1000 ";
+        $select = " category IN ('$cattreelist') AND defaultmark = 1000 AND qtype NOT LIKE 'random%' ";
         if ($DB->record_exists_select('question', $select, array())) {
             $rootcats[$catid]->questiontypes['C'] = 1;
         }
-        $select = " category IN ('$cattreelist') AND defaultmark = 1 ";
+        if (optional_param('qdebug', false, PARAM_BOOL)) {
+            if ($questions = $DB->get_records_select('question', $select, array(), 'id', 'id,category')) {
+                foreach ($questions as $q) {
+                    $rootcats[$catid]->questions['C'][$q->category][] = $q->id;
+                }
+            }
+        }
+
+        $select = " category IN ('$cattreelist') AND defaultmark = 1 AND qtype NOT LIKE 'random%' ";
         if ($DB->record_exists_select('question', $select, array())) {
             $rootcats[$catid]->questiontypes['A'] = 1;
         }
+        if (optional_param('qdebug', false, PARAM_BOOL)) {
+            if ($questions = $DB->get_records_select('question', $select, array(), 'id', 'id,category')) {
+                foreach ($questions as $q) {
+                    $rootcats[$catid]->questions['A'][$q->category][] = $q->id;
+                }
+            }
+        }
+
     }
     return;
 }
@@ -195,12 +211,18 @@ function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategor
     $errormsg = false;
     $rootcatkeys = array_keys($rootcats);
 
+    $graded = null;
+    if ($mode == 'training') {
+        $graded = 'answered';
+    }
+
     if (!empty($userattempts)) {
         foreach ($userattempts as $ua) {
-            if ($allstates = block_userquizmonitor_get_all_user_records($ua->uniqueid, $USER->id, null, true)) {
+            if ($allstates = block_userquiz_monitor_get_all_user_records($ua->uniqueid, $USER->id, $graded, true)) {
 
                 if ($allstates->valid()) {
                     foreach ($allstates as $state) {
+
                         if (($mode == 'training') && is_null($state->grade)) {
                             continue;
                         }
@@ -392,12 +414,14 @@ function block_userquiz_monitor_check_has_quiz($course, $quizid) {
 
         if ($quizid == $config->examquiz) {
             $config->mode = 'exam';
+            $config->uqm = $uqm;
             return $config;
         }
 
         if (!empty($config->trainingquizzes)) {
             if (in_array($quizid, $config->trainingquizzes)) {
                 $config->mode = 'training';
+                $config->uqm = $uqm;
                 return $config;
             }
         }
@@ -417,4 +441,119 @@ function userquiz_build_course() {
 
     userquiz_add_quizzes();
 
+}
+
+/**
+ * get all states from a user
+ * @param int $attemptid
+ * @param int $userid
+ * @param mixed $grade if 'answered', get all answered questions, whether they have positive grade or not.
+ * if 'graded' get all non 0 graded records, if numeric, get records with such grade, get all if not defined
+ */
+function block_userquiz_monitor_get_all_user_records($attemptuniqueid, $userid, $grade = null, $asrecordset = false) {
+    global $DB;
+
+    $gradeclause = '';
+    if ($grade === 'answered') {
+        $gradeclause = ' AND qas.fraction IS NOT NULL ';
+    } else if ($grade === 'graded') {
+        $gradeclause = ' AND qas.fraction IS NOT NULL AND qas.fraction > 0 ';
+    }
+
+    $sql = "
+        SELECT
+            qas.questionattemptid,
+            qa.questionid as question,
+            MAX(qas.fraction) as grade,
+            qa.questionusageid as uaid
+        FROM
+            {question_attempt_steps} qas,
+            {question_attempts} qa
+        WHERE
+            qas.questionattemptid = qa.id AND
+            qa.questionusageid = ? AND
+            qas.state != 'todo'
+            $gradeclause
+        GROUP BY
+            qas.questionattemptid
+    ";
+
+    if ($asrecordset) {
+        $rs = $DB->get_recordset_sql($sql, array($attemptuniqueid));
+        return $rs;
+    }
+
+    if (!$records = $DB->get_records_sql($sql, array($attemptuniqueid))) {
+        return array();
+    }
+
+    return $records;
+}
+
+function block_userquiz_monitor_count_available_attempts($userid, $quizid) {
+    global $DB;
+
+    $select = "
+        userid = ? AND
+        quiz = ?
+    ";
+    $usedattempts = $DB->get_records_select('quiz_attempts', $select, array($userid, $quizid));
+    $params = array('userid' => $userid, 'quizid' => $quizid);
+    $limitsenabled = $DB->get_field('qa_usernumattempts', 'enabled', array('quizid' => $quizid));
+    if (!$limitsenabled) {
+        // Always give a new attempts to requirer.
+        return 1;
+    }
+    $availableattempts = $DB->get_field('qa_usernumattempts_limits', 'maxattempts', $params);
+
+    $userattemptscount = (is_array($usedattempts)) ? count($usedattempts) : 0;
+    return max(0, $availableattempts - $userattemptscount);
+}
+
+function block_userquiz_monitor_get_cattreeids($catid, &$catids) {
+    global $DB;
+
+    static $deepness = 0;
+
+    if ($subcats = $DB->get_records_menu('question_categories', array('parent' => $catid), 'id,name')) {
+        $catids = array_merge($catids, array_keys($subcats));
+        foreach (array_keys($subcats) as $subcatid) {
+            $deepness++;
+            if ($deepness > 10) {
+                die('too deep');
+            }
+            block_userquiz_monitor_get_cattreeids($subcatid, $catids);
+            $deepness--;
+        }
+    }
+}
+
+function block_userquiz_monitor_get_quiz_by_numquestions($courseid, $theblock, $nbquestions) {
+    global $DB;
+
+    list($insql, $params) = $DB->get_in_or_equal($theblock->config->trainingquizzes);
+    $params = array_merge(array($courseid), $params);
+
+    $sql = "
+        SELECT
+            count(qs.questionid) as numquestions,
+            qs.quizid
+           FROM
+            {quiz} q,
+            {quiz_slots} qs
+        WHERE
+            q.course = ? AND
+            qs.quizid = q.id AND
+            q.id $insql
+        GROUP BY
+            qs.quizid
+    ";
+
+    $quizes = $DB->get_records_sql($sql, $params);
+
+    if (!isset($quizes[$nbquestions])) {
+        print_error('erroruserquiznoquiz', 'block_userquiz_monitor');
+    }
+
+    return $quizes[$nbquestions]->quizid;
 }
