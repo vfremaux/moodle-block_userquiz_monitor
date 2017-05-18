@@ -728,8 +728,8 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         $str = '';
 
         $str .= '<div style="padding:5px;">';
-        $str .= '<div class="userquiz-monitor-row colspaned">';
-        $str .= '<div class="userquiz-monitor-cell">';
+        $str .= $this->output->box_start('userquiz-monitor-row colspaned');
+        $str .= $this->output->box_start('userquiz-monitor-cell');
         $str .= '<p>'.$totaldescstr.'</p>';
 
         if ($mode == 'training' && has_capability('moodle/site:config', context_system::instance(), @$USER->realuser)) {
@@ -739,10 +739,10 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
             $str .= '<input type="button" value="'.$label.'" id="" onclick="'.$jshandler.'" /></p>';
         }
 
-        $str .= '</div>';
-        $str .= '</div>'; // Row.
+        $str .= $this->output->box_end();
+        $str .= $this->output->box_end(); // Row.
 
-        $str = $this->total_graph($components, $data);
+        $str .= $this->total_graph($components, $data);
         $str .= '</div>';
 
         return $str;

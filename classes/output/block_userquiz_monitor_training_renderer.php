@@ -91,30 +91,31 @@ class training_renderer extends \block_userquiz_monitor_renderer {
 
         $str = '';
 
-        $str .= '<div>'; // Table.
-        $str .= '<div class="">'; // Row.
+        $str .= $this->output->box_start(); // Table.
+        $str .= $this->output->box_start(); // Row.
 
-        $str .= '<div class="userquiz-monitor-cell userquiz-cat-progress span9">';
+        $str .= $this->output->box_start('userquiz-monitor-cell userquiz-cat-progress span9');
+
         $str .= '<h1>'.$totalstr.' '.$this->output->help_icon('total', 'block_userquiz_monitor', false).'</h1>';
-        $str .= '<div class="trans100">';
-        $str .= $total;
-        $str .= '</div>';
-        $str .= '</div>';
+        $str .= $this->output->box($total, 'trans100');
 
-        $str .= '<div class="userquiz-monitor-cell span3">';
+        $str .= $this->output->box_end();
+
+        $str .= $this->output->box_start('userquiz-monitor-cell span3');
 
         $helpicon = $this->output->help_icon('launch', 'block_userquiz_monitor', false);
         $str .= '<h1>'.get_string('runtest', 'block_userquiz_monitor').' '.$helpicon.'</h1>';
 
-        $str .= '<div class="trans100">';
+        $str .= $this->output->box_start('trans100');
         $str .= '<div id="userquiz-training-selector" class="selectorcontainers" style="width:100%; font-size : 120%;">';
         $str .= $selector;
         $str .= '</div>';
-        $str .= '</div>';
-        $str .= '</div>';
+        $str .= $this->output->box_end();
 
-        $str .= '</div>'; // Row.
-        $str .= '</div>'; // Table.
+        $str .= $this->output->box_end();
+
+        $str .= $this->output->box_end(); // Row
+        $str .= $this->output->box_end(); // Table.
 
         return $str;
     }
@@ -125,36 +126,34 @@ class training_renderer extends \block_userquiz_monitor_renderer {
 
         $str = '';
 
-        $str .= '<div class="trans100" id="divpl'.$cat->id.'">';
-        $str .= '<div class="userquiz-monitor-categorycontainer">'; // Table.
+        $str .= $this->output->box_start('trans100', 'divpl'.$cat->id);
+        $str .= $this->output->box_start('userquiz-monitor-categorycontainer'); // Table.
 
-        $str .= '<div class="userquiz-monitor-row">'; // Row.
+        $str .= $this->box_start('userquiz-monitor-row'); // Row.
 
-        $str .= '<div class="userquiz-monitor-cell categorychoice">';
+        $str .= $this->box_start('userquiz-monitor-cell categorychoice');
         $str .= '<input type="checkbox"
                         name="cb_pl'.$cat->id.'"
                         id="cbpl'.$cat->id.'"
                         onclick="'.$cat->jshandler1.'"
                         style="padding-left:2px;" />';
-        $str .= '</div>';
+        $str .= $this->output->box_end(); // Cell.
 
-        $str .= '<div class="userquiz-monitor-cell categoryname">';
-        $str .= $cat->name;
-        $str .= '</div>';
-        $str .= '</div>'; // Row.
+        $str .= $this->output->box($cat->name, 'userquiz-monitor-cell categoryname');
 
-        $str .= '<div class="userquiz-monitor-row">'; // Row
-        $str .= '<div class="userquiz-monitor-cell">';
+        $str .= $this->output->box_end(); // Row.
+
+        $str .= $this->output->box_start('userquiz-monitor-row'); // Row
+
+        $str .= $this->output->box_start('userquiz-monitor-cell');
         $str .= $cat->accessorieslink;
         $str .= '<input type="hidden" name="h_cb_pl'.$cat->id.'" value="h_cb_pl'.$cat->id.'"/>';
-        $str .= '</div>';
-
-        $str .= '<div class="userquiz-monitor-cell">';
+        $str .= $this->output->box_end();
 
         // Blank cell.
-        $str .= '</div>';
+        $str .= $this->output->box('', 'userquiz-monitor-cell');
 
-        $str .= '<div class="userquiz-monitor-cell">';
+        $str .= $this->output->box_start('userquiz-monitor-cell');
         $pixurl = $this->get_area_url('detailsicon');
         if ($pixurl) {
             $str .= '<img class="userquiz-monitor-cat-button"
@@ -170,9 +169,9 @@ class training_renderer extends \block_userquiz_monitor_renderer {
                           value="'.$seesubsstr.'"
                           onclick="'.$cat->jshandler2.'"/>';
         }
-        $str .= '</div>';
+        $str .= $this->output->box_end();
 
-        $str .= '</div>'; // Row.
+        $str .= $this->output->box_end(); // Row.
 
         if (optional_param('qdebug', false, PARAM_BOOL)) {
             $str .= '<div class="qdebug"><pre>';
@@ -191,7 +190,7 @@ class training_renderer extends \block_userquiz_monitor_renderer {
             $str .= '</pre></div>';
         }
 
-        $str .= '<div class="category-bargraph">'; // Not a row. Must collapse.
+        $str .= $this->output->box_start('category-bargraph'); // Not a row. Must collapse.
         $str .= '<table width="100%">';
         $str .= $this->render_bar_head_row('');
 
@@ -221,10 +220,10 @@ class training_renderer extends \block_userquiz_monitor_renderer {
         }
 
         $str .= '</table>';
-        $str .= '</div>'; // Not a Row.
+        $str .= $this->output->box_end(); // Not a row.
 
-        $str .= '</div>'; // Table.
-        $str .= '</div>';
+        $str .= $this->output->box_end(); // Table.
+        $str .= $this->output->box_end();
 
         /*
          * Invisible subcat cat instance container for narrow screens.

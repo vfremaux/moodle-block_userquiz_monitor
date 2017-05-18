@@ -248,6 +248,7 @@ function activedisplayexaminationsubcategories(courseid, categoryid, list, quizi
     }, 'html');
 }
 
+/* Probably useless */
 function form_submit(formelm) {
     $.each('.cbpr', function(index, value) {
         if ($(value).prop('checked')) {

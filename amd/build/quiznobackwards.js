@@ -7,9 +7,12 @@
 // jshint undef:false, unused:false
 /* globals $ */
 
-$(document).ready( function() {
+define(['jquery'], function($) {
 
-    // Disables prev button.
-    $('.mod_quiz-prev-nav').css('display', 'none');
-
+    return {
+        init: function() {
+            // Disables prev button.
+            $('.mod_quiz-prev-nav').css('display', 'none');
+        }
+    };
 });
