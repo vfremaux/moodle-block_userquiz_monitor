@@ -134,7 +134,11 @@ function displaytrainingsubcategories(courseid, rootcategory, categoryid, list, 
             $('.category-subpod').css('visibility', 'hidden');
             $('.category-subpod').css('display', 'none');
             // Show which we want.
-            $('#category-subcatpod-' + categoryid).html(data);
+
+            // $('#category-subcatpod-' + categoryid).html(data);
+            pod = document.getElementById('category-subcatpod-' + categoryid);
+            pod.innerHTML = data;
+
             $('#category-subcatpod-' + categoryid).css('visibility', 'visible');
             $('#category-subcatpod-' + categoryid).css('display', 'block');
             $('#divpl' + categoryid)[0].scrollIntoView();
@@ -144,13 +148,18 @@ function displaytrainingsubcategories(courseid, rootcategory, categoryid, list, 
             $('.category-subpod').css('visibility', 'hidden');
             $('.category-subpod').css('display', 'none');
 
-            $('#displaysubcategories').html(data);
+            // $('#displaysubcategories').html(data);
+
+            partright = document.getElementById('displaysubcategories');
+            partright.innerHTML = data;
+
             $('.tablemonitorcategorycontainer .userquiz-monitor-row').css('display', 'block');
 
             // Get top pos of the left block.
             var origtop = Math.round($('#userquiz-select-all').offset().top);
             var leftpostop = Math.round($('#divpl' + categoryid).offset().top);
-    
+
+            $('#displaysubcategories').css('display', 'block');
             $('#displaysubcategories').css('position', 'relative');
             $('#displaysubcategories').css('top', leftpostop - origtop);
         }
@@ -237,6 +246,15 @@ function activedisplayexaminationsubcategories(courseid, categoryid, list, quizi
         $('#displaysubcategories').html(data);
         $('.tablemonitorcategorycontainer .userquiz-monitor-row').css('display', 'block');
     }, 'html');
+}
+
+/* Probably useless */
+function form_submit(formelm) {
+    $.each('.cbpr', function(index, value) {
+        if ($(value).prop('checked')) {
+            formelm.elements[$(value).attr('name')] = 'on';
+        }
+    });
 }
 
 /**

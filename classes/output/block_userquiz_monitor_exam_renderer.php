@@ -82,7 +82,6 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
         $noavailableattemptsstr = get_string('noavailableattemptsstr', 'block_userquiz_monitor');
         $availablestr = get_string('available', 'block_userquiz_monitor');
         $attemptstr = get_string('attempt', 'block_userquiz_monitor');
-        $stillavailablestr = get_string('stillavailable', 'block_userquiz_monitor');
 
         $str = '<div style="margin-top:5px" class="trans100" >';
         $str .= '<table style="font-size:0.8em" width="100%">';
@@ -102,6 +101,9 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
             $usedix = $used;
             foreach ($usedattempts as $usedattempt) {
                 $usedattempts = array($usedattempt);
+
+                $overall = block_userquiz_monitor_init_overall();
+
                 $errors = block_userquiz_monitor_compute_all_results($usedattempts, $rootcategory, $rootcats,
                                                                                    $attempts, $overall, 'exam');
 
@@ -142,7 +144,7 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
                     $str .= '<td colspan="3">';
 
                     $graphwidth = ($overall->ratio * 100) / $maxratio;
-            
+
                     // Prepare results bargaphs.
                     $graphparams = array (
                         'boxheight' => 50,
@@ -230,7 +232,8 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
                 if ($attemptsleft) {
                     // If we could not display all available.
                     $str .= '<tr valign="top">';
-                    $str .= '<td>'.$attemptsleft.' '.$stillavailablestr.'</td>';
+                    $stillavailablestr = get_string('stillavailable', 'block_userquiz_monitor', $attemptsleft);
+                    $str .= '<td colspan="3" class="uq-more-attempts">'.$stillavailablestr.'</td>';
                     $str .= '</tr>';
                 }
             } else {
@@ -274,7 +277,7 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
             $str .= $this->launch_button($quizid, 'examination');
             $str .= '</form>';
         } else {
-            $str .= '<button class="dimmed" type="submit" value="'.get_string('runexam', 'block_userquiz_monitor').'"/>';
+            $str .= '<input type="button" class="dimmed" type="submit" value="'.get_string('runexam', 'block_userquiz_monitor').'"/>';
         }
 
         $str .= '</div>';

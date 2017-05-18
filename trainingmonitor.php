@@ -79,7 +79,8 @@ function get_monitortest($courseid, &$response, &$block) {
     $response .= $scripts;
     $formurl = new moodle_url('/blocks/userquiz_monitor/userpreset.php');
     $response .= '<div id="userquiz-subpod-switch"></div>';
-    $response .= '<form name="form" method="GET" action="'.$formurl.'">';
+    $jshandler = 'form_submit(this)';
+    $response .= '<form name="form" method="GET" action="'.$formurl.'" onsubmit="'.$jshandler.'">';
     $response .= '<input type="hidden" name="blockid" value="'.$block->instance->id.'">';
 
     if ($block->config->trainingshowhistory) {
@@ -146,14 +147,14 @@ function get_monitortest($courseid, &$response, &$block) {
 
     $response .= $renderer->global_monitor($total, $selector);
 
-    $response .= '<div class="userquiz-monitor-trainingcontainer container-fluid">';
+    $response .= $OUTPUT->box_start('userquiz-monitor-trainingcontainer container-fluid');
 
     if (!empty($errormsg)) {
         $response .= $renderer->errorline($errormsg);
     }
 
-    $response .= '<div class="userquiz-monitor-container-row row-fluid">';
-    $response .= '<div class="userquiz-monitor-area span6">';
+    $response .= $OUTPUT->box_start('userquiz-monitor-container-row row-fluid');
+    $response .= $OUTPUT->box_start('userquiz-monitor-area span6');
 
     $cpt = 0;
     $scale = '';
@@ -247,14 +248,13 @@ function get_monitortest($courseid, &$response, &$block) {
         $notenum++;
     }
     $response .= '<span class="smallnotes">'.get_string('columnnotesratio', 'block_userquiz_monitor', $notenum).'</span>';
-    $response .= '</div>'; // Closing area.
 
-    $response .= '<div class="userquiz-monitor-area span6">';
-    $response .= $renderer->category_detail_container();
-    $response .= '</div>';
+    $response .= $OUTPUT->box_end(); // Closing area.
 
-    $response .= '</div>'; // Table row.
-    $response .= '</div>'; // Training Container Table.
+    $response .= $OUTPUT->box($renderer->category_detail_container(), 'userquiz-monitor-area span6');
+
+    $response .= $OUTPUT->box_end(); // Table row.
+    $response .= $OUTPUT->box_end(); // Training Container Table.
 
     // Will display only for small screens.
     // $response .= $renderer->training_second_button($selector);

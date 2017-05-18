@@ -436,11 +436,11 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                     if ($mode == "training") {
                         $jshandler = 'updateselectorpr('.$courseid.','.$rootcategory.', \''.$subcategoriesids.'\', \'all\'';
                         $jshandler .= ', \''.$quizzesliststring.'\');';
-                        $cb = '<input type="checkbox"
+                        $cb = '<table><tr><td><input type="checkbox"
                                name="checkall_pr"
                                id="checkall_pr"
                                onclick="'.$jshandler.'"
-                               style="padding-left:2px;" /> <span class="select-all">'.get_string('selectallcb', 'block_userquiz_monitor').'</span>';
+                               style="padding-left:2px;" /> <span class="select-all">'.get_string('selectallcb', 'block_userquiz_monitor').'</span></td></tr></table>';
                     }
 
                     $str .= '<div class="trans100 subcategory-cancel" id="divpr">';
@@ -459,11 +459,12 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                     $jshandler = 'updateselectorpr('.$courseid.', '.$rootcategory.',';
                     $jshandler .= ' \''.$subcategoriesids.'\', \'none\', \''.$quizzesliststring.'\')';
                     $cb = '
-                        <input type="checkbox"
+                        <table><tr><td><input type="checkbox"
                           name="cbpr'.$subcat->id.'"
                           id="cbpr'.$subcat->id.'"
+                          class="cbpr"
                           onclick="'.$jshandler.'"
-                          style="padding-left:2px;" />
+                          style="padding-left:2px;" /></td></tr></table>
                     ';
                 }
 
@@ -727,8 +728,8 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         $str = '';
 
         $str .= '<div style="padding:5px;">';
-        $str .= '<div class="userquiz-monitor-row colspaned">';
-        $str .= '<div class="userquiz-monitor-cell">';
+        $str .= $this->output->box_start('userquiz-monitor-row colspaned');
+        $str .= $this->output->box_start('userquiz-monitor-cell');
         $str .= '<p>'.$totaldescstr.'</p>';
 
         if ($mode == 'training' && has_capability('moodle/site:config', context_system::instance(), @$USER->realuser)) {
@@ -738,10 +739,10 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
             $str .= '<input type="button" value="'.$label.'" id="" onclick="'.$jshandler.'" /></p>';
         }
 
-        $str .= '</div>';
-        $str .= '</div>'; // Row.
+        $str .= $this->output->box_end();
+        $str .= $this->output->box_end(); // Row.
 
-        $str = $this->total_graph($components, $data);
+        $str .= $this->total_graph($components, $data);
         $str .= '</div>';
 
         return $str;

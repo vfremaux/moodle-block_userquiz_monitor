@@ -60,15 +60,17 @@ function block_userquiz_monitor_attempt_adds($attemptobj) {
     if ($config) {
         if (($config->mode == 'exam' && !empty($config->examforceanswer)) ||
                 ($config->mode == 'training' && !empty($config->trainingforceanswer))) {
-            $PAGE->requires->js('/blocks/userquiz_monitor/js/quizforceanswer.js');
+            $PAGE->requires->js_call_amd('block_userquiz_monitor/quizforceanswer', 'init');
         }
         if (($config->mode == 'exam' && !empty($config->examnobackwards)) ||
                 ($config->mode == 'training' && !empty($config->trainingnobackwards))) {
-            $PAGE->requires->js('/blocks/userquiz_monitor/js/quiznobackwards.js');
+            $PAGE->requires->js_call_amd('block_userquiz_monitor/quiznobackwards', 'init');
         }
         if ($config->protectcopy) {
-            $PAGE->requires->js('/blocks/userquiz_monitor/js/quizprotectcopy.js');
+            $PAGE->requires->js_call_amd('block_userquiz_monitor/quizprotectcopy', 'init');
         }
+
+        $PAGE->requires->js_call_amd('block_userquiz_monitor/quiztrapoutlinks', 'init');
     }
 }
 

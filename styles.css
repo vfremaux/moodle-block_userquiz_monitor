@@ -586,3 +586,9 @@ td.detail-container {
     width: 100px;
     padding: 8px;
 }
+
+.uq-more-attempts {
+    text-align: center;
+    padding: 10px;
+    font-size: 1.7em;
+}
