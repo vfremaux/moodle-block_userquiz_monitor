@@ -49,7 +49,7 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
         $str = '<div>';
         $str .= '<div class="userquiz-monitor-row">';
 
-        $str .= '<div class="userquiz-monitor-cell span12 md-col-12">';
+        $str .= '<div id="program-heading" class="userquiz-monitor-cell span12 md-col-12">';
         $str .= $this->output->heading($title, 1);
         $str .= '</div>';
 
@@ -84,7 +84,7 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
         $attemptstr = get_string('attempt', 'block_userquiz_monitor');
 
         $str = '<div style="margin-top:5px" class="trans100" >';
-        $str .= '<table style="font-size:0.8em" width="100%">';
+        $str .= '<table style="font-size:0.8em" width="100%" class="available-attempts">';
 
         // Start printing used attempts.
         $select = "
@@ -118,10 +118,10 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
                 if (!$maxdisplay || ($used < $maxdisplay)) {
                     $attemptsstr = get_string('attempt', 'quiz', $usedix);
                     $str .= '<tr valign="middle">';
-                    $str .= '<td class="exam-history-attempt">'.$attemptsstr.' '.userdate($usedattempt->timefinish).'<br/>'.$passingstr.'</td>';
+                    $str .= '<td class="exam-history-attempt">'.$attemptsstr.' '.userdate($usedattempt->timefinish).'<br/>'.$passingstr;
                     $iconurl = $this->output->pix_url($stateicon, 'block_userquiz_monitor');
-                    $str .= '<td><img src="'.$iconurl.'" /></td>';
-                    $usedurl = new moodle_url('/mod/quiz/review.php', array('q' => $quizid, 'attempt' => $usedattempt->id));
+                    $str .= '<img src="'.$iconurl.'" /></td>';
+                    $usedurl = new moodle_url('/mod/quiz/review.php', array('q' => $quizid, 'attempt' => $usedattempt->id, 'showall' => 1));
 
                     $seedetailsstr = get_string('seedetails', 'block_userquiz_monitor');
                     $pixurl = $this->get_area_url('detailsicon');
@@ -141,7 +141,7 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
                     $str .= '</tr>';
 
                     $str .= '<tr>';
-                    $str .= '<td colspan="3">';
+                    $str .= '<td colspan="2">';
 
                     $graphwidth = ($overall->ratio * 100) / $maxratio;
 

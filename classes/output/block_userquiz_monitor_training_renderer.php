@@ -62,8 +62,8 @@ class training_renderer extends \block_userquiz_monitor_renderer {
         $str = '<div>'; // Table.
         $str .= '<div class="userquiz-monitor-row">';
 
-        $str .= '<div class="userquiz-monitor-cell span5 md-col-5">';
-        $str .= $this->output->heading( $title, 1);
+        $str .= '<div id="program-heading" class="userquiz-monitor-cell span5 md-col-5">';
+        $str .= $this->output->heading($title, 1);
         $str .= '</div>';
 
         /*
@@ -141,19 +141,7 @@ class training_renderer extends \block_userquiz_monitor_renderer {
 
         $str .= $this->output->box($cat->name, 'userquiz-monitor-cell categoryname');
 
-        $str .= $this->output->box_end(); // Row.
-
-        $str .= $this->output->box_start('userquiz-monitor-row'); // Row
-
-        $str .= $this->output->box_start('userquiz-monitor-cell');
-        $str .= $cat->accessorieslink;
-        $str .= '<input type="hidden" name="h_cb_pl'.$cat->id.'" value="h_cb_pl'.$cat->id.'"/>';
-        $str .= $this->output->box_end();
-
-        // Blank cell.
-        $str .= $this->output->box('', 'userquiz-monitor-cell');
-
-        $str .= $this->output->box_start('userquiz-monitor-cell');
+        $str .= $this->output->box_start('userquiz-monitor-cell details-button');
         $pixurl = $this->get_area_url('detailsicon');
         if ($pixurl) {
             $str .= '<img class="userquiz-monitor-cat-button"
@@ -170,6 +158,19 @@ class training_renderer extends \block_userquiz_monitor_renderer {
                           onclick="'.$cat->jshandler2.'"/>';
         }
         $str .= $this->output->box_end();
+
+        $str .= $this->output->box_end(); // Row.
+
+        $str .= $this->output->box_start('userquiz-monitor-row'); // Row
+
+        $str .= $this->output->box_start('userquiz-monitor-cell');
+        $str .= $cat->accessorieslink;
+        $str .= '<input type="hidden" name="h_cb_pl'.$cat->id.'" value="h_cb_pl'.$cat->id.'"/>';
+        $str .= $this->output->box_end();
+
+        // Blank cell.
+        $str .= $this->output->box('', 'userquiz-monitor-cell');
+
 
         $str .= $this->output->box_end(); // Row.
 

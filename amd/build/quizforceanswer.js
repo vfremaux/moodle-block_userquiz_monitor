@@ -13,8 +13,16 @@ define(['jquery'], function($) {
         init: function() {
 
             // Disables end button.
-            $('.mod_quiz-next-nav').attr('disabled', 'disabled');
-            $('.im-controls').css('visibility', 'hidden');
+            questions = $('.que.notyetanswered');
+            if (questions.size() > 0) {
+                $('.mod_quiz-next-nav').attr('disabled', 'disabled');
+                $('.mod_quiz-next-nav').css('visibility', 'visible');
+                $('.im-controls').css('visibility', 'hidden');
+            } else {
+                // Show the nav button back.
+                $('.mod_quiz-next-nav').css('visibility', 'visible');
+                $('.is-userquiz #responseform input[type=radio]').css('visibility', 'visible');
+            }
 
             // Add onclic observer on all question options
             $('#responseform input').on('change', function() {

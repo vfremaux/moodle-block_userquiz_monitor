@@ -10,20 +10,29 @@
 
 define(['jquery', 'core/str'], function($, str) {
 
+    var passed;
+
     var f = function(e) {
+
+        if (passed) return;
+
+        e.stopPropagation();
         str.get_string('looseattemptsignal', 'theme_essential_barchen').done(function(s) {
             check = confirm(s);
         });
+        passed = true;
         if (!check) {
-            e.stopPropagation();
             return false;
         }
+        return true;
     };
 
     return {
         init: function() {
             $('header a').click(f);
-            $('#page-navbar a').click(f);
+            $('.navbar a').click(f);
+            $('header a[target="_blank"]').unbind('click', f);
+            $('.navbar a[target="_blank"]').unbind('click', f);
         }
     };
 

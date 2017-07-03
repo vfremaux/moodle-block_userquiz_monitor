@@ -52,6 +52,13 @@ if (is_dir($CFG->dirroot.'/blocks/userquiz_monitor')) {
     include_once($CFG->dirroot.'/blocks/userquiz_monitor/xlib.php');
     block_userquiz_monitor_attempt_adds($attemptobj);
     $uqconfig = block_userquiz_monitor_check_has_quiz_ext($attemptobj->get_course(), $attemptobj->get_quizid());
+    if (($uqconfig->mode == 'training' && $uqconfig->trainingforceanswer) || ($uqconfig->mode == 'exam' && $uqconfig->examforceanswer)) {
+        $PAGE->add_body_class('is-userquiz');
+        $PAGE->add_body_class('userquiz-'.$uqconfig->mode);
+    }
+    if (($uqconfig->mode == 'training' && $uqconfig->trainingnobackwards) || ($uqconfig->mode == 'exam' && $uqconfig->examnobackwards)) {
+        $PAGE->add_body_class('userquiz-nobackward');
+    }
 }
 // CHANGE-.
 

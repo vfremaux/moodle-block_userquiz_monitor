@@ -401,8 +401,42 @@ img.userquiz-monitor-questiontype {
     }
 }
 
+/* Align buttons in quiz page */
+@media all and (max-width: 480px) {
+    .submitbtns-left {
+        float: left !important;
+        max-width: 180px !important;
+    }
+
+    .submitbtns-right {
+        float: right !important;
+        max-width: 180px !important;
+    }
+}
+
 #userquiz-subpod-switch {
     display: none;
+}
+
+@media all and (max-width: 800px) {
+    #mod_quiz_questioninfo {
+        display:none;
+    }
+
+    .question-num {
+        font-size: 1.6em;
+    }
+
+    .subcategories-spacer {
+        display: none;
+        visibility: hidden;
+    }
+}
+
+@media all and (min-width: 800px) {
+    .narrow-screen {
+        display:none;
+    }
 }
 
 @media all and (max-width: 800px) {
@@ -451,7 +485,7 @@ img.userquiz-monitor-questiontype {
     }
 }
 
-@media all and (min-width: 801px) {
+@media all and (min-width: 800px) {
     /* We use this switch to drive js behaviour to switch
     between plain screen and mobile narrow screen devices */
     #userquiz-subpod-switch {
@@ -592,3 +626,36 @@ td.detail-container {
     padding: 10px;
     font-size: 1.7em;
 }
+
+.is-userquiz .mod_quiz-next-nav {
+    visibility: hidden;
+}
+
+.is-userquiz .im-controls {
+    visibility: hidden;
+}
+
+.is-userquiz.userquiz-nobackward .mod_quiz-prev-nav {
+    visibility: hidden;
+}
+
+.userquiz-monitor-cell.details-button {
+    float: right;
+}
+
+.category-bargraph {
+   max-width: 600px;
+}
+
+.exam-history-attempt img {
+    height: 20px;
+    width: 20px;
+    margin-left:10px;
+}
+
+/* protect radio boxes until amd is here */
+/* is-userquiz assumes we force answer */
+.is-userquiz #responseform input[type=radio] {
+    visibility:hidden;
+}
+
