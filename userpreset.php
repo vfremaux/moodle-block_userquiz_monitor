@@ -125,6 +125,7 @@ if (!empty($courseid) && !empty($mode)) {
                     $params = array('cmid' => $cm->id,
                                     'setconstraints' => 1 ,
                                     'constraints' => $selectionstr,
+                                    'forcenew' => 1,
                                     'sesskey' => sesskey());
                     redirect(new moodle_url('/mod/quiz/startattempt.php', $params));
                 } else {

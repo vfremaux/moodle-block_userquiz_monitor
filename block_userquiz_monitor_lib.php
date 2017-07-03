@@ -165,4 +165,3 @@ function update_selector($courseid, $catidslist, $mode, $rootcat, $quizzeslist =
 
     return $response;
 }
-

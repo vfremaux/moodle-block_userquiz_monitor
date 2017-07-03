@@ -420,7 +420,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                     // Do it once for first cat !
                     // Define height position of the first block on the left part monitor.
                     if ($positionheight != 0) {
-                        $str .= '<div id="divpr" style="height:'.$positionheight.'px;"></div>';
+                        $str .= '<div id="divpr" style="height:'.$positionheight.'px;" class="subcategories-spacer"></div>';
                     }
                     $cancel = '';
                     $cancelicon = $this->get_area_url('closesubsicon', $this->output->pix_url('cancel', 'block_userquiz_monitor'));
@@ -478,7 +478,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                 $str .= $subcat->name;
                 $str .= '</div>'; // Row.
 
-                $str .= '<table width="100%">';
+                $str .= '<table width="100%" class="progress-bar">';
                 $str .= $this->render_bar_head_row();
 
                 $graphwidth = round(($subcat->ratio * 100) / $maxratio);
@@ -752,7 +752,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
 
         $str = '';
 
-        $str .= '<table width="100%">';
+        $str .= '<table width="100%" class="progress-bar">';
         $str .= $this->render_bar_head_row('');
 
         $serieicon = $this->get_area_url('serie1icon', $this->output->pix_url('a', 'block_userquiz_monitor'));
