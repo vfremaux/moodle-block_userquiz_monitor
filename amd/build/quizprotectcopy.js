@@ -9,7 +9,7 @@
 // jshint undef:false, unused:false
 /* globals $ */
 
-define(['jquery'], function($) {
+define(['jquery', 'core/log'], function($, log) {
 
     return {
         init: function() {
@@ -27,6 +27,8 @@ define(['jquery'], function($) {
                     return false;
                 }
             });
+
+            log.debug('AMD Block_userquiz_monnitor quizprotectcopy initialized');
         }
     };
 });
