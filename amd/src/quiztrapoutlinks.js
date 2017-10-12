@@ -8,7 +8,7 @@
 /* globals $ */
 
 
-define(['jquery', 'core/str'], function($, str) {
+define(['jquery', 'core/str', 'core/log'], function($, str, log) {
 
     var passed;
 
@@ -31,8 +31,11 @@ define(['jquery', 'core/str'], function($, str) {
         init: function() {
             $('header a').click(f);
             $('.navbar a').click(f);
+            $('.breadcrumb a').click(f);
             $('header a[target="_blank"]').unbind('click', f);
             $('.navbar a[target="_blank"]').unbind('click', f);
+
+            log.debug('AMD Block_userquiz_monnitor quiztrapoutlinks initialized');
         }
     };
 

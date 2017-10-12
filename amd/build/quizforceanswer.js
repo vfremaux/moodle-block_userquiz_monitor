@@ -7,7 +7,7 @@
 // jshint undef:false, unused:false
 /* globals $ */
 
-define(['jquery'], function($) {
+define(['jquery', 'core/log'], function($, log) {
 
     return {
         init: function() {
@@ -29,6 +29,8 @@ define(['jquery'], function($) {
                 $('.mod_quiz-next-nav').attr('disabled', null);
                 $('.im-controls').css('visibility', 'visible');
             });
+
+            log.debug('AMD Block_userquiz_monnitor quizforceanswer initialized');
         }
     };
 });
