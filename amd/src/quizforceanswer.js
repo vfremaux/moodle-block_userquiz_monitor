@@ -14,10 +14,11 @@ define(['jquery', 'core/log'], function($, log) {
 
             // Disables end button.
             questions = $('.que.notyetanswered');
-            if (questions.size() > 0) {
+            if (questions.length == 0) {
                 $('.mod_quiz-next-nav').attr('disabled', 'disabled');
                 $('.mod_quiz-next-nav').css('visibility', 'visible');
                 $('.im-controls').css('visibility', 'hidden');
+                $('.is-userquiz #responseform input[type=radio]').css('visibility', 'visible');
             } else {
                 // Show the nav button back.
                 $('.mod_quiz-next-nav').css('visibility', 'visible');
