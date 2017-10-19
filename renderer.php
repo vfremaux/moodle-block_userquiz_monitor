@@ -540,7 +540,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
     public function render_bar_head_row() {
         $str = '<tr valign="middle">'; // Row.
         if (!empty($this->theblock->config->dualserie)) {
-            $str .= '<td class="userquiz-monitor-bg" style="text-align:center;font-size:0.8em;">';
+            $str .= '<td class="userquiz-monitor-bg" style="text-align:center;">';
             $str .= get_string('level1', 'block_userquiz_monitor');
             $str .= '</td>';
         }
@@ -548,7 +548,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         $str .= get_string('score', 'block_userquiz_monitor');
         $str .= '</td>';
 
-        $str .= '<td class="userquiz-monitor-bg" style="text-align:center;font-size:0.8em;">';
+        $str .= '<td class="userquiz-monitor-bg" style="text-align:center;">';
         $str .= get_string('ratio1', 'block_userquiz_monitor');
         $str .= '</td>';
         $str .= '</tr>';
