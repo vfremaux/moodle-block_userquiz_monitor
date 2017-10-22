@@ -157,12 +157,15 @@ function get_monitortest($courseid, &$response, &$block) {
     $response .= $OUTPUT->box_start('userquiz-monitor-area span6');
 
     $cpt = 0;
+    $lcpt = 0;
     $scale = '';
     $quizzeslist = urlencode($quizzeslist);
+    $globalcount = count($rootcats);
 
     foreach ($rootcats as $catid => $cat) {
 
         if ($catid == 0) {
+            $lcpt++;
             continue; // But why.
         }
 
@@ -238,16 +241,22 @@ function get_monitortest($courseid, &$response, &$block) {
         $cat->jshandler1 .= ' \'cbpl\', \'none\', \''.$quizzesliststring.'\')';
         $cat->jshandler2 = 'activedisplaytrainingsubcategories('.$courseid.', '.$rootcategory.', '.$catid;
         $cat->jshandler2 .= ', idcategoriespl , \''.$quizzesliststring.'\' , \''.$scale.'\', '.$blockid.')';
-        $response .= $renderer->category_result($cat);
+
         $cpt++;
+        $lcpt++;
+
+        $response .= $renderer->category_result($cat, $lcpt == $globalcount);
     }
+
+    $response .= '<div id="rootcatnotes">',
 
     $notenum = 1;
     if ($block->config->dualserie) {
         $response .= '<span class="smallnotes">'.get_string('columnnotesdual', 'block_userquiz_monitor', $notenum).'</span>';
         $notenum++;
     }
-    $response .= '<span class="smallnotes">'.get_string('columnnotesratio', 'block_userquiz_monitor', $notenum).'</span>';
+    $response .= '<span class="smallnotes">'.get_string('columnnotesratio', 'block_userquiz_monitor', $notenum).'</span></div>';
+    $response .= $OUTPUT->box('', '', 'rootcategoriesvertspacer');
 
     $response .= $OUTPUT->box_end(); // Closing area.
 
