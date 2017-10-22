@@ -142,6 +142,7 @@ function displaytrainingsubcategories(courseid, rootcategory, categoryid, list, 
             $('#category-subcatpod-' + categoryid).css('visibility', 'visible');
             $('#category-subcatpod-' + categoryid).css('display', 'block');
             $('#divpl' + categoryid)[0].scrollIntoView();
+            $('#rootcategoriesvertspacer').css('display', 'none');
             window.scrollBy(0, -40);
         } else {
             // Ensure all narrow screen divs are gone.
@@ -158,10 +159,24 @@ function displaytrainingsubcategories(courseid, rootcategory, categoryid, list, 
             // Get top pos of the left block.
             var origtop = Math.round($('#userquiz-select-all').offset().top);
             var leftpostop = Math.round($('#divpl' + categoryid).offset().top);
+            var leftabstop = Math.round($('#rootcatnotes').offset().top);
+            var leftabsheight = Math.round($('#rootcatnotes').height());
+            var rightabsheight = Math.round($('#displaysubcategories').height());
+            var leftabsbottom = leftabstop + leftabsheight;
+            var rightabsbottom = leftpostop + rightabsheight;
+            var delta = rightabsbottom - leftabsbottom;
 
             $('#displaysubcategories').css('display', 'block');
             $('#displaysubcategories').css('position', 'relative');
             $('#displaysubcategories').css('top', leftpostop - origtop);
+            $('#rootcategoriesvertspacer').css('display', 'block');
+            if (delta > 0) {
+                $('#rootcategoriesvertspacer').css('min-height', delta + 'px');
+                $('#rootcategoriesvertspacer').css('height', delta + 'px');
+            } else {
+                $('#rootcategoriesvertspacer').css('min-height', 0);
+                $('#rootcategoriesvertspacer').css('height', 0);
+            }
         }
 
     }, 'html');

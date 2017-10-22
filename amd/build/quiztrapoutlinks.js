@@ -18,10 +18,11 @@ define(['jquery', 'core/str', 'core/log'], function($, str, log) {
 
         e.stopPropagation();
         str.get_string('looseattemptsignal', 'theme_essential_barchen').done(function(s) {
-            check = confirm(s);
+            outcheck = confirm(s);
         });
         passed = true;
-        if (!check) {
+        if (!outcheck) {
+            passed = false;
             return false;
         }
         return true;
@@ -34,6 +35,8 @@ define(['jquery', 'core/str', 'core/log'], function($, str, log) {
             $('.breadcrumb a').click(f);
             $('header a[target="_blank"]').unbind('click', f);
             $('.navbar a[target="_blank"]').unbind('click', f);
+            $('.navbar a.dropdown-toggle').unbind('click', f);
+            $('.navbar a[data-toggle="collapse"]').unbind('click', f);
 
             log.debug('AMD Block_userquiz_monnitor quiztrapoutlinks initialized');
         }

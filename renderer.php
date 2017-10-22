@@ -420,7 +420,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                     // Do it once for first cat !
                     // Define height position of the first block on the left part monitor.
                     if ($positionheight != 0) {
-                        $str .= '<div id="divpr" style="height:'.$positionheight.'px;" class="subcategories-spacer"></div>';
+                        // $str .= '<div id="divpr" class="subcategories-spacer"></div>';
                     }
                     $cancel = '';
                     $cancelicon = $this->get_area_url('closesubsicon', $this->output->pix_url('cancel', 'block_userquiz_monitor'));
@@ -443,7 +443,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                                style="padding-left:2px;" /> <span class="select-all">'.get_string('selectallcb', 'block_userquiz_monitor').'</span></td></tr></table>';
                     }
 
-                    $str .= '<div class="trans100 subcategory-cancel" id="divpr">';
+                    $str .= '<div class="trans100 subcategory-cancel" id="divprsubs">';
                     $str .= '<table width="100%">'; // Table.
                     $str .= '<tr>'; // Row.
                     $str .= '<td>';

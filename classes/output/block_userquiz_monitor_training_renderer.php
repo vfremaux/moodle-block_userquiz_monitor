@@ -120,13 +120,15 @@ class training_renderer extends \block_userquiz_monitor_renderer {
         return $str;
     }
 
-    public function category_result($cat) {
+    public function category_result($cat, $islast = false) {
 
         $seesubsstr = get_string('more', 'block_userquiz_monitor');
 
         $str = '';
 
-        $str .= $this->output->box_start('trans100', 'divpl'.$cat->id);
+        $islastclass = ($islast) ? 'is-last' : '';
+
+        $str .= $this->output->box_start("trans100 $islastclass divpl", 'divpl'.$cat->id);
         $str .= $this->output->box_start('userquiz-monitor-categorycontainer'); // Table.
 
         $str .= $this->box_start('userquiz-monitor-row'); // Row.
