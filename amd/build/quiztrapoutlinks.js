@@ -10,33 +10,19 @@
 
 define(['jquery', 'core/str', 'core/log'], function($, str, log) {
 
-    var passed;
+    var outmessage = "You will loose all results of the attempt. Do you want to continue?";
 
     var f = function(e) {
-
-        if (passed) return;
-
-        e.stopPropagation();
-        str.get_string('looseattemptsignal', 'theme_essential_barchen').done(function(s) {
-            outcheck = confirm(s);
-        });
-        passed = true;
-        if (!outcheck) {
-            passed = false;
-            return false;
-        }
-        return true;
+        return outmessage;
     };
 
     return {
         init: function() {
-            $('header a').click(f);
-            $('.navbar a').click(f);
-            $('.breadcrumb a').click(f);
-            $('header a[target="_blank"]').unbind('click', f);
-            $('.navbar a[target="_blank"]').unbind('click', f);
-            $('.navbar a.dropdown-toggle').unbind('click', f);
-            $('.navbar a[data-toggle="collapse"]').unbind('click', f);
+
+            str.get_string('looseattemptsignal', 'theme_essential_barchen').done(function(s) {
+                outmessage = s;
+            });
+            window.onbeforeunload = f;
 
             log.debug('AMD Block_userquiz_monnitor quiztrapoutlinks initialized');
         }
