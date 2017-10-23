@@ -49,7 +49,7 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
         $str = '<div>';
         $str .= '<div class="userquiz-monitor-row">';
 
-        $str .= '<div id="program-heading" class="userquiz-monitor-cell span12 md-col-12">';
+        $str .= '<div id="program-heading" class="userquiz-monitor-cell is-exam span12 md-col-12">';
         $str .= $this->output->heading($title, 1);
         $str .= '</div>';
 

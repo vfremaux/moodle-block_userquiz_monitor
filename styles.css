@@ -418,6 +418,12 @@ img.userquiz-monitor-questiontype {
     display: none;
 }
 
+.exam-launch-panel {
+    width: 40%;
+    padding: 10px;
+    background-color: #f0f0f0;
+}
+
 @media all and (max-width: 800px) {
     #mod_quiz_questioninfo {
         display:none;
@@ -481,7 +487,11 @@ img.userquiz-monitor-questiontype {
     }
 
     .exam-launch-panel {
-        width: 100%;
+        width: initial;
+    }
+
+    #program-heading.is-exam {
+        display: none;
     }
 }
 
@@ -516,12 +526,6 @@ img.userquiz-monitor-questiontype {
 
 .jqx-bulletchart-target {
     width: 2px !important;
-}
-
-.exam-launch-panel {
-    width: 40%;
-    padding: 10px;
-    background-color: #f0f0f0;
 }
 
 .exam-history-attempt {
