@@ -248,7 +248,7 @@ function get_monitortest($courseid, &$response, &$block) {
         $response .= $renderer->category_result($cat, $lcpt == $globalcount);
     }
 
-    $response .= '<div id="rootcatnotes">',
+    $response .= '<div id="rootcatnotes">';
 
     $notenum = 1;
     if ($block->config->dualserie) {

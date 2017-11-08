@@ -14,7 +14,8 @@ define(['jquery', 'core/log'], function($, log) {
 
             // Disables end button.
             questions = $('.que.notyetanswered');
-            if (questions.length == 0) {
+            feedbacks = $('.immediatefeedback');
+            if (questions.length == 0 && feedback.length == 0) {
                 $('.mod_quiz-next-nav').attr('disabled', 'disabled');
                 $('.mod_quiz-next-nav').css('visibility', 'visible');
                 $('.im-controls').css('visibility', 'hidden');
