@@ -16,6 +16,10 @@ define(['jquery', 'core/str', 'core/log'], function($, str, log) {
         return outmessage;
     };
 
+    var skipf = function(e) {
+        window.onbeforeunload = null;
+    };
+
     return {
         init: function() {
 
@@ -23,6 +27,7 @@ define(['jquery', 'core/str', 'core/log'], function($, str, log) {
                 outmessage = s;
             });
             window.onbeforeunload = f;
+            window.onsubmit = skipf;
 
             log.debug('AMD Block_userquiz_monnitor quiztrapoutlinks initialized');
         }
