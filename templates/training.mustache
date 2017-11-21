@@ -1,0 +1,46 @@
+
+
+
+<!-- training -->
+<div id="userquiz-subpod-switch"></div>
+
+    <form name="form" method="GET" action="{{{formurl}}}">
+
+    <input type="hidden" name="blockid" value="{{blockid}}">
+
+    {{{globalmonitor}}}
+
+    <div class="userquiz-monitor-trainingcontainer container-fluid">
+
+{{#errors}}
+        {{{initerrorstr}}}
+        {{{compileerrorstr}}}
+{{/errors}}
+
+{{^errors}}
+
+        <div class="userquiz-monitor-container-row row-fluid">
+            <div class="userquiz-monitor-area>
+
+                {{{programheadline}}}
+
+                {{#categoryresults}}
+                {{{result}}}
+                {{/categoryresults}}
+
+                <div id="rootcatnotes">
+                    {{{note1}}}
+                    {{{note2}}}
+                </div>
+
+            </div>
+        </div>
+
+{{/errors}}
+
+    </div>
+
+    </form>
+
+</div>
+<!-- /training -->

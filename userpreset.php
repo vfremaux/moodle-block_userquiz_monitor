@@ -24,7 +24,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require('../../config.php');
-require_once($CFG->dirroot.'/blocks/userquiz_monitor/block_userquiz_monitor_lib.php');
 require_once($CFG->dirroot.'/blocks/userquiz_monitor/locallib.php');
 
 // Init variables.
@@ -139,7 +138,16 @@ if (!empty($courseid) && !empty($mode)) {
     }
 
     if ($mode == 'examination') {
+        if (empty($theblock->config->examquiz)) {
+            echo $OUTPUT->header();
+            echo $OUTPUT->notification(get_string('errornoexamquizdefined', 'block_userquiz_monitor'));
+            echo $OUTPUT->footer();
+            die();
+        }
         $cm = get_coursemodule_from_instance('quiz', $theblock->config->examquiz);
+        if (!$cm) {
+            print_error('badcoursemodule');
+        }
         redirect(new moodle_url('/mod/quiz/startattempt.php', array('cmid' => $cm->id, 'forcenew' => true, 'sesskey' => sesskey())));
     }
 }

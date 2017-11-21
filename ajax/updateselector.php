@@ -22,9 +22,11 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+define('AJAX_SCRIPT', 1);
+
 // Include files.
-require_once('../../config.php');
-require_once($CFG->dirroot.'/blocks/userquiz_monitor/block_userquiz_monitor_lib.php');
+require_once('../../../config.php');
+require_once($CFG->dirroot.'/blocks/userquiz_monitor/locallib.php');
 require_once($CFG->dirroot.'/blocks/userquiz_monitor/renderer.php');
 require_once($CFG->dirroot.'/blocks/userquiz_monitor/classes/output/block_userquiz_monitor_training_renderer.php');
 
@@ -33,11 +35,14 @@ $courseid = required_param('courseid', PARAM_INT);
 $categorylist = optional_param('categoryid', '', PARAM_TEXT);
 $location = optional_param('location', '', PARAM_TEXT);
 $rootcategory = optional_param('rootcategory', '', PARAM_TEXT);
-$quizzeslist = optional_param('quizzeslist', '', PARAM_TEXT);
+$quizlist = optional_param('quizlist', '', PARAM_TEXT);
 
 $course = $DB->get_record('course', array('id' => $courseid));
+if (!$course) {
+    print_error('coursemisconf');
+}
 
 require_login($course);
-$response = update_selector($courseid, $categorylist, $location, $rootcategory, $quizzeslist);
+$response = block_userquiz_monitor_update_selector($courseid, $categorylist, $location, $rootcategory, $quizlist);
 echo($response);
 

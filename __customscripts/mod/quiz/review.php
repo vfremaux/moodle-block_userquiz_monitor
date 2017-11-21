@@ -59,7 +59,7 @@ $attemptobj->check_review_capability();
 // May bypass review step after an attempt on constraints.
 if (is_dir($CFG->dirroot.'/blocks/userquiz_monitor')) {
     require_once($CFG->dirroot.'/blocks/userquiz_monitor/xlib.php');
-    // check_userquiz_monitor_review_applicability($attemptobj);
+    block_userquiz_monitor_add_body_classes($attemptobj);
 }
 // CHANGE-.
 // Create an object to manage all the other (non-roles) access rules.
