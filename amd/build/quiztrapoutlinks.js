@@ -13,7 +13,15 @@ define(['jquery', 'core/str', 'core/log'], function($, str, log) {
     var outmessage = "You will loose all results of the attempt. Do you want to continue?";
 
     var f = function(e) {
-        return outmessage;
+        return outmessage || true;
+    };
+
+    var skipf = function(e) {
+        if (e.localTarget.id == 'responseform') {
+            // Trap only the quiz answer form, let trigger all other forms.
+            window.onbeforeunload = null;
+        }
+        return null;
     };
 
     return {
@@ -23,6 +31,7 @@ define(['jquery', 'core/str', 'core/log'], function($, str, log) {
                 outmessage = s;
             });
             window.onbeforeunload = f;
+            window.onsubmit = skipf;
 
             log.debug('AMD Block_userquiz_monnitor quiztrapoutlinks initialized');
         }

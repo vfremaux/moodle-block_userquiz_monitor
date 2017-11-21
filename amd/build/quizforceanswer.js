@@ -14,7 +14,9 @@ define(['jquery', 'core/log'], function($, log) {
 
             // Disables end button.
             questions = $('.que.notyetanswered');
+            feedbacks = $('.immediatefeedback');
             if (questions.length > 0) {
+                // If we do not have all answered, disable the next button.
                 $('.mod_quiz-next-nav').attr('disabled', 'disabled');
                 $('.mod_quiz-next-nav').css('visibility', 'visible');
                 $('.im-controls').css('visibility', 'hidden');
@@ -25,7 +27,7 @@ define(['jquery', 'core/log'], function($, log) {
                 $('.is-userquiz #responseform input[type=radio]').css('visibility', 'visible');
             }
 
-            // Add onclic observer on all question options
+            // Add onchange observer on all question options.
             $('#responseform input').on('change', function() {
                 $('.mod_quiz-next-nav').attr('disabled', null);
                 $('.im-controls').css('visibility', 'visible');
