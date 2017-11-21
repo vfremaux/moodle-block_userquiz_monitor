@@ -85,7 +85,7 @@ define(['jquery', 'core/log'], function($, log) {
         /**
          * Updates the selector following the user's choice.
          */
-        update_selector_master: function(mode) {
+        update_selector_master_global: function(mode) {
 
             var categorieslist = '';
             var cpt = 0;
@@ -200,6 +200,8 @@ define(['jquery', 'core/log'], function($, log) {
             } else {
                 $('.cb-master').prop('checked', false);
             }
+
+            training.update_selector_master_global();
         },
 
         /*
