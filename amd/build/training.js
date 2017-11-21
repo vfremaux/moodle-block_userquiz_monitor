@@ -278,7 +278,7 @@ define(['jquery', 'core/log'], function($, log) {
         fetch_training_subcategories: function(e) {
 
             that = $(this);
-            categoryid = that.attr('id').replace('details-button-', '');
+            categoryid = that.attr('id').replace('details-button-div-', '');
 
             var params = "blockid=" + blockid + "&courseid=" + courseid + "&rootcategory=" + rootcategory;
             params += "&categoryid=" + categoryid + "&quizzeslist=" + quizlist + "&mode=training";
