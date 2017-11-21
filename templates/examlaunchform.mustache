@@ -1,0 +1,30 @@
+
+
+
+<!-- examlaunchform -->
+<div class="exam-launch-panel">
+    <div id="exam-remainings">
+        <h3>{{remainingattemptsstr}}</h3>
+    </div>
+
+{{#examinstructions}}
+    <p>{{{examinstructions}}}</p>
+{{/examinstructions}}
+
+{{#canexam}}
+    <form name="form" method="GET" action="{{{formurl}}}">
+        <div>
+            <input type="hidden" name="blockid" value="{{blockid}}" />
+            <input type="hidden" name="quizid" value="{{quizid}}" />
+            <input type="hidden" name="mode" value="examination" />
+            <input type="hidden" name="courseid" value="{{courseid}}}" />
+            <input class="active" type="submit" value="{{runexamstr}}" />
+        </div>
+    </form>
+{{/canexam}}
+{{^canexam}}
+    <input type="button" class="dimmed" value="{{runexamstr}}" />
+{{/canexam}}
+
+</div>
+<!-- /examlaunchform -->

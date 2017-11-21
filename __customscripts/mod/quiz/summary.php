@@ -54,6 +54,13 @@ if ($attemptobj->is_preview_user()) {
     navigation_node::override_active_url($attemptobj->start_attempt_url());
 }
 
+// CHANGE+ : Adding body markers allowing to use css to tune screens.
+if (is_dir($CFG->dirroot.'/blocks/userquiz_monitor')) {
+    include_once($CFG->dirroot.'/blocks/userquiz_monitor/xlib.php');
+    block_userquiz_monitor_add_body_classes($attemptobj);
+}
+// CHANGE-.
+
 // Check access.
 $accessmanager = $attemptobj->get_access_manager(time());
 $accessmanager->setup_attempt_page($PAGE);

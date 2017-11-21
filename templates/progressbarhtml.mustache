@@ -1,0 +1,24 @@
+
+
+
+<!-- progressbarhtml -->
+<div class="html-gauge-container" style="width: {{boxwidth}}; height: {{boxheight}}">
+    <div class="html-gauge-value-label {{{skin}}}">
+        {{successrate}} %
+    </div>
+
+    <table width="100%" height="4px">
+        <tr>
+            <td class="html-gauge-valuebar {{{skin}}}" style="background-color: {{{barcolor}}}" width="{{successrate}}%">
+            </td>
+
+            <td class="html-gauge-remainbar {{{skin}}}" style="background-color: grey" width="{{remains}}%">
+            </td>
+        </tr>
+    </table>
+    <div class="html-gauge-targetvalue-label {{{skin}}}" style="color: {{barcolor}};left: {{stop}}%">
+        {{stop}} %
+    </div>
+    <div class="html-gauge-targetvalue-mark {{{skin}}}" style="background-color: {{barcolor}};left: {{stop}}%"></div>
+</div>
+<!-- /progressbarhtml -->

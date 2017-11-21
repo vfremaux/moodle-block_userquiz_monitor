@@ -23,13 +23,11 @@
  */
 
 define('AJAX_SCRIPT', true);
-
 require('../../../config.php');
-require_once($CFG->dirroot.'/blocks/userquiz_monitor/block_userquiz_monitor_lib.php');
+
+require_once($CFG->dirroot.'/blocks/userquiz_monitor/locallib.php');
 
 // Init variable.
-$response = '';
-
 $courseid = required_param('courseid', PARAM_INT);
 $course = $DB->get_record('course', array('id' => $courseid));
 
@@ -38,7 +36,6 @@ require_login($course);
 
 $categoryid = optional_param('categoryid', '', PARAM_TEXT);
 $quizid = optional_param('quizzeslist', '', PARAM_TEXT);
-$positionheight = optional_param('positionheight', 0, PARAM_INT);
 $mode = optional_param('mode', '', PARAM_TEXT);
 $blockid = required_param('blockid', PARAM_INT);
 if (!$instance = $DB->get_record('block_instances', array('id' => $blockid))) {
@@ -51,9 +48,7 @@ $renderer->set_block($theblock);
 
 if ($mode == 'training') {
     $rootcategory = required_param('rootcategory', PARAM_INT);
-    $response .= $renderer->subcategories($courseid, $rootcategory, $categoryid, $quizid, $positionheight, $mode);
+    echo $renderer->subcategories($courseid, $rootcategory, $categoryid, $quizid, $mode);
 } else {
-    $response .= $renderer->subcategories($courseid, null, $categoryid, $quizid, $positionheight, $mode);
+    echo $renderer->subcategories($courseid, null, $categoryid, $quizid, $mode);
 }
-
-echo($response);

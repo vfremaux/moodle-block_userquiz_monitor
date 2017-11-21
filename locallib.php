@@ -23,6 +23,10 @@
  */
 defined('MOODLE_INTERNAL') || die;
 
+require_once($CFG->dirroot.'/blocks/userquiz_monitor/generators/history_chart.php');
+require_once($CFG->dirroot.'/blocks/userquiz_monitor/generators/attempts.php');
+require_once($CFG->dirroot.'/blocks/userquiz_monitor/generators/progress_bar.php');
+
 function block_userquiz_monitor_get_categories_for_root() {
     global $COURSE, $DB;
 
@@ -115,14 +119,14 @@ function block_userquiz_monitor_init_overall() {
  * aggregating results. Only the first sublevel is scanned.
  *
  * @param int $rootcategory id of the root question category where all the stuff resides.
- * @param arrayref &$rootcats an array to be feild by the function
- * @return void;
+ * @param arrayref &$rootcats an array to be filed by the function
+ * @return void if success or an error message;
  */
 function block_userquiz_monitor_init_rootcats($rootcategory, &$rootcats) {
-    global $DB;
+    global $DB, $OUTPUT;
 
     if (!$rootcats = $DB->get_records('question_categories', array('parent' => $rootcategory), 'sortorder, id', 'id,name')) {
-        return get_string('configwarningmonitor', 'block_userquiz_monitor');
+        return $OUTPUT->notification(get_string('configwarningemptycats', 'block_userquiz_monitor'), 'notifyproblem');
     }
 
     foreach ($rootcats as $catid => $cat) {
@@ -205,7 +209,7 @@ function block_userquiz_monitor_get_exam_attempts($quizid) {
  * @param string $mode 'training' or 'exam' mode. When training, non answered questions are ignored in stats.
  */
 function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategory, &$rootcats, &$attempts, &$overall, $mode = 'training') {
-    global $USER, $DB;
+    global $USER, $DB, $OUTPUT;
     static $qstates = array();
 
     $errormsg = false;
@@ -323,9 +327,11 @@ function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategor
                 $allstates->close();
 
             } else {
-                $errormsg = get_string('error2', 'block_userquiz_monitor');
+                $errormsg = $OUTPUT->notification(get_string('error2', 'block_userquiz_monitor'), 'notifyproblem');
             }
         }
+
+        return $errormsg;
     }
 
     // Build the stucture of the reporting.
@@ -556,4 +562,142 @@ function block_userquiz_monitor_get_quiz_by_numquestions($courseid, $theblock, $
     }
 
     return $quizes[$nbquestions]->quizid;
+}
+
+/**
+ * Format the data to feed the generator histogram graph
+ * this can display category progress among attempts
+ */
+function calcul_hist($categoryid, &$counters) {
+
+    $datas = null;
+
+    if ($counters) {
+
+        foreach ($counters as $attemptid => $counterset) {
+            // Init variables.
+
+            // If there are no types A, C questions then do nothing.
+            if ((@$counterset[$categoryid]->cptA > 0) || @$counterset[$categoryid]->cptC > 0) {
+                $data = array (
+                    'attemptid' => $attemptid,
+                    'attempttimefinish' => $counterset[$categoryid]->timefinish,
+                    'cptgoodanswersA' => 0 + @$counterset[$categoryid]->goodA,
+                    'cptgoodanswersC' => 0 + @$counterset[$categoryid]->goodC,
+                    'nbquestionsA' => 0 + @$counterset[$categoryid]->cptA,
+                    'nbquestionsC' => 0 + @$counterset[$categoryid]->cptC,
+                );
+                $datas[] = $data;
+            }
+        }
+    }
+
+    return urlencode(json_encode($datas));
+}
+
+/**
+ * On changes of the current selection, update the question amount choice list
+ * @return the question amount selector
+ */
+function block_userquiz_monitor_update_selector($courseid, $catidslist, $mode, $rootcat, $quizzeslist = '') {
+    global $DB, $PAGE, $CFG;
+
+    $response = '';
+    $options = '';
+
+    $renderer = $PAGE->get_renderer('block_userquiz_monitor', 'training');
+
+    $catids = explode(',', $catidslist);
+    list($insql, $inparams) = $DB->get_in_or_equal($catids);
+
+    if (!empty($catidslist) && ($catidslist != 'null')) {
+        if ($mode == 'mode0') {
+            // Processes update in subcategories from main categories.
+            // Init variables.
+            $subcategorieslist = '';
+            $cpt = 0;
+
+            $select = " parent $insql ";
+            if ($subcats = $DB->get_records_select_menu('question_categories', $select, $inparams, 'id,name')) {
+                $subcategorieslist = array_keys($subcats);
+            }
+
+            if (!empty($subcategorieslist)) {
+
+                list($insql, $inparams) = $DB->get_in_or_equal($subcategorieslist);
+
+                // Init variables.
+                $nbquestions = 0;
+                $options = '';
+                $select = "
+                    category $insql AND
+                    qtype != 'random' AND
+                    qtype != 'randomconstrained'
+                ";
+                $recordsgetnbquestions = $DB->count_records_select('question', $select, $inparams);
+
+                /*
+                foreach ($recordsgetnbquestions as $recordnbquestions) {
+                        $nbquestions = $recordnbquestions;
+                }
+                */
+                $nbquestions = $recordsgetnbquestions;
+
+                if (strlen($nbquestions) > 1) {
+                    // Group nb questions per 10.
+                    $val = 10;
+                    $nbquestionstest = (substr($nbquestions, 0, -1)) * 10;
+
+                    while ($val <= $nbquestionstest) {
+                        if ($val <= 100) {
+                            $options .= '<option value="'.$val.'">'.$val.'</option>';
+                        }
+                        $val = $val + 10;
+                    }
+                } else {
+                    $nbquestionstest = $nbquestions;
+
+                    for ($i = 1; $i <= $nbquestionstest; $i++) {
+                        $options .= '<option value="'.$i.'">'.$i.'</option>';
+                    }
+                }
+                $response .= $renderer->launch_gui($options, $quizzeslist);
+            }
+        } else {
+            // Processes update in given categories.
+            list($insql, $inparams) = $DB->get_in_or_equal($catidslist);
+
+            $select = "
+                category $insql AND
+                qtype != 'random' AND
+                qtype != 'randomconstrained'
+            ";
+            $nbquestions = $DB->count_records_select('question', $select, $inparams);
+
+            // Make question amount choice options.
+            if (strlen($nbquestions) > 1) {
+                $nbquestionstest = (substr($nbquestions, 0, -1)) * 10;
+
+                $val = 10;
+                while ($val <= $nbquestionstest) {
+                    if ($val <= 100) {
+                        $options .= '<option value="'.$val.'">'.$val.'</option>';
+                    }
+                    $val = $val + 10;
+                }
+            } else {
+                $nbquestionstest = $nbquestions;
+
+                for ($i = 1; $i <= $nbquestionstest; $i++) {
+                    $options .= '<option value="'.$i.'">'.$i.'</option>';
+                }
+            }
+
+            $response .= $renderer->launch_gui($options, $quizzeslist);
+        }
+    } else {
+        $response .= $renderer->empty_launch_gui();
+    }
+
+    return $response;
 }

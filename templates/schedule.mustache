@@ -1,0 +1,21 @@
+
+
+
+<table class="trans100 userquiz-monitor-schedule">
+    <tr>
+        <td>
+            <div style="margin-bottom:20px; margin-left:5px; width:100%;">
+                <p>{{selectschedulestr}}</p>
+
+{{#maincategories}}
+                <a id="amfcat{{catid}}" onClick="{{{jshandler}}}" {{{class}}} >&nbsp {{nexti}} &nbsp</a>
+{{/maincategories}}
+            </div>
+
+            <div id="divschedule" style="margin-top:20px; width:100%;">
+            </div>
+        </td>
+    </tr>
+</table>
+
+<script type="text/javascript">{{{jshandler}}}</script>
