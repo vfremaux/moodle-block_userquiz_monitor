@@ -27,7 +27,6 @@ define(['jquery', 'core/str', 'core/log'], function($, str, log) {
                 // Trap only the quiz answer form, let trigger all other forms.
                 window.onbeforeunload = null;
             }
-        }
         } else if (e.target) {
             if (e.target.id == 'responseform') {
                 // Trap only the quiz answer form, let trigger all other forms.
