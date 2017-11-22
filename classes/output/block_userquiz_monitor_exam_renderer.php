@@ -48,14 +48,14 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
         }
 
         $template = new StdClass;
-        $template->heading = $this->output->heading($title, 1);
+        $template->examheading = $this->output->heading($title, 1);
 
         /*
         // The results filtering scale
         $template->filterstate = $this->filter_state('exams', $this->theblock->instance->id);
         */
 
-        return $this->output->render_from_template('block_userquiz_monitor/panelheader', $template);
+        return $this->output->render_from_template('block_userquiz_monitor/exampanelheader', $template);
     }
 
     /**
@@ -164,7 +164,7 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
                                   'goodC' => $overall->goodC,
                                   'cptC' => $overall->cptC);
 
-                    $usedcattpl->totalgraph = $this->total_graph($components, $data);
+                    $usedcattpl->totalgraph = $this->total($components, $data, $quizid);
 
                 } else {
                     if (!$printedellipse) {

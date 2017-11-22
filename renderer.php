@@ -226,6 +226,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         global $USER, $DB;
 
         $template = new StdClass;
+        $template->catid = $categoryid;
 
         $blockid = $this->theblock->instance->id;
         $gaugerenderfunc = $this->gaugerendererfunc;

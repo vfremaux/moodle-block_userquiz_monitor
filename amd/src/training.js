@@ -66,10 +66,10 @@ define(['jquery', 'core/log'], function($, log) {
         update_selector_master_ajax: function() {
 
             var that = $(this);
-            // try first from a selector checkbox.
+            // Try first from a selector checkbox.
             categoryid = parseInt(that.attr('id').replace('id-cb-master-', ''));
             if (!categoryid) {
-                // try if even not comes from the subcategory button.
+                // Try if even not comes from the subcategory button.
                 categoryid = parseInt(that.attr('id').replace('details-button-', ''));
             }
 
@@ -79,6 +79,13 @@ define(['jquery', 'core/log'], function($, log) {
 
             $.get(url, function(data) {
                 $('.selectorcontainers').html(data);
+
+                // Enable Go Btn if there are question numbers.
+                if ($('#id-selector-nb-questions').length) {
+                    $('#id-training-go-button').prop('disabled', false);
+                } else {
+                    $('#id-training-go-button').prop('disabled', true);
+                }
             }, 'html');
         },
 
@@ -188,6 +195,13 @@ define(['jquery', 'core/log'], function($, log) {
 
             $.get(url, function(data) {
                 $('.selectorcontainers').html(data);
+
+                // Enable Go Btn if there   are question numbers.
+                if ($('#id-selector-nb-questions').length) {
+                    $('#id-training-go-button').prop('disabled', false);
+                } else {
+                    $('#id-training-go-button').prop('disabled', true);
+                }
             }, 'html');
         },
 
