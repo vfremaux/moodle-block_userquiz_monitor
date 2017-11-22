@@ -57,7 +57,7 @@ if ($attemptobj->is_preview_user()) {
 // CHANGE+ : Adding body markers allowing to use css to tune screens.
 if (is_dir($CFG->dirroot.'/blocks/userquiz_monitor')) {
     include_once($CFG->dirroot.'/blocks/userquiz_monitor/xlib.php');
-    block_userquiz_monitor_add_body_classes($attemptobj);
+    $uqconfig = block_userquiz_monitor_add_body_classes($attemptobj);
 }
 // CHANGE-.
 
