@@ -52,12 +52,16 @@ class training_renderer extends \block_userquiz_monitor_renderer {
         $title = get_string('testtitle', 'block_userquiz_monitor', $this->theblock->config->trainingprogramname);
         $template = new StdClass;
 
-        $template->header = $this->output->heading($title, 1);
+        $template->trainingheading = $this->output->heading($title, 1);
 
         /*
         $template->filterstate = $this->filter_state('training', $this->theblock->instance->id);
         */
-        $template->filter_form = $this->training_filter_form($this->theblock);
+        $template->filterform = $this->training_filter_form($this->theblock);
+
+        if (!empty($template->trainingheading) && !empty($template->filterform)) {
+            $template->hascontent = true;
+        }
 
         return $this->output->render_from_template('block_userquiz_monitor/trainingheader', $template);
     }
@@ -148,6 +152,7 @@ class training_renderer extends \block_userquiz_monitor_renderer {
         $template->quizlist = $quizzeslist;
         $template->options = $options;
         $template->courseid = $COURSE->id;
+        $template->disabled = 'disabled="disabled"';
 
         return $this->output->render_from_template('block_userquiz_monitor/traininglaunchgui', $template);
     }

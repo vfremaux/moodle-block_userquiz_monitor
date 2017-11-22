@@ -724,7 +724,7 @@ input.radio-hidden[type="radio"]:checked + div.category-subpod {
 
 @media (max-width: 640px) {
     div.category-subpod {
-        width: 100%;
+        width: 98%;
         padding-left:0;
     }
 
@@ -752,4 +752,8 @@ input.radio-hidden[type="radio"]:checked + div.category-subpod {
 .quiz-progress-bar {
     height: 6px;
     background-color: #21277C;
+}
+
+.category-check {
+    padding-left: 10px;
 }
