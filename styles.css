@@ -633,6 +633,11 @@ td.detail-container {
     visibility: hidden;
 }
 
+/* put back visible in review screen */
+#page-mod-quiz-review .is-userquiz .mod_quiz-next-nav {
+    visibility: visible;
+}
+
 .is-userquiz .im-controls {
     visibility: hidden;
 }
