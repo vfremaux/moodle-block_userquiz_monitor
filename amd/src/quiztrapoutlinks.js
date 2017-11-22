@@ -17,9 +17,22 @@ define(['jquery', 'core/str', 'core/log'], function($, str, log) {
     };
 
     var skipf = function(e) {
-        if (e.localTarget.id == 'responseform') {
-            // Trap only the quiz answer form, let trigger all other forms.
-            window.onbeforeunload = null;
+        if (e.localTarget) {
+            if (e.localTarget.id == 'responseform') {
+                // Trap only the quiz answer form, let trigger all other forms.
+                window.onbeforeunload = null;
+            }
+        } else if (e.originTarget) {
+            if (e.originTarget.id == 'responseform') {
+                // Trap only the quiz answer form, let trigger all other forms.
+                window.onbeforeunload = null;
+            }
+        }
+        } else if (e.target) {
+            if (e.target.id == 'responseform') {
+                // Trap only the quiz answer form, let trigger all other forms.
+                window.onbeforeunload = null;
+            }
         }
         return null;
     };

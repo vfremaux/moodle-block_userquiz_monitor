@@ -60,6 +60,7 @@ $attemptobj->check_review_capability();
 if (is_dir($CFG->dirroot.'/blocks/userquiz_monitor')) {
     require_once($CFG->dirroot.'/blocks/userquiz_monitor/xlib.php');
     $uqconfig = block_userquiz_monitor_add_body_classes($attemptobj);
+    block_userquiz_monitor_protect_page($attemptobj);
 }
 // CHANGE-.
 // Create an object to manage all the other (non-roles) access rules.

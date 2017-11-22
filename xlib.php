@@ -70,6 +70,23 @@ function block_userquiz_monitor_attempt_adds($attemptobj) {
     }
 }
 
+/**
+ * Adds Jquery form control for single question quizzes
+ */
+function block_userquiz_monitor_protect_page($attemptobj) {
+    global $PAGE;
+
+    $course = $attemptobj->get_course();
+
+    $PAGE->requires->jquery();
+    $config = block_userquiz_monitor_check_has_quiz($course, $attemptobj->get_quizid());
+    if ($config) {
+        if ($config->protectcopy) {
+            $PAGE->requires->js_call_amd('block_userquiz_monitor/quizprotectcopy', 'init');
+        }
+    }
+}
+
 function block_userquiz_monitor_add_body_classes($attemptobj) {
     global $PAGE;
 
