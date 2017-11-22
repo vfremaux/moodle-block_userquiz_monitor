@@ -51,7 +51,7 @@ $PAGE->set_url($attemptobj->attempt_url(null, $page));
 if (is_dir($CFG->dirroot.'/blocks/userquiz_monitor')) {
     include_once($CFG->dirroot.'/blocks/userquiz_monitor/xlib.php');
     block_userquiz_monitor_attempt_adds($attemptobj);
-    block_userquiz_monitor_add_body_classes($attemptobj);
+    $uqconfig = block_userquiz_monitor_add_body_classes($attemptobj);
 }
 // CHANGE-.
 

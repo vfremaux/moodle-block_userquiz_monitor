@@ -83,6 +83,8 @@ function block_userquiz_monitor_add_body_classes($attemptobj) {
             ($uqconfig->mode == 'exam' && $uqconfig->examnobackwards)) {
         $PAGE->add_body_class('no-backwards');
     }
+
+    return $uqconfig;
 }
 
 function block_userquiz_monitor_check_has_quiz_ext($course, $quizid) {
