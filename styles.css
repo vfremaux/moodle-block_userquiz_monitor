@@ -762,3 +762,11 @@ input.radio-hidden[type="radio"]:checked + div.category-subpod {
 .category-check {
     padding-left: 10px;
 }
+
+.html-gauge {
+    height: 10px;
+}
+
+.html-gauge-remainbar {
+    background-color: #bbb;
+}
