@@ -399,8 +399,8 @@ class training_renderer extends \block_userquiz_monitor_renderer {
             if ($data = $preferenceform->get_data()) {
                 $data->userid = $USER->id;
                 if (!empty($prefs)) {
-                    if (!empty($data->examsdepth)) {
-                        $prefs->examsdepth = 0 + @$data->examsdepth;
+                    if (!is_null($data->resultsdepth)) {
+                        $prefs->resultsdepth = 0 + @$data->resultsdepth;
                     }
                     $DB->update_record('userquiz_monitor_prefs', $prefs);
                 } else {

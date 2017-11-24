@@ -331,6 +331,10 @@ function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategor
             }
         }
 
+        $overall->ratioA = ($overall->cptA) ? round($overall->goodA / $overall->cptA * 100) : 0 ;
+        $overall->ratioC = ($overall->cptC) ? round($overall->goodC / $overall->cptC * 100) : 0 ;
+        $overall->ratio = ($overall->cpt) ? round($overall->good / $overall->cpt * 100) : 0 ;
+
         return $errormsg;
     }
 
