@@ -1,0 +1,91 @@
+
+
+<!-- availableattempts -->
+<div class="available-attempts-container trans100">
+
+    <table class="available-attempts">
+
+{{#hasusedattempts}}
+
+{{#usedattempts}}
+        <tr valign="middle">
+
+            <td class="exam-history-attempt">
+                {{{attemptsstr}}} {{{finishdate}}}<br/>
+                {{{passingstr}}}
+                <img src="{{{iconurl}}}" />
+            </td>
+
+            <td class="detail-container">
+                <a href="{{{usedurl}}}">{{{detailbutton}}}</a>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="2">
+                {{total}}
+            </td>
+        </tr>
+{{/usedattempts}}
+
+{{#printellipse}}
+        <tr valign="top">
+            <td>...</td>';
+            <td><img src="{{{ellipseiconurl}}}" /></td>
+            <td></td>
+        </tr>
+{{/printellipse}}
+
+{{/hasusedattempts}}
+
+{{^hasusedattempts}}
+        <tr>
+            <td colspan="3">{{{nousedattemptsstr}}}</td>
+        </tr>
+{{/hasusedattempts}}
+
+{{^limitsenabled}}
+        <tr valign="top">
+            <td>
+                {{attemptstr}} {{availablestr}}
+            </td>
+            <td>
+                <img src="{{{availableiconurl}}}" />
+            </td>
+            <td>
+            </td>
+        </tr>
+{{/limitsenabled}}
+
+{{#limitsenabled}}
+{{#availables}}
+        {{! Loop untill all displayable units are done }}
+        <tr valign="top">
+            <td>
+                {{attemptstr}} {{availablestr}}
+            </td>
+            <td>
+                <img src="{{{availableiconurl}}}" />
+            </td>
+            <td>
+            </td>
+        </tr>
+{{/availables}}
+{{^available}}
+        <tr>';
+            <td align="center">
+            {{{noavailableattemptsstr}}}
+            </td>
+        </tr>
+{{/available}}
+{{#stillavailablestr}}
+        <tr valign="top">
+            <td colspan="3" class="uq-more-attempts">{{{stillavailablestr}}}</td>
+        </tr>
+{{/stillavailablestr}}
+{{/limitsenabled}}
+
+    </table>
+
+</div>
+<!-- /availableattempts -->

@@ -26,6 +26,7 @@
 
 // require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+require_once($CFG->dirroot . '/blocks/userquiz_monitor/xlib.php');
 
 // Look for old-style URLs, such as may be in the logs, and redirect them to startattemtp.php.
 if ($id = optional_param('id', 0, PARAM_INT)) {
@@ -46,11 +47,11 @@ $attemptobj = quiz_attempt::create($attemptid);
 $page = $attemptobj->force_page_number_into_range($page);
 $PAGE->set_url($attemptobj->attempt_url(null, $page));
 
-// CHANGE+.
+// CHANGE+ : Adding body markers allowing to use css to tune screens.
 if (is_dir($CFG->dirroot.'/blocks/userquiz_monitor')) {
     include_once($CFG->dirroot.'/blocks/userquiz_monitor/xlib.php');
     block_userquiz_monitor_attempt_adds($attemptobj);
-    $uqconfig = block_userquiz_monitor_check_has_quiz_ext($attemptobj->get_course(), $attemptobj->get_quizid());
+    $uqconfig = block_userquiz_monitor_add_body_classes($attemptobj);
 }
 // CHANGE-.
 

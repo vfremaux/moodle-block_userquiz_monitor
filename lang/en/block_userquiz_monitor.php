@@ -58,14 +58,14 @@ $string['configexamhidescoringinterface'] = 'Hide examination scoring interface.
 $string['configexaminstructions'] = 'Instructions for exams';
 $string['configexamtab'] = 'Title of the examination';
 $string['configinformationpageid'] = 'information course page identifier.<br/>';
-$string['configcolorAserie'] = 'First serie gauge color';
-$string['configcolorCserie'] = 'Second serie gauge color';
+$string['configcoloraserie'] = 'First serie gauge color';
+$string['configcolorcserie'] = 'Second serie gauge color';
 $string['configquiznobackwards'] = 'Forbid going backwards on quiz';
 $string['configprotectcopy'] = 'Protect against content copy';
 $string['configquizforceanswer'] = 'Force answer';
-$string['configrateAserie'] = 'First serie threshold (% on A type)';
-$string['configrateCserie'] = 'Second serie threshold (% on C type)';
-$string['configrootcategory'] = 'Parent category for choice';
+$string['configrateaserie'] = 'First serie threshold (% on A type)';
+$string['configratecserie'] = 'Second serie threshold (% on C type)';
+$string['configrootcategory'] = 'Parent category for the whole training system';
 $string['configtest'] = 'Add belonging quizzes tests';
 $string['configtrainingenabled'] = 'Enable training';
 $string['configshowhistory'] = 'Show results history';
@@ -131,6 +131,13 @@ $string['opttwoexams'] = '2 passed exams';
 $string['opttwoweeks'] = '2 passed weeks';
 $string['pluginname'] = 'Userquiz monitoring';
 $string['questiontype'] = 'Questions\'s types:&ensp;';
+$string['returntoquiz'] = 'Back to the quiz';
+$string['returntotraining'] = 'Back to training board';
+$string['finalvalidation'] = 'Final validation';
+$string['finalvalidation_desc'] = 'Please confirm saving all your answers. You will not be allowed to go back any more after this action.';
+$string['looseattemptsignal'] = 'You will loose all your answers if you quit the quiz. Continue ?';
+$string['questionreference'] = 'Question Ref';
+$string['questioncategory'] = 'Category';
 $string['ratio'] = '<b>Ratio<sup>{$a}</sup></b>';
 $string['ratio1'] = 'RATIO';
 $string['reftitle'] = '{$a} Assessment Reference';
@@ -147,8 +154,8 @@ $string['schedule'] = 'Here is the {$a}\'s training program';
 $string['selectallcb'] = 'Select all';
 $string['selectschedule'] = 'Select a category to view program';
 $string['showdiv'] = 'Show / Hide the total score';
-$string['stillavailable'] = ' still available';
-$string['score'] = 'Score';
+$string['stillavailable'] = ' You have {$a} still available attempts in your account.';
+$string['score'] = 'SCORE';
 $string['subcategoryname'] = 'Subcategory\'s name:&ensp;';
 $string['target'] = 'Target';
 $string['meanscore'] = 'Mean Score';
@@ -190,3 +197,7 @@ $string['configquizforceanswer_help'] = 'If enabled, the corresponding quiz will
 content. This only works in "single question per page forme"';
 
 $string['resultsdepth_help'] = 'Choose how long in the past you want results to be considered in calculation';
+
+$string['configrootcategory_help'] = 'The choice of this category is very important for the training system. When training,
+it will be the start of the quiz area choice by the user. When making an exam, it will also be the root of the results analysis
+questionning space.';

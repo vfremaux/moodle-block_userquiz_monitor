@@ -1,0 +1,33 @@
+
+
+<!-- examlaunchpanel -->
+<div>
+    <div class="userquiz-monitor-row">
+
+        <div class="userquiz-monitor-cell vertical-centered span3">
+            <h1>{{runexamstr}}</h1>
+            <div class="trans100" style="text-align:center;">
+                {{{runlaunchform}}}
+            </div>
+
+            {{{availableattempts}}}
+
+        </div>
+
+{{^examhidescoringinterface}}
+        <div class="userquiz-monitor-cell vertical-centered  userquiz-cat-progress span9">
+            <h1>{{totalheader}}</h1>
+            <div class="trans100">
+                <div class="userquiz-monitor-container">
+
+                    <div class="userquiz-monitor-row colspaned"></div>
+
+                    {{[total]}}
+
+                </div>
+            </div>
+        </div>
+{{/examhidescoringinterface}}
+    </div>
+</div>
+<!-- /examlaunchpanel -->

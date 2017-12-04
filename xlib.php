@@ -60,16 +60,48 @@ function block_userquiz_monitor_attempt_adds($attemptobj) {
     if ($config) {
         if (($config->mode == 'exam' && !empty($config->examforceanswer)) ||
                 ($config->mode == 'training' && !empty($config->trainingforceanswer))) {
-            $PAGE->requires->js('/blocks/userquiz_monitor/js/quizforceanswer.js');
-        }
-        if (($config->mode == 'exam' && !empty($config->examnobackwards)) ||
-                ($config->mode == 'training' && !empty($config->trainingnobackwards))) {
-            $PAGE->requires->js('/blocks/userquiz_monitor/js/quiznobackwards.js');
+            $PAGE->requires->js_call_amd('block_userquiz_monitor/quizforceanswer', 'init');
         }
         if ($config->protectcopy) {
-            $PAGE->requires->js('/blocks/userquiz_monitor/js/quizprotectcopy.js');
+            $PAGE->requires->js_call_amd('block_userquiz_monitor/quizprotectcopy', 'init');
+        }
+
+        $PAGE->requires->js_call_amd('block_userquiz_monitor/quiztrapoutlinks', 'init');
+    }
+}
+
+/**
+ * Adds Jquery form control for single question quizzes
+ */
+function block_userquiz_monitor_protect_page($attemptobj) {
+    global $PAGE;
+
+    $course = $attemptobj->get_course();
+
+    $PAGE->requires->jquery();
+    $config = block_userquiz_monitor_check_has_quiz($course, $attemptobj->get_quizid());
+    if ($config) {
+        if ($config->protectcopy) {
+            $PAGE->requires->js_call_amd('block_userquiz_monitor/quizprotectcopy', 'init');
         }
     }
+}
+
+function block_userquiz_monitor_add_body_classes($attemptobj) {
+    global $PAGE;
+
+    $uqconfig = block_userquiz_monitor_check_has_quiz_ext($attemptobj->get_course(), $attemptobj->get_quizid());
+    if (($uqconfig->mode == 'training' && $uqconfig->trainingforceanswer) ||
+            ($uqconfig->mode == 'exam' && $uqconfig->examforceanswer)) {
+        $PAGE->add_body_class('is-userquiz');
+        $PAGE->add_body_class('userquiz-'.$uqconfig->mode);
+    }
+    if (($uqconfig->mode == 'training' && $uqconfig->trainingnobackwards) ||
+            ($uqconfig->mode == 'exam' && $uqconfig->examnobackwards)) {
+        $PAGE->add_body_class('no-backwards');
+    }
+
+    return $uqconfig;
 }
 
 function block_userquiz_monitor_check_has_quiz_ext($course, $quizid) {

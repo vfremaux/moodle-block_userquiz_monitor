@@ -1,0 +1,30 @@
+
+
+
+<!-- total -->
+<div style="padding:5px;">
+
+    <div class="userquiz-monitor-row colspaned">
+        <div class="userquiz-monitor-cell">
+            <p>{{{totaldescstr}}}</p>
+
+{{#trainingadmin}}
+            <p>
+            {{adminresethiststr}}
+            <input type="button" value="{{resetlabel}}" id="id-reset-training" />
+            </p>
+{{/trainingadmin}}
+
+        </div>
+    </div>
+
+    <table width="100%" class="global-progress-bar userquiz-monitor-bg">
+
+        {{{bar_head_row}}}
+        {{{barrangerowA}}}
+        {{{barrangerowC}}}
+
+    </table>
+
+</div>
+<!-- /total -->

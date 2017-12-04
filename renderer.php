@@ -63,23 +63,6 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         return $this->gaugerendererfunc;
     }
 
-    /**
-     * formats a single error line for displaying in a
-     * table container.
-     * @param string $msg a textual message to output.
-     */
-    public function errorline($msg) {
-        $str = '';
-
-        $str .= '<div class="userquiz-monitor-row">';
-        $str .= '<div class="userquiz-monitor-cell">';
-        $str .= $this->output->notification($msg);
-        $str .= '</div>';
-        $str .= '</div>';
-
-        return $str;
-    }
-
     public function category_detail_container() {
 
         $catdetailstr = get_string('categorydetail', 'block_userquiz_monitor', $this->theblock->config->trainingprogramname);
@@ -100,31 +83,23 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
      * Display the progress bar
      */
     public function progress_bar_html($id, $data) {
+        global $OUTPUT;
 
-        if ($data['skin'] == 'A') {
-            $barcolor = $this->theblock->config->colorAserie;
+        $template = (object) $data;
+
+        if ($template->skin == 'A') {
+            $template->barcolor = $this->theblock->config->colorAserie;
         } else {
-            $barcolor = $this->theblock->config->colorCserie;
+            $template->barcolor = $this->theblock->config->colorCserie;
         }
 
-        $valuebartop = $data['boxheight'] / 2 - 2;
+        // $valuebartop = $data['boxheight'] / 2 - 2; 
 
-        $data['id'] = $id;
+        $template->id = $id;
 
-        $str = '<div class="html-gauge-container" style="width: '.$data['boxwidth'].'; height: '.$data['boxheight'].'">';
-        $str .= '<div class="html-gauge-value-label '.$data['skin'].'">'.$data['successrate'].' %</div>';
-        $str .= '<table width="100%" height="4px">';
-        $str .= '<tr>';
-        $str .= '<td class="html-gauge-valuebar '.$data['skin'].'" style="background-color: '.$barcolor.'" width="'.$data['successrate'].'%"></td>';
-        $remains = 100 - $data['successrate'];
-        $str .= '<td class="html-gauge-remainbar '.$data['skin'].'" style="background-color: #b0b0b0" width="'.$remains.'%"></td>';
-        $str .= '</tr>';
-        $str .= '</table>';
-        $str .= '<div class="html-gauge-targetvalue-label '.$data['skin'].'" style="color: '.$barcolor.';left:'.$data['stop'].'%">'.$data['stop'].' %</div>';
-        $str .= '<div class="html-gauge-targetvalue-mark '.$data['skin'].'" style="background-color: '.$barcolor.';left:'.$data['stop'].'%"></div>';
-        $str .= '</div>';
+        $template->remains = 100 - $template->successrate;
 
-        return $str;
+        return $OUTPUT->render_from_template('block_userquiz_monitor/progressbarhtml', $template);
     }
 
     /**
@@ -247,8 +222,11 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
     /**
      * Displaying the subcategories of a category
      */
-    public function subcategories($courseid, $rootcategory, $categoryid, $quizzeslist, $positionheight, $mode) {
+    public function subcategories($courseid, $rootcategory, $categoryid, $quizzeslist, $mode) {
         global $USER, $DB;
+
+        $template = new StdClass;
+        $template->catid = $categoryid;
 
         $blockid = $this->theblock->instance->id;
         $gaugerenderfunc = $this->gaugerendererfunc;
@@ -256,11 +234,9 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
             throw new coding_exception('Renderers functions were called before renderer has block being setup');
         }
 
-        // Init variables.
-        $str = '';
-
         $quizzeslist = stripslashes($quizzeslist);
-        $quizzeslist = str_replace(',', "','", $quizzeslist);
+        $quizzesarr = explode(',', $quizzeslist);
+        list($insql, $inparams) = $DB->get_in_or_equal($quizzesarr);
 
         $fields = 'id, name, parent';
         if ($subcats = $DB->get_records('question_categories', array('parent' => $categoryid), 'sortorder', $fields )) {
@@ -336,14 +312,17 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                         qas.state != 'todo' AND
                         q.category = qc.id AND
                         qas.userid = ? AND
-                        qua.quiz IN ('$quizzeslist') AND
+                        qua.quiz $insql AND
                         qa.questionid = q.id AND
                         qc.parent = ?
                     GROUP BY
                         qas.questionattemptid
                 ";
 
-                $catstates = $DB->get_records_sql($sql, array($USER->id, $categoryid));
+                $params = array($USER->id);
+                $params = array_merge($params, $inparams);
+                $params[] = $categoryid;
+                $catstates = $DB->get_records_sql($sql, $params);
             }
 
             if (!empty($catstates)) {
@@ -417,68 +396,49 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
 
             foreach ($subcats as $subcat) {
                 if ($cpt == 0) {
-                    // Do it once for first cat !
-                    // Define height position of the first block on the left part monitor.
-                    if ($positionheight != 0) {
-                        $str .= '<div id="divpr" style="height:'.$positionheight.'px;"></div>';
-                    }
-                    $cancel = '';
-                    $cancelicon = $this->get_area_url('closesubsicon', $this->output->pix_url('cancel', 'block_userquiz_monitor'));
-                    if ($mode == 'training') {
-                        $cancel .= '<img class="userquiz-icon" src="'.$cancelicon.'" onclick="closepr()" />';
-                    } else {
-                        $cancel .= '<img class="userquiz-icon" src="'.$cancelicon.'" onclick="closeprexam()" />';
-                    }
 
                     $cb = '';
                     $quizzesliststring = $quizzeslist;
 
-                    if ($mode == "training") {
-                        $jshandler = 'updateselectorpr('.$courseid.','.$rootcategory.', \''.$subcategoriesids.'\', \'all\'';
-                        $jshandler .= ', \''.$quizzesliststring.'\');';
-                        $cb = '<input type="checkbox"
-                               name="checkall_pr"
-                               id="checkall_pr"
-                               onclick="'.$jshandler.'"
-                               style="padding-left:2px;" /> <span class="select-all">'.get_string('selectallcb', 'block_userquiz_monitor').'</span>';
+                    if ($mode == 'training') {
+                        $boxtpl = new StdClass;
+                        $boxtpl->selectall = true;
+                        $boxtpl->selectallcbstr = get_string('selectallcb', 'block_userquiz_monitor');
+                        $boxtpl->name = 'checkall_detail';
+                        $boxtpl->id = 'id-checkall-detail-'.$categoryid;
+                        $boxtpl->class = 'cb-detail-'.$categoryid;
+                        $cb = $this->output->render_from_template('block_userquiz_monitor/catcheckbox', $boxtpl);
                     }
 
-                    $str .= '<div class="trans100 subcategory-cancel" id="divpr">';
-                    $str .= '<table width="100%">'; // Table.
-                    $str .= '<tr>'; // Row.
-                    $str .= '<td>';
-                    $str .= $cb.' <span style="float:right;">'.$cancel.'</span>';
-                    $str .= '</td>';
-                    $str .= '</tr>'; // Row.
-                    $str .= '</table>'; // Table.
-                    $str .= '</div>';
+                    $canceltpl = new StdClass;
+                    $canceltpl->canceliconurl = $this->get_area_url('closesubsicon', $this->output->pix_url('cancel', 'block_userquiz_monitor'));
+                    $canceltpl->parentcatid = $categoryid;
+                    /*
+                    if ($mode == 'training') {
+                        $canceltpl->jshandler = 'closepr()';
+                    } else {
+                        $canceltpl->jshanlder = 'closeprexam()';
+                    }
+                    */
+                    $canceltpl->cb = $cb;
+                    $template->cancelrow = $this->output->render_from_template('block_userquiz_monitor/cancelrow', $canceltpl);
                 }
 
                 $cb = '';
                 if ($mode == 'training') {
-                    $jshandler = 'updateselectorpr('.$courseid.', '.$rootcategory.',';
-                    $jshandler .= ' \''.$subcategoriesids.'\', \'none\', \''.$quizzesliststring.'\')';
-                    $cb = '
-                        <input type="checkbox"
-                          name="cbpr'.$subcat->id.'"
-                          id="cbpr'.$subcat->id.'"
-                          onclick="'.$jshandler.'"
-                          style="padding-left:2px;" />
-                    ';
+                    $boxtpl = new StdClass;
+                    $boxtpl->name = 'cbpr'.$subcat->id;
+                    $boxtpl->id = 'id-cb-detail-'.$subcat->id;
+                    $boxtpl->class = 'cb-detail cb-detail-'.$categoryid;
+                    $cb = $this->output->render_from_template('block_userquiz_monitor/catcheckbox', $boxtpl);
                 }
 
-                $str .= '<div class="trans100" id="divpr'.$subcat->id.'" >'; // Supercontainer.
-                $str .= '<div class="userquiz-monitor-categorycontainer">'; // Container.
+                $subcattpl = new StdClass;
+                $subcattpl->id = $subcat->id;
+                $subcattpl->cb = $cb;
+                $subcattpl->name = $subcat->name;
 
-                $str .= '<div class="userquiz-monitor-cell categorychoice">';
-                $str .= $cb;
-                $str .= '</div>';
-                $str .= '<div class="userquiz-monitor-cell categoryname">';
-                $str .= $subcat->name;
-                $str .= '</div>'; // Row.
-
-                $str .= '<table width="100%">';
-                $str .= $this->render_bar_head_row();
+                $subcattpl->barheadrow = $this->render_bar_head_row();
 
                 $graphwidth = round(($subcat->ratio * 100) / $maxratio);
 
@@ -505,7 +465,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                         $catcounts = new StdClass;
                         $catcounts->good = $subcat->goodA;
                         $catcounts->cpt = $subcat->cptA;
-                        $str .= $this->render_bar_range_row($progressbar, $catcounts, $serieicon);
+                        $subcattpl->barrangerowA = $this->render_bar_range_row($progressbar, $catcounts, $serieicon);
                     }
                     if ($this->theblock->config->dualserie && ($questiontype == 'C')) {
                         $data = array (
@@ -523,54 +483,38 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                         $catcounts = new StdClass;
                         $catcounts->good = $subcat->goodC;
                         $catcounts->cpt = $subcat->cptC;
-                        $str .= $this->render_bar_range_row($progressbar, $catcounts, $serieicon);
+                        $subcattpl->barrangerowC = $this->render_bar_range_row($progressbar, $catcounts, $serieicon);
                     }
+                    $template->subcategories[] = $subcattpl;
                 }
-                $str .= '</table>';
 
-                $str .= '</div>'; // Container.
-                $str .= '</div>'; // Supercontainer
                 $cpt++;
             }
-            return $str;
+            return $this->output->render_from_template('block_userquiz_monitor/subcategories', $template);
         }
     }
 
     public function render_bar_head_row() {
-        $str = '<tr valign="middle">'; // Row.
-        if (!empty($this->theblock->config->dualserie)) {
-            $str .= '<td class="userquiz-monitor-bg" style="text-align:center;font-size:0.8em;">';
-            $str .= get_string('level1', 'block_userquiz_monitor');
-            $str .= '</td>';
-        }
-        $str .= '<td class="userquiz-monitor-bg" style="text-align:center;">';
-        $str .= get_string('score', 'block_userquiz_monitor');
-        $str .= '</td>';
 
-        $str .= '<td class="userquiz-monitor-bg" style="text-align:center;font-size:0.8em;">';
-        $str .= get_string('ratio1', 'block_userquiz_monitor');
-        $str .= '</td>';
-        $str .= '</tr>';
+        $template = new Stdclass;
+        $template->dualserie = !empty($this->theblock->config->dualserie);
+        $template->level1str = get_string('level1', 'block_userquiz_monitor');
+        $template->scorestr = get_string('score', 'block_userquiz_monitor');
+        $template->ratio1str = get_string('ratio1', 'block_userquiz_monitor');
 
-        return $str;
+        return $this->output->render_from_template('block_userquiz_monitor/headrow', $template);
     }
 
     public function render_bar_range_row($progressbar, $catcounts, $serieicon) {
-        $str = '<tr valign="middle">'; // Row.
-        if (!empty($this->theblock->config->dualserie)) {
-            $str .= '<td class="userquiz-cat-total">';
-            $str .= '<img class="userquiz-cat-image" src="'.$serieicon.'" />';
-            $str .= '</td>';
-        }
-        $str .= '<td class="userquiz-cat-progress" style="text-align:center;">';
-        $str .= $progressbar;
-        $str .= '</td>';
-        $str .= '<td class="userquiz-cat-total">';
-        $str .= '<h4>'.$catcounts->good.'/'.$catcounts->cpt.'</h4>';
-        $str .= '</td>';
-        $str .= '</tr>'; // Row.
 
-        return $str;
+        $template = new StdClass;
+
+        $template->dualserie = !empty($this->theblock->config->dualserie);
+        $template->serieiconurl = $serieicon;
+        $template->progressbar = $progressbar;
+        $template->catcounter = $catcounts->good.'/'.$catcounts->cpt;
+
+        return $this->output->render_from_template('block_userquiz_monitor/rangebarrow', $template);
     }
 
     public function filter_state($domain, $blockid) {
@@ -721,44 +665,25 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
     public function total($components, $data, $quizzeslist, $mode = 'training') {
         global $USER, $COURSE;
 
-        $commenthist = get_string('commenthist', 'block_userquiz_monitor');
-        $totaldescstr = get_string('totaldesc'.$mode, 'block_userquiz_monitor');
+        $template = new StdClass;
 
-        $str = '';
+        $template->mode = $mode;
+        $template->commenthist = get_string('commenthist', 'block_userquiz_monitor');
+        $template->totaldescstr = get_string('totaldesc'.$mode, 'block_userquiz_monitor');
 
-        $str .= '<div style="padding:5px;">';
-        $str .= '<div class="userquiz-monitor-row colspaned">';
-        $str .= '<div class="userquiz-monitor-cell">';
-        $str .= '<p>'.$totaldescstr.'</p>';
+        $template->admintraining = ($mode == 'training') &&
+            has_capability('moodle/site:config', context_system::instance(), @$USER->realuser);
+        $template->adminresethiststr = get_string('adminresethist', 'block_userquiz_monitor');
+        $template->jshandler = 'resettraining(\''.$COURSE->id.'\', \''.$USER->id.'\', \''.urlencode($quizzeslist).'\')';
+        $template->resetlabel = get_string('reset', 'block_userquiz_monitor');
 
-        if ($mode == 'training' && has_capability('moodle/site:config', context_system::instance(), @$USER->realuser)) {
-            $str .= '<p>'.get_string('adminresethist', 'block_userquiz_monitor');
-            $jshandler = 'resettraining(\''.$COURSE->id.'\', \''.$USER->id.'\', \''.urlencode($quizzeslist).'\')';
-            $label = get_string('reset', 'block_userquiz_monitor');
-            $str .= '<input type="button" value="'.$label.'" id="" onclick="'.$jshandler.'" /></p>';
-        }
-
-        $str .= '</div>';
-        $str .= '</div>'; // Row.
-
-        $str = $this->total_graph($components, $data);
-        $str .= '</div>';
-
-        return $str;
-    }
-
-    public function total_graph($components, $data) {
-
-        $str = '';
-
-        $str .= '<table width="100%">';
-        $str .= $this->render_bar_head_row('');
+        $template->barheadrow = $this->render_bar_head_row('');
 
         $serieicon = $this->get_area_url('serie1icon', $this->output->pix_url('a', 'block_userquiz_monitor'));
         $catcounts = new \StdClass;
         $catcounts->good = $data['goodA'];
         $catcounts->cpt = $data['cptA'];
-        $str .= $this->render_bar_range_row($components['progressbarA'], $catcounts, $serieicon);
+        $template->barrangerowA = $this->render_bar_range_row($components['progressbarA'], $catcounts, $serieicon);
 
         if (!empty($data['dualserie'])) {
             $serie2iconurl = $this->get_area_url('serie2icon', $this->output->pix_url('c', 'block_userquiz_monitor'));
@@ -766,49 +691,20 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
             $catcounts = new \StdClass;
             $catcounts->good = $data['goodC'];
             $catcounts->cpt = $data['cptC'];
-            $str .= $this->render_bar_range_row($components['progressbarC'], $catcounts, $serieicon);
+            $template->barrangerowC = $this->render_bar_range_row($components['progressbarC'], $catcounts, $serieicon);
         }
 
-        $str .= '</table>';
-
-        return $str;
+        return $this->output->render_from_template('block_userquiz_monitor/total', $template);
     }
 
-    public function program_headline($programname, $jshandler) {
+    public function program_headline($programname) {
 
-        $catstr = get_string('categories', 'block_userquiz_monitor', $programname);
-        $selectallcbstr = ' <span class="select-all">'.get_string('selectallcb', 'block_userquiz_monitor').'<span>';
+        $template = new StdClass;
 
-        $str = '';
+        $template->catstr = get_string('categories', 'block_userquiz_monitor', $programname);
+        $template->selectallcbstr = get_string('selectallcb', 'block_userquiz_monitor');
 
-        $str .= '<div id="userquiz-monitor-program-headline">';
-        $str .= '<div class="userquiz-monitor-categorycontainer">';
-        $str .= '<div class="userquiz-monitor-row" style="height:17px">';
-        $str .= '<div class="userquiz-monitor-cell"><h1>'.$catstr.'</h1></div>';
-        $str .= '</div>'; // Row.
-        $str .= '</div>'; // Table.
-        $str .= '</div>';
-
-        if (empty($jshandler)) {
-            return $str;
-        }
-
-        $str .= '<div class="trans100">';
-        $str .= '<div class="userquiz-monitor-categorycontainer" id="userquiz-select-all">';
-        $str .= '<div class="userquiz-monitor-row">';
-        $str .= '<div class="userquiz-monitor-cell" style="width:59%;">';
-        $str .= '<input type="checkbox"
-                        name="checkall_pl"
-                        id="checkall_pl"
-                        style="padding-left:2px;"
-                        onclick="'.$jshandler.'" />';
-        $str .= $selectallcbstr;
-        $str .= '</div>';
-        $str .= '</div>'; // Row.
-        $str .= '</div>'; // Table.
-        $str .= '</div>';
-
-        return $str;
+        return $this->output->render_from_template('block_userquiz_monitor/programheadline', $template);
     }
 
     /**
