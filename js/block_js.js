@@ -110,6 +110,7 @@ function displaytrainingsubcategories(courseid, rootcategory, categoryid, list, 
             $('#divpl' + list[i]).removeClass('trans50');
             $('#cbpl' + list[i]).prop('checked', true);
             $('#cbpl' + list[i]).prop('disabled', true);
+            $('#userquiz-subcat-open' + list[i]).addClass('active');
         } else {
             $('#divpl' + list[i]).addClass('trans50');
             $('#divpl' + list[i]).removeClass('trans100');
@@ -117,6 +118,7 @@ function displaytrainingsubcategories(courseid, rootcategory, categoryid, list, 
             $('#cbpl' + list[i]).prop('disabled', true);
             $('#progressbarcontainerA' + list[i]).css('visibility', 'hidden');
             $('#progressbarcontainerC' + list[i]).css('visibility', 'hidden');
+            $('#userquiz-subcat-open' + list[i]).removeClass('active');
         }
     }
 
@@ -126,20 +128,41 @@ function displaytrainingsubcategories(courseid, rootcategory, categoryid, list, 
     var url = M.cfg.wwwroot + "/blocks/userquiz_monitor/ajax/subcategoriescontent.php?" + params;
 
     $.post(url, '', function(data) {
-        if ($('#category-subcatpod-' + categoryid).css('display') == 'block') {
-            $('#category-subcatpod-' + categoryid).html(data);
-            $('#category-subpod').css('visibility', 'hidden');
-            $('#category-subcatpod-' + categoryid).css('visibility', 'visible');
-        } else {
-            $('#displaysubcategories').html(data);
-            $('.tablemonitorcategorycontainer .userquiz-monitor-row').css('display', 'block');
-        }
-        // Get top pos of the left block:
-        var origtop = Math.round($('#userquiz-select-all').offset().top);
-        var leftpostop = Math.round($('#divpl' + categoryid).offset().top);
+        if ($('#userquiz-subpod-switch').css('visibility') === 'visible') {
+            // Narrow layout has switched on.
+            // Hide everyone.
+            $('.category-subpod').css('visibility', 'hidden');
+            $('.category-subpod').css('display', 'none');
+            // Show which we want.
 
-        $('#displaysubcategories').css('position', 'relative');
-        $('#displaysubcategories').css('top', leftpostop - origtop);
+            // $('#category-subcatpod-' + categoryid).html(data);
+            pod = document.getElementById('category-subcatpod-' + categoryid);
+            pod.innerHTML = data;
+
+            $('#category-subcatpod-' + categoryid).css('visibility', 'visible');
+            $('#category-subcatpod-' + categoryid).css('display', 'block');
+            $('#divpl' + categoryid)[0].scrollIntoView();
+            window.scrollBy(0, -40);
+        } else {
+            // Ensure all narrow screen divs are gone.
+            $('.category-subpod').css('visibility', 'hidden');
+            $('.category-subpod').css('display', 'none');
+
+            // $('#displaysubcategories').html(data);
+
+            partright = document.getElementById('displaysubcategories');
+            partright.innerHTML = data;
+
+            $('.tablemonitorcategorycontainer .userquiz-monitor-row').css('display', 'block');
+
+            // Get top pos of the left block.
+            var origtop = Math.round($('#userquiz-select-all').offset().top);
+            var leftpostop = Math.round($('#divpl' + categoryid).offset().top);
+
+            $('#displaysubcategories').css('display', 'block');
+            $('#displaysubcategories').css('position', 'relative');
+            $('#displaysubcategories').css('top', leftpostop - origtop);
+        }
 
     }, 'html');
 
@@ -223,6 +246,14 @@ function activedisplayexaminationsubcategories(courseid, categoryid, list, quizi
         $('#displaysubcategories').html(data);
         $('.tablemonitorcategorycontainer .userquiz-monitor-row').css('display', 'block');
     }, 'html');
+}
+
+function form_submit(formelm) {
+    $.each('.cbpr', function(index, value) {
+        if ($(value).prop('checked')) {
+            formelm.elements[$(value).attr('name')] = 'on';
+        }
+    });
 }
 
 /**
@@ -317,16 +348,18 @@ function closepr(button) {
     $('#checkall_pl').prop('checked', false);
     $('#checkall_pl').prop('disabled', false);
     $('#displaysubcategories').html('');
-    $('#displaysubcategories').css('disaply', 'none');
+    $('#displaysubcategories').css('display', 'none');
     $('.tablemonitorcategorycontainer .userquiz-monitor-row').css('display', 'none');
     $('.category-subpod').html('');
     $('.category-subpod').css('visibility', 'hidden');
+    $('.category-subpod').css('display', 'none');
     $('.selectorcontainers').html(button);
     for (var j = 0; j < idcategoriespl.length; j++) {
         $('#cbpl' + idcategoriespl[j]).prop('checked', false);
         $('#cbpl' + idcategoriespl[j]).prop('disabled', false);
         $('#divpl' + idcategoriespl[j]).addClass('trans100');
         $('#divpl' + idcategoriespl[j]).removeClass('trans50');
+        $('#userquiz-subcat-open' + idcategoriespl[j]).removeClass('active');
         $('#progressbarcontainerA' + idcategoriespl[j]).css('visibility', 'visible');
         $('#progressbarcontainerC' + idcategoriespl[j]).css('visibility', 'visible');
     }

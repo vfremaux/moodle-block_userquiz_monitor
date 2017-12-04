@@ -58,16 +58,17 @@ $string['configexamhidescoringinterface'] = 'Hide examination scoring interface.
 $string['configexaminstructions'] = 'Instructions for exams';
 $string['configexamtab'] = 'Title of the examination';
 $string['configinformationpageid'] = 'information course page identifier.<br/>';
-$string['configcolorAserie'] = 'First serie gauge color';
-$string['configcolorCserie'] = 'Second serie gauge color';
+$string['configcoloraserie'] = 'First serie gauge color';
+$string['configcolorcserie'] = 'Second serie gauge color';
 $string['configquiznobackwards'] = 'Forbid going backwards on quiz';
 $string['configprotectcopy'] = 'Protect against content copy';
 $string['configquizforceanswer'] = 'Force answer';
-$string['configrateAserie'] = 'First serie threshold (% on A type)';
-$string['configrateCserie'] = 'Second serie threshold (% on C type)';
-$string['configrootcategory'] = 'Parent category for choice';
+$string['configrateaserie'] = 'First serie threshold (% on A type)';
+$string['configratecserie'] = 'Second serie threshold (% on C type)';
+$string['configrootcategory'] = 'Parent category for the whole training system';
 $string['configtest'] = 'Add belonging quizzes tests';
-$string['configtrainingenabled'] = 'Enable training ';
+$string['configtrainingenabled'] = 'Enable training';
+$string['configshowhistory'] = 'Show results history';
 $string['configtrainingprogramname'] = 'Name of the training program (enters in titling and labels)';
 $string['configwarning'] = 'Beware if a quiz is selected in the test, then it can only be found in the examination and vice versa.';
 $string['configwarningemptycats'] = 'The root cat you have choose seems not having subcats.';
@@ -147,9 +148,11 @@ $string['selectallcb'] = 'Select all';
 $string['selectschedule'] = 'Select a category to view program';
 $string['showdiv'] = 'Show / Hide the total score';
 $string['stillavailable'] = ' still available';
+$string['score'] = 'Score';
 $string['subcategoryname'] = 'Subcategory\'s name:&ensp;';
 $string['target'] = 'Target';
 $string['meanscore'] = 'Mean Score';
+$string['seedetails'] = 'See details';
 $string['testinstructions'] = '<p>To launch a training, please select categories or subcategories you wxant to focus on in the following table than choose the number of questions you want to get in your training.</p><p>The dashboard computes your success rate per category, accumulating your mean success level from the beginning of your trainig period.</p>';
 $string['testtitle'] = 'Self-training to the {$a} assessment';
 $string['thankyou'] = 'Thank you for having submitted to this examination';
@@ -187,3 +190,7 @@ $string['configquizforceanswer_help'] = 'If enabled, the corresponding quiz will
 content. This only works in "single question per page forme"';
 
 $string['resultsdepth_help'] = 'Choose how long in the past you want results to be considered in calculation';
+
+$string['configrootcategory_help'] = 'The choice of this category is very important for the training system. When training,
+it will be the start of the quiz area choice by the user. When making an exam, it will also be the root of the results analysis
+questionning space.';

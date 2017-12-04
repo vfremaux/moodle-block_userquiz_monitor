@@ -92,7 +92,7 @@ class training_renderer extends \block_userquiz_monitor_renderer {
         $str = '';
 
         $str .= '<div>'; // Table.
-        $str .= '<div class="userquiz-monitor-row">'; // Row.
+        $str .= '<div class="">'; // Row.
 
         $str .= '<div class="userquiz-monitor-cell userquiz-cat-progress span9">';
         $str .= '<h1>'.$totalstr.' '.$this->output->help_icon('total', 'block_userquiz_monitor', false).'</h1>';
@@ -130,6 +130,14 @@ class training_renderer extends \block_userquiz_monitor_renderer {
 
         $str .= '<div class="userquiz-monitor-row">'; // Row.
 
+        $str .= '<div class="userquiz-monitor-cell categorychoice">';
+        $str .= '<input type="checkbox"
+                        name="cb_pl'.$cat->id.'"
+                        id="cbpl'.$cat->id.'"
+                        onclick="'.$cat->jshandler1.'"
+                        style="padding-left:2px;" />';
+        $str .= '</div>';
+
         $str .= '<div class="userquiz-monitor-cell categoryname">';
         $str .= $cat->name;
         $str .= '</div>';
@@ -137,11 +145,6 @@ class training_renderer extends \block_userquiz_monitor_renderer {
 
         $str .= '<div class="userquiz-monitor-row">'; // Row
         $str .= '<div class="userquiz-monitor-cell">';
-        $str .= '<input type="checkbox"
-                        name="cb_pl'.$cat->id.'"
-                        id="cbpl'.$cat->id.'"
-                        onclick="'.$cat->jshandler1.'"
-                        style="padding-left:2px;" />';
         $str .= $cat->accessorieslink;
         $str .= '<input type="hidden" name="h_cb_pl'.$cat->id.'" value="h_cb_pl'.$cat->id.'"/>';
         $str .= '</div>';
@@ -152,14 +155,41 @@ class training_renderer extends \block_userquiz_monitor_renderer {
         $str .= '</div>';
 
         $str .= '<div class="userquiz-monitor-cell">';
-        $pixurl = $this->get_area_url('detailsicon', $this->output->pix_url('detail', 'block_userquiz_monitor'));
-        $str .= '<img class="userquiz-monitor-cat-button"
-                      title="'.$seesubsstr.'"
-                      src="'.$pixurl.'"
-                      onclick="'.$cat->jshandler2.'"/>';
+        $pixurl = $this->get_area_url('detailsicon');
+        if ($pixurl) {
+            $str .= '<img class="userquiz-monitor-cat-button"
+                          title="'.$seesubsstr.'"
+                          src="'.$pixurl.'"
+                          onclick="'.$cat->jshandler2.'"/>';
+        } else {
+            // If no detail image loaded keep a single button.
+            $str .= '<input type="button"
+                          id="userquiz-subcat-open'.$cat->id.'"
+                          class="userquiz-monitor-cat-button btn"
+                          title="'.$seesubsstr.'"
+                          value="'.$seesubsstr.'"
+                          onclick="'.$cat->jshandler2.'"/>';
+        }
         $str .= '</div>';
 
         $str .= '</div>'; // Row.
+
+        if (optional_param('qdebug', false, PARAM_BOOL)) {
+            $str .= '<div class="qdebug"><pre>';
+            if (!empty($cat->questions['A'])) {
+                $str .= 'A questions'."\n";
+                foreach ($cat->questions['A'] as $catid => $catqs) {
+                    $str .= $catid.' => '.implode(', ', $catqs)."\n";
+                }
+            }
+            if (!empty($cat->questions['C'])) {
+                $str .= 'C questions'."\n";
+                foreach ($cat->questions['C'] as $catid => $catqs) {
+                    $str .= $catid.' => '.implode(', ', $catqs)."\n";
+                }
+            }
+            $str .= '</pre></div>';
+        }
 
         $str .= '<div class="category-bargraph">'; // Not a row. Must collapse.
         $str .= '<table width="100%">';

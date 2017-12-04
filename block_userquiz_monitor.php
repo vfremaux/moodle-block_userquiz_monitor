@@ -130,8 +130,7 @@ class block_userquiz_monitor extends block_base {
         $response = '';
 
         // Menu establishment.
-        $defaultview = $this->get_active_view();
-        $selectedview = optional_param('selectedview', $defaultview, PARAM_TEXT);
+        $selectedview = $this->get_active_view();
 
         // Display schedule.
         // Note : At the moment we do not really know what to do with this.
@@ -197,8 +196,9 @@ class block_userquiz_monitor extends block_base {
                 switch ($selectedview) {
                     case 'examlaunch': {
                         $quizid = @$this->config->examquiz;
-                        $available = userquizmonitor_count_available_attempts($USER->id, $quizid);
-                        $maxattempts = $DB->get_field('qa_usernumattempts_limits', 'maxattempts', array('userid' => $USER->id, 'quizid' => $quizid));
+                        $available = block_userquiz_monitor_count_available_attempts($USER->id, $quizid);
+                        $params = array('userid' => $USER->id, 'quizid' => $quizid);
+                        $maxattempts = $DB->get_field('qa_usernumattempts_limits', 'maxattempts', $params);
                         $examination .= $renderer->launch_widget($quizid, 0 + $available, max(0 + $available, 0 + $maxattempts));
                         break;
                     }
@@ -223,9 +223,7 @@ class block_userquiz_monitor extends block_base {
                             if ($data = $preferenceform->get_data()) {
                                 $data->userid = $USER->id;
                                 if (!empty($prefs)) {
-                                    if (!empty($data->examsdepth)) {
-                                        $prefs->examsdepth = 0 + @$data->examsdepth;
-                                    }
+                                    $prefs->examsdepth = 0 + @$data->examsdepth;
                                     $DB->update_record('userquiz_monitor_prefs', $prefs);
                                 } else {
                                     unset($data->id);
@@ -275,31 +273,32 @@ class block_userquiz_monitor extends block_base {
     }
 
     protected function get_active_view() {
-        global $SESSION;
+        global $SESSION, $USER, $COURSE;
+
+        if (!in_array(@$SESSION->userquizview[$COURSE->id], array('training', 'examination'))) {
+            $SESSION->userquizview[$COURSE->id] = 'training';
+        }
+
+        $selectedview = optional_param('selectedview', $SESSION->userquizview[$COURSE->id], PARAM_TEXT);
 
         // Ensures context conservation in userquiz_monitor.
-        if (empty($SESSION->userquizview) ||
-                (!@$this->config->trainingenabled && $SESSION->userquizview == 'training') ||
-                        (!@$this->config->examenabled && $SESSION->userquizview == 'examination')) {
-            if (!empty($this->config->trainingenabled)) {
-                $SESSION->userquizview = 'training';
-            } else if (!empty($this->config->examenabled)) {
-                $SESSION->userquizview = 'examination';
-            } else if ($selectedview != 'preferences') {
-                if (!empty($this->config->informationpageid) && !isediting()) {
-                    $params = array('id' => $COURSE->id, 'page' => $this->config->informationpageid);
-                    redirect(new moodle_url('/course/view.php', $params));
-                }
-            }
+        if (!@$this->config->examenabled && (empty($selectedview) || $selectedview == 'examination')) {
+            $selectedview = 'training';
         }
 
-        if ($this->config->trainingenabled) {
-            $defaultview = 'training';
-        } else {
-            $defaultview = 'examination';
+        if (!@$this->config->trainingenabled && (empty($selectedview) || $selectedview == 'training')) {
+            $selectedview = 'examination';
         }
 
-        return (!empty($SESSION->userquizview)) ? $SESSION->userquizview : $defaultview;
+        /*
+        if (!empty($this->config->informationpageid)) {
+            $params = array('id' => $COURSE->id, 'page' => $this->config->informationpageid);
+            redirect(new moodle_url('/course/view.php', $params));
+        }
+        */
+
+        $SESSION->userquizview[$COURSE->id] = $selectedview;
+        return $selectedview;
     }
 
     static public function get_fileareas() {

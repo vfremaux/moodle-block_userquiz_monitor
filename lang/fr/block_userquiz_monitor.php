@@ -53,20 +53,21 @@ $string['configexamenabled'] = 'Activation de l\'examen';
 $string['configexamhidescoringinterface'] = 'Cacher l\'interface de scoring de l\'examen.<br/>';
 $string['configexaminstructions'] = 'Instructions pour les examens';
 $string['configexamtab'] = 'Onglet pour le dispositif d\'examen';
+$string['configshowhistory'] = 'Afficher les historiques';
 $string['configgaugerenderer'] = 'Rendu des jauges';
 $string['fullhtml'] = 'HTML brut';
 $string['gd'] = 'Générateur Php GD';
 $string['jqw'] = 'JQWidget';
 $string['flash'] = 'Objet Flash';
 $string['configinformationpageid'] = 'Identifiant de la page d\'accueil du cours. <br/>';
-$string['configcolorAserie'] = 'Couleur jauge première série';
-$string['configcolorCserie'] = 'Couleur jauge deuxième série';
-$string['configrateAserie'] = 'Seuil de réussite première série (A)';
-$string['configrateCserie'] = 'Seuil de réussite deuxième série (C)';
+$string['configcoloraserie'] = 'Couleur jauge première série';
+$string['configcolorcserie'] = 'Couleur jauge deuxième série';
+$string['configrateaserie'] = 'Seuil de réussite première série (A)';
+$string['configratecserie'] = 'Seuil de réussite deuxième série (C)';
 $string['configquiznobackwards'] = 'Empêcher le retour en arrière dans le quiz';
 $string['configprotectcopy'] = 'Protégrer contre la copie de contenu';
 $string['configquizforceanswer'] = 'Forcer la réponse';
-$string['configrootcategory'] = 'Catégorie parente des choix de contraintes';
+$string['configrootcategory'] = 'Catégorie de question parente pour le système de révision';
 $string['configtest'] = 'Ajouter les tests constituants le dispositif d\'entraînement';
 $string['configtrainingprogramname'] = 'Nom du programme d\'entraînement (entre dans la composition des titres et labels)';
 $string['configwarning'] = '* Attention si un test est sélectionné dans la partie entrainement, alors il ne peut se retrouver dans la partie examen et vice versa.';
@@ -143,8 +144,10 @@ $string['runexam'] = 'Lancer un examen';
 $string['runtest'] = 'Lancer un entraînement';
 $string['runtraininghelp'] = 'Sélectionnez des catégories ou sous-catégories dans le tableau ci-dessous puis choisissez la taille de votre questionnaire&nbsp:&ensp;';
 $string['schedule'] = 'Ici se trouve le programme de formation {$a}';
+$string['score'] = 'Score';
 $string['selectallcb'] = 'Tout selectionner';
 $string['selectschedule'] = '<p>Vous pouvez visualiser le référentiel de l\'examen {$a} par catégorie sur les 12 catégories de questions standard. Vous pourrez alors mieux appréhender le classement des thèmes de cet examen et organiser vos révisions selon votre convenance.</p><p>Selectionner une catégorie pour afficher son programme : </p>';
+$string['seedetails'] = 'Voir le détail';
 $string['showdiv'] = 'Afficher / Cacher le résultat total';
 $string['stillavailable'] = 'supplémentaire(s)';
 $string['subcategoryname'] = 'Nom de la sous-catégorie&nbsp;:&ensp;';
@@ -206,3 +209,8 @@ Ceci ne fonctionne que sur des tests à "une question par page".';
 $string['resultsdepth_help'] = '<b>Calcul de la moyenne (semaines) : </b> Avec ce réglage, vous pouvez indiquer sur combien de
 semaines passées à partir de la date courante vous souhaitez afficher vos complations de progression. Ceci permet d\'éliminer quelques
 uns des premiers résultats qui pourraient fausser l\'affichage de votre progression réelle';
+
+$string['configrootcategory_help'] = 'Le choix de cette catégorie a un impact majeur sur le système de révision. En mode entrainement
+il détermine la racine de l\'espace de questions que l\'apprenant peut choisir de réviser. Les quiz proposés en mode entrainement
+utilisant des questions aléatoires à contraintes ne pourront choisir les questions que dans cet espace. En mode examen, il limite l\'espace dans
+lequel les résultats des quiz sera calculé. Le quiz d\'examen doit être constitué de questions (aléaoires ou non) dans cet espace de questionnement';
