@@ -30,7 +30,7 @@ $plugin->version   = 2017112100; // The current plugin version (Date: YYYYMMDDXX
 $plugin->requires  = 2016120500; // Requires this Moodle version.
 $plugin->component = 'block_userquiz_monitor'; // Full name of the plugin (used for diagnostics).
 $plugin->maturity = MATURITY_RC;
-$plugin->release = '3.2.0 (Build 2017112100)';
+$plugin->release = '3.3.0 (Build 2017112100)';
 
 // Non moodle attributes.
-$plugin->codeincrement = '3.2.0002';
+$plugin->codeincrement = '3.3.0002';
