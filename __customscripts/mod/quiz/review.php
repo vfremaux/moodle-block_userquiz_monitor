@@ -27,7 +27,6 @@
 
 // Customscript type : CUSTOMSCRIPT_REPLACE.
 
-// require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
 
@@ -60,7 +59,8 @@ $attemptobj->check_review_capability();
 // May bypass review step after an attempt on constraints.
 if (is_dir($CFG->dirroot.'/blocks/userquiz_monitor')) {
     require_once($CFG->dirroot.'/blocks/userquiz_monitor/xlib.php');
-    // check_userquiz_monitor_review_applicability($attemptobj);
+    $uqconfig = block_userquiz_monitor_add_body_classes($attemptobj);
+    block_userquiz_monitor_protect_page($attemptobj);
 }
 // CHANGE-.
 // Create an object to manage all the other (non-roles) access rules.
@@ -277,7 +277,7 @@ if (empty($uqconfig)) {
 }
 // CHANGE-.
 
-echo $output->review_page($attemptobj, $slots, $page, $showall, $lastpage, $options, $summarydata);
+echo $output->review_page($attemptobj, $slots, $page, $showall, $lastpage, $options, $summarydata, $uqconfig);
 
 // Trigger an event for this review.
 $attemptobj->fire_attempt_reviewed_event();

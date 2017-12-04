@@ -30,9 +30,9 @@ $response = '';
 $cpt = 0;
 
 $rootcategory = optional_param('rootcategory', null, PARAM_INT);
-$id = optional_param('id', null, PARAM_INT);
+$catid = optional_param('id', null, PARAM_INT);
 
-if (is_null($rootcategory) || is_null($id)) {
+if (is_null($rootcategory) || is_null($catid)) {
     echo $response;
     die;
 }
@@ -68,7 +68,7 @@ $recordsgetcategories = $DB->get_records_sql($sqlselectcategories, array($rootca
 if (!empty($recordsgetcategories)) {
     foreach ($recordsgetcategories as $recordsgetcategory) {
 
-        if ($cpt == $id) {
+        if ($cpt == $catid) {
             $response .= '<table class="test_report">';
             $response .= '<tr>';
             $response .= '<td>';

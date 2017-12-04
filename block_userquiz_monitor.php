@@ -23,7 +23,7 @@
  */
 defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->dirroot.'/blocks/userquiz_monitor/block_userquiz_monitor_lib.php');
+require_once($CFG->dirroot.'/blocks/userquiz_monitor/locallib.php');
 
 class block_userquiz_monitor extends block_base {
 
@@ -122,10 +122,6 @@ class block_userquiz_monitor extends block_base {
     public function get_report() {
         global $DB, $COURSE, $CFG, $USER, $SESSION, $OUTPUT, $PAGE;
 
-        include_once($CFG->dirroot.'/blocks/userquiz_monitor/trainingmonitor.php');
-        include_once($CFG->dirroot.'/blocks/userquiz_monitor/block_userquiz_monitor_lib.php');
-        include_once($CFG->dirroot.'/blocks/userquiz_monitor/schedulemonitor.php');
-
         // HTML response.
         $response = '';
 
@@ -136,7 +132,7 @@ class block_userquiz_monitor extends block_base {
         // Note : At the moment we do not really know what to do with this.
         if ($selectedview == 'schedule') {
 
-            $renderer = $PAGE->get_renderer('block_userquiz_monitor');
+            $renderer = $PAGE->get_renderer('block_userquiz_monitor', 'schedule');
             $renderer->set_block($this);
             $response = $renderer->tabs($selectedview);
 
@@ -144,7 +140,7 @@ class block_userquiz_monitor extends block_base {
             $schedule = $OUTPUT->heading($title, 1);
 
             if (!empty($this->config->rootcategory)) {
-                $schedule .= get_schedule($this);
+                $schedule .= $renderer->schedule($this);
             } else {
                 $notif = get_string('warningchoosecategory', 'block_userquiz_monitor');
                 $schedule .= $OUTPUT->notification($notif, 'notifyproblem');
@@ -165,7 +161,7 @@ class block_userquiz_monitor extends block_base {
             $training = $renderer->heading();
 
             if ((! empty($this->config->rootcategory)) && (! empty($this->config->trainingquizzes))) {
-                get_monitortest($COURSE->id, $training, $this);
+                $training .= $renderer->training($COURSE->id, $this);
             } else {
                 if (empty($this->config->rootcategory)) {
                     $notif = get_string('warningchoosecategory', 'block_userquiz_monitor');
@@ -265,11 +261,14 @@ class block_userquiz_monitor extends block_base {
     }
 
     public function get_required_javascript() {
-        global $PAGE;
+        global $PAGE, $COURSE;
 
         parent::get_required_javascript();
 
         $PAGE->requires->jquery_plugin('jqwidgets-bulletchart', 'local_vflibs');
+        $trainquizlist = implode(",", $this->config->trainingquizzes);
+        $args = array($COURSE->id, $this->instance->id, $this->config->rootcategory, $trainquizlist);
+        $PAGE->requires->js_call_amd('block_userquiz_monitor/training', 'init', $args);
     }
 
     protected function get_active_view() {

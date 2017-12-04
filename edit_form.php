@@ -74,11 +74,11 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
         $mform->addElement('text', 'config_informationpageid', $label);
         $mform->setType('config_informationpageid', PARAM_INT);
 
-        $label = get_string('configrateAserie', 'block_userquiz_monitor');
+        $label = get_string('configrateaserie', 'block_userquiz_monitor');
         $mform->addElement('text', 'config_rateAserie', $label);
         $mform->setType('config_rateAserie', PARAM_INT);
 
-        $label = get_string('configcolorAserie', 'block_userquiz_monitor');
+        $label = get_string('configcoloraserie', 'block_userquiz_monitor');
         $mform->addElement('text', 'config_colorAserie', $label);
         $mform->setType('config_colorAserie', PARAM_TEXT);
         $mform->setDefault('config_colorAserie', '#C00000');
@@ -87,12 +87,12 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
         $mform->addElement('advcheckbox', 'config_dualserie', $label);
         $mform->setType('config_dualserie', PARAM_BOOL);
 
-        $label = get_string('configrateCserie', 'block_userquiz_monitor');
+        $label = get_string('configratecserie', 'block_userquiz_monitor');
         $mform->addElement('text', 'config_rateCserie', $label);
         $mform->disabledIf('config_rateCserie', 'config_dualserie', 0);
         $mform->setType('config_rateCserie', PARAM_INT);
 
-        $label = get_string('configcolorCserie', 'block_userquiz_monitor');
+        $label = get_string('configcolorcserie', 'block_userquiz_monitor');
         $mform->addElement('text', 'config_colorCserie', $label);
         $mform->setType('config_colorCserie', PARAM_TEXT);
         $mform->setDefault('config_colorCserie', '#0000C0');

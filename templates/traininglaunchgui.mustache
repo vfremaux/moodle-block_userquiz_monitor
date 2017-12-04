@@ -1,0 +1,35 @@
+
+
+<!-- traininglaunchgui -->
+<div class="userquiz-monitor-categorycontainer">
+
+    <div class="userquiz-monitor-row">
+        <div class="userquiz-monitor-cell">
+            <p>{{{runtraininghelpstr}}}</p>
+        </div>
+    </div>
+
+{{#quizlist}}
+    <div class="userquiz-monitor-row">
+        <div class="userquiz-monitor-cell">
+             {{{numberofquestionsstr}}}
+            <select class="selectorsnbquestions" id="id-selector-nb-questions" name="selectornbquestions" size="1">
+                {{{options}}}
+            </select>
+        </div>
+    </div>
+{{/quizlist}}
+
+    <div class="userquiz-monitor-row">
+        <div class="userquiz-monitor-cell">
+             <input type="hidden" name="mode" value="test" />
+             <input type="hidden" name="courseid" value="{{courseid}}" />
+{{#quizlist}}
+             <input type="hidden" name="quizlist" value="{{quizlist}}" />
+{{/quizlist}}
+             <input type="submit" id="id-training-go-button" class="enabled" value="{{runteststr}}" id="submit" {{{disabled}}} />
+         </div>
+     </div>
+</div>
+<!-- /traininglaunchgui -->
+

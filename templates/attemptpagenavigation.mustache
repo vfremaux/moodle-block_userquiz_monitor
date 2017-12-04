@@ -1,0 +1,22 @@
+
+
+
+
+<!-- attemptpagenavigation -->
+
+<div class="submitbtns">
+    <div class="submitbtns-left span6">
+        <a href="{{{finishurl}}}" class="btn btn-default" title="{{label}}">{{{label}}}
+            <span aria-hidden="true" class="fa-fw fa fa-sign-in"></span></a>
+    </div>
+
+    <div class="submitbtns-right span6">
+
+{{#isnotfirstpage}}
+        <input  type="submit" name="previous" value="{{navigatepreviousstr}}" class="mod_quiz-prev-nav" />
+{{/isnotfirstpage}}
+
+        <input type="submit" name="next" value="{{nextlabelstr}}" class="mod_quiz-next-nav" />
+    </div>
+</div>
+<!-- /attemptpagenavigation -->

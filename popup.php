@@ -20,8 +20,8 @@
 
 // Include files.
 
-require("../../config.php");
-require_once($CFG->dirroot.'/blocks/userquiz_monitor/block_userquiz_monitor_lib.php');
+require('../../config.php');
+require_once($CFG->dirroot.'/blocks/userquiz_monitor/localllib.php');
 
 // Get display's mode.
 

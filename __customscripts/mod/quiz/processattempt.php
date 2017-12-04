@@ -54,7 +54,7 @@ $attemptobj = quiz_attempt::create($attemptid);
 if (is_dir($CFG->dirroot.'/blocks/userquiz_monitor')) {
     require_once($CFG->dirroot.'/blocks/userquiz_monitor/xlib.php');
     $course = $attemptobj->get_course();
-    $config = block_userquiz_monitor_check_has_quiz($course, $attemptobj->get_quizid());
+    $config = block_userquiz_monitor_check_has_quiz_ext($course, $attemptobj->get_quizid());
 }
 // CHANGE-.
 // Set $nexturl now.
@@ -104,11 +104,15 @@ if ($status == quiz_attempt::OVERDUE) {
 } else {
     // CHANGE+.
     // Attempt abandoned or finished.
-    if ($config == 'exam') {
-        // If a userquiz examination, will force returning directly to course.
-        $params = array('id' => $course->id);
-        $returnurl = new moodle_url('/course/view.php', $params);
-        redirect(returnurl);
+    if ($config->mode == 'exam') {
+        if ($config->directreturn) {
+            // If a userquiz examination, will force returning directly to course.
+            $params = array('id' => $course->id);
+            $returnurl = new moodle_url('/course/view.php', $params);
+            redirect($returnurl);
+        }
+        // Go to review page (showall is forced).
+        redirect($attemptobj->review_url(null, -1, true));
     } else {
         redirect($attemptobj->review_url());
     }
