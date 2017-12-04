@@ -406,6 +406,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                         $boxtpl->selectallcbstr = get_string('selectallcb', 'block_userquiz_monitor');
                         $boxtpl->name = 'checkall_detail';
                         $boxtpl->id = 'id-checkall-detail-'.$categoryid;
+                        $boxtpl->class = 'cb-detail-'.$categoryid;
                         $cb = $this->output->render_from_template('block_userquiz_monitor/catcheckbox', $boxtpl);
                     }
 

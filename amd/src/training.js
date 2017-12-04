@@ -32,11 +32,11 @@ define(['jquery', 'core/log'], function($, log) {
             $('#checkall-master').bind('change', this.select_all_master_categories);
 
             // this is a call stack in order.
-            $('.cb-master').bind('click', this.update_selector_master_ajax);
+            $('.cb-master').bind('click', this.update_selector_master_global);
             $('.userquiz-monitor-cat-button').bind('click', this.fetch_training_subcategories);
             $('.userquiz-monitor-cat-button').addClass('active');
 
-            log.debug('AMD Block_userquiz_monnitor quizforceanswer initialized');
+            log.debug('AMD Block_userquiz_monitor quizforceanswer initialized');
         },
 
         /*
@@ -55,7 +55,7 @@ define(['jquery', 'core/log'], function($, log) {
             $('#id-checkall-detail-' + categoryid).prop('checked', false);
             $('#id-checkall-detail-' + categoryid).bind('change', this.select_all_detail_categories);
             $('.cb-detail-' + categoryid).prop('checked', false);
-            $('.cb-detail-' + categoryid).bind('click', this.update_selector_detail_ajax);
+            $('.cb-detail-' + categoryid).bind('click', this.update_selector_detail);
             log.debug('AMD Block_userquiz_monitor detail ' + categoryid + ' initialized');
         },
 
@@ -66,6 +66,7 @@ define(['jquery', 'core/log'], function($, log) {
         update_selector_master_ajax: function() {
 
             var that = $(this);
+
             // Try first from a selector checkbox.
             categoryid = parseInt(that.attr('id').replace('id-cb-master-', ''));
             if (!categoryid) {
@@ -76,6 +77,11 @@ define(['jquery', 'core/log'], function($, log) {
             var params = "courseid=" + courseid + "&rootcategory=" + rootcategory + "&categoryid=" + categoryid;
             params += "&location=mode0&quizlist=" + quizlist;
             var url = M.cfg.wwwroot + '/blocks/userquiz_monitor/ajax/updateselector.php?' + params;
+
+            // If is checked, should check also all subcategories if visible.
+            if (that.prop('checked')) {
+                $('.cb-detail-' + categoryid).prop('checked', true);
+            }
 
             $.get(url, function(data) {
                 $('.selectorcontainers').html(data);
@@ -122,38 +128,35 @@ define(['jquery', 'core/log'], function($, log) {
 
             $.get(url, function(data) {
                 $('.selectorcontainers').html(data);
-            }, 'html');
-        },
 
-        update_selector_detail: function(list, display) {
-
-            var number = '';
-            var idsubcategories = [];
-            var cpt = 0;
-
-            if (display === 'all') {
-                select_all_cb_detail(list);
-            }
-            for (i = 0; i < list.length; i++) {
-                if (list[i] === ',') {
-                    idsubcategories[cpt] = number;
-                    number = '';
-                    cpt++;
+                // Enable Go Btn if there are question numbers.
+                if ($('#id-selector-nb-questions').length) {
+                    $('#id-training-go-button').prop('disabled', false);
                 } else {
-                    number = number + list[i];
+                    $('#id-training-go-button').prop('disabled', true);
                 }
-            }
-            idsubcategories[cpt] = number;
-            this.update_selector_detail_ajax(idsubcategories);
+            }, 'html');
         },
 
         /**
          * Updates the selector following the user's choice.
          */
-        update_selector_detail_ajax: function () {
+        update_selector_detail: function () {
+
+            log.debug("update_selector_detail");
 
             var categorieslist = '';
             var cpt = 0;
+            var allchecked = true;
+
+            var currentclasses = this.className.split(' ');
+
+            for (var i in currentclasses) {
+                // Find the parent related class
+                if (currentclasses[i].match(/^cb-detail-/)) {
+                    var parentid = currentclasses[i].replace('cb-detail-', '');
+                }
+            }
 
             $('.cb-detail').each(function(index) {
 
@@ -166,8 +169,15 @@ define(['jquery', 'core/log'], function($, log) {
                     } else {
                         categorieslist = categorieslist + "," + categoryid;
                     }
+                } else {
+                    allchecked = false;
                 }
             });
+
+            // If not checked, uncheck the master category.
+            if (!allchecked) {
+                $('#id-cb-master-' + parentid).prop('checked', false);
+            }
 
             if (categorieslist === '') {
                 categorieslist = "null";
@@ -179,6 +189,13 @@ define(['jquery', 'core/log'], function($, log) {
 
             $.get(url, function(data) {
                 $('.selectorcontainers').html(data);
+
+                // Enable Go Btn if there are question numbers.
+                if ($('#id-selector-nb-questions').length) {
+                    $('#id-training-go-button').prop('disabled', false);
+                } else {
+                    $('#id-training-go-button').prop('disabled', true);
+                }
             }, 'html');
         },
 
@@ -231,6 +248,9 @@ define(['jquery', 'core/log'], function($, log) {
             } else {
                 $('.cb-detail-' + categoryid).prop('checked', false);
             }
+
+            callback = $.proxy(training.update_selector_detail, this);
+            callback();
         },
 
         reset_training: function(userid) {
@@ -259,7 +279,7 @@ define(['jquery', 'core/log'], function($, log) {
 
             $.get(url, function(data) {
                 $('#divschedule').html(data);
-                this.highlight_amf_cat( categoryid);
+                this.highlight_amf_cat(categoryid);
             });
         },
 
@@ -275,6 +295,11 @@ define(['jquery', 'core/log'], function($, log) {
         },
 
         close_detail: function() {
+
+            that = $(this);
+
+            categoryid = that.attr('id').replace('id-cancel-detail-', '');
+
             $('#checkall-master').prop('checked', false);
             $('#checkall-master').prop('disabled', false);
             $('.cb-master').prop('checked', false);
@@ -283,6 +308,16 @@ define(['jquery', 'core/log'], function($, log) {
             $('.cb-master').removeClass('trans50');
             $('#id-detail-button-div-' + categoryid).addClass('active');
             $('.progressbar-container').css('visibility', 'visible');
+            $('.category-subpod').css('display', 'none');
+            $('#category-subcatpod-' + categoryid).html('');
+
+            // Desinhibits all other master cats.
+            $('.cb-master').prop('disabled', false);
+            $('.div-main').removeClass('trans50');
+            $('.div-main').addClass('trans100');
+
+            callback = $.proxy(training.update_selector_detail, this);
+            callback();
         },
 
         /**
@@ -305,7 +340,14 @@ define(['jquery', 'core/log'], function($, log) {
                 } else {
                     localcatid = categoryid;
                 }
+
+                // Empty all subcategories.
+                $('.category-subpod').css('display', 'none');
+                $('#category-subcatpod-' + categoryid).html('');
+
+                // Setup category content.
                 $('#category-subcatpod-' + localcatid).html(data);
+                $('#category-subcatpod-' + localcatid).css('display', 'inline-block');
                 log.debug('AMD Block_userquiz_monitor detail ' + localcatid + ' loaded');
 
                 $('#id-checkall-detail-' + categoryid).prop('checked', false);
@@ -317,9 +359,23 @@ define(['jquery', 'core/log'], function($, log) {
                     $('#id-checkall-detail-' + categoryid).prop('checked', true);
                     $('.cb-detail-' + categoryid).prop('checked', true);
                 }
-                $('.cb-detail-' + categoryid).bind('click', training.update_selector_detail_ajax);
+                $('.cb-detail-' + categoryid).bind('click', training.update_selector_detail);
                 $('#id-cancel-detail-' + categoryid).bind('click', training.close_detail);
                 $('#id-detail-button-div-' + categoryid).removeClass('active');
+
+                // Inhibits all other master cats.
+                $('.cb-master').prop('disabled', true);
+                $('.cb-master').prop('checked', false);
+                $('.div-main').addClass('trans50');
+                $('.div-main').removeClass('trans100');
+                $('#cb-master-' + categoryid).prop('disabled', false);
+                $('#id-div-main-' + categoryid).removeClass('trans50');
+                $('#id-div-main-' + categoryid).addClass('trans100');
+
+                $('html,body').animate({scrollTop: $('#id-cat-' + categoryid).offset().top},'slow');
+
+                callback = $.proxy(training.update_selector_detail, this);
+                callback();
 
             }, 'html');
         }
