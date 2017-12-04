@@ -601,6 +601,9 @@ function calcul_hist($categoryid, &$counters) {
 
 /**
  * On changes of the current selection, update the question amount choice list
+ * @param int $courseid
+ * @param string $catidlist
+ * @param string $mode mode0 works for master categories digging in all subcats. mode1 works directly with given subcategories.
  * @return the question amount selector
  */
 function block_userquiz_monitor_update_selector($courseid, $catidslist, $mode, $rootcat, $quizzeslist = '') {
@@ -611,7 +614,11 @@ function block_userquiz_monitor_update_selector($courseid, $catidslist, $mode, $
 
     $renderer = $PAGE->get_renderer('block_userquiz_monitor', 'training');
 
-    $catids = explode(',', $catidslist);
+    if (!is_array($catidslist)) {
+        $catids = explode(',', $catidslist);
+    } else {
+        $catids = $catidslist;
+    }
     list($insql, $inparams) = $DB->get_in_or_equal($catids);
 
     if (!empty($catidslist) && ($catidslist != 'null')) {
@@ -669,7 +676,6 @@ function block_userquiz_monitor_update_selector($courseid, $catidslist, $mode, $
             }
         } else {
             // Processes update in given categories.
-            list($insql, $inparams) = $DB->get_in_or_equal($catidslist);
 
             $select = "
                 category $insql AND

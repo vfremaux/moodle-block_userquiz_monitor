@@ -94,7 +94,7 @@ div.errorcontainer {
 }
 
 .userquiz-monitor-row {
-    display: table-row;
+/*    display: table-row; */
 }
 
 .userquiz-monitor-block {
@@ -123,16 +123,20 @@ div.errorcontainer {
     font-size: 0.9em;
 }
 
-.block-userquiz-monitor h4 {
+.block_userquiz_monitor h4 {
     color: #658EA0;
     font-size: 1.0em;
     text-align: center;
 }
 
-.block-userquiz-monitor h1 {
+.block_userquiz_monitor h1 {
     color: #064d82;
     font-size: 20px;
     line-height: 24px;
+}
+
+.block_userquiz_monitor table td {
+    border: none;
 }
 
 .tabrow0 {
@@ -584,14 +588,14 @@ img.userquiz-monitor-questiontype {
     font-size: 12px;
     position: relative;
     width: 40px;
-    top: -27px;
+    top: -48px;
 }
 
 .html-gauge-targetvalue-mark {
     height: 24px;
     width: 2px;
     position: relative;
-    top: -35px;
+    top: -48px;
 }
 
 .html-gauge-value {
@@ -708,6 +712,10 @@ input.radio-hidden[type="radio"] {
     display: none;
 }
 
+.category-subpod .userquiz-monitor-cell.categoryname {
+    padding-left: 15px;
+}
+
 div.category-subpod {
     width: 47%;
     display: none;
@@ -715,8 +723,11 @@ div.category-subpod {
 }
 
 input.radio-hidden[type="radio"]:checked + div.category-subpod {
-    float: right;
     display: inline-block;
+}
+
+input.radio-hidden[type="radio"] + div.category-subpod {
+    float: right;
 }
 
 .userquiz-monitor-main-item {
@@ -769,4 +780,9 @@ input.radio-hidden[type="radio"]:checked + div.category-subpod {
 
 .html-gauge-remainbar {
     background-color: #bbb;
+}
+
+.userquiz-detail-cancel-icon {
+    width: 20px;
+    height: 20px;
 }
