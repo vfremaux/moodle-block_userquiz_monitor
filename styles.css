@@ -670,6 +670,10 @@ td.detail-container {
     visibility: hidden;
 }
 
+.is-userquiz #responseform input[type=radio] + label {
+    pointer-events:none;
+}
+
 /* hide all unnecessary links and buttons */
 .is-userquiz.no-backwards .mod_quiz-prev-nav {
     display: none;

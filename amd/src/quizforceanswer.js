@@ -21,10 +21,12 @@ define(['jquery', 'core/log'], function($, log) {
                 $('.mod_quiz-next-nav').css('visibility', 'visible');
                 $('.im-controls').css('visibility', 'hidden');
                 $('.is-userquiz #responseform input[type=radio]').css('visibility', 'visible');
+                $('.is-userquiz #responseform input[type=radio] + label').css('pointer-events', 'auto');
             } else {
                 // Show the nav button back.
                 $('.mod_quiz-next-nav').css('visibility', 'visible');
                 $('.is-userquiz #responseform input[type=radio]').css('visibility', 'visible');
+                $('.is-userquiz #responseform input[type=radio] + label').css('pointer-events', 'auto');
             }
 
             // Add onchange observer on all question options.
