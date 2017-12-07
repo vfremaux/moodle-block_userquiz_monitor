@@ -92,9 +92,9 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
             $usedix = $used;
             foreach ($usedattempts as $usedattempt) {
 
-                $usedcattpl = new StdClass;
+                $usedattempttpl = new StdClass;
 
-                $usedattempts = array($usedattempt);
+                // $usedattempts = array($usedattempt);
 
                 $overall = block_userquiz_monitor_init_overall();
 
@@ -103,28 +103,28 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
 
                 $passed = block_userquiz_monitor_is_passing($this->theblock, $overall);
                 if ($passed) {
-                    $usedcattpl->passingstr = get_string('examstatepassed', 'block_userquiz_monitor');
+                    $usedattempttpl->passingstr = get_string('examstatepassed', 'block_userquiz_monitor');
                     $stateicon = 'passed';
                 } else {
-                    $usedcattpl->passingstr = get_string('examstatefailed', 'block_userquiz_monitor');
+                    $usedattempttpl->passingstr = get_string('examstatefailed', 'block_userquiz_monitor');
                     $stateicon = 'failed';
                 }
                 if (!$maxdisplay || ($used < $maxdisplay)) {
-                    $usedcattpl->attemptsstr = get_string('attempt', 'quiz', $usedix);
-                    $usedcattpl->finishdate = userdate($usedattempt->timefinish);
-                    $usedcattpl->iconurl = $this->output->pix_url($stateicon, 'block_userquiz_monitor');
+                    $usedattempttpl->attemptsstr = get_string('attempt', 'quiz', $usedix);
+                    $usedattempttpl->finishdate = userdate($usedattempt->timefinish);
+                    $usedattempttpl->iconurl = $this->output->pix_url($stateicon, 'block_userquiz_monitor');
                     $params = array('q' => $quizid, 'attempt' => $usedattempt->id, 'showall' => 1);
-                    $usedcattpl->usedurl = new moodle_url('/mod/quiz/review.php', $params);
+                    $usedattempttpl->usedurl = new moodle_url('/mod/quiz/review.php', $params);
 
                     $seedetailsstr = get_string('seedetails', 'block_userquiz_monitor');
                     $pixurl = $this->get_area_url('detailsicon');
                     if ($pixurl) {
-                        $usedcattpl->detailbutton = '<img class="userquiz-monitor-cat-button"
+                        $usedattempttpl->detailbutton = '<img class="userquiz-monitor-cat-button"
                                       title="'.$seedetailsstr.'"
                                       src="'.$pixurl.'"/>';
                     } else {
                         // If no detail image loaded keep a single button.
-                        $usedcattpl->detailbutton = '<input type="button"
+                        $usedattempttpl->detailbutton = '<input type="button"
                                       class="userquiz-monitor-cat-button btn"
                                       title="'.$seedetailsstr.'"
                                       value="'.$seedetailsstr.'"/>';
@@ -164,7 +164,7 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
                                   'goodC' => $overall->goodC,
                                   'cptC' => $overall->cptC);
 
-                    $usedcattpl->totalgraph = $this->total($components, $data, $quizid);
+                    $usedattempttpl->totalgraph = $this->total($components, $data, $quizid);
 
                 } else {
                     if (!$printedellipse) {
@@ -173,7 +173,8 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
                         break;
                     }
                 }
-                $template->usedcats[] = $usedcattpl;
+                $template->usedattempts[] = $usedattempttpl;
+                $template->hasusedattempts = true;
                 $usedix--;
             }
         }
@@ -183,7 +184,6 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
 
         if ($maxattempts = $DB->get_record('qa_usernumattempts_limits', array('userid' => $userid, 'quizid' => $quizid))) {
             if ($availableattempts = $maxattempts->maxattempts - count($usedattempts)) {
-                $iconurl = $this->output->pix_url('availableattempt', 'block_userquiz_monitor');
                 $attemptsleft = $availableattempts;
                 for ($i = 0; $i < min($maxdisplay, $availableattempts); $i++) {
                     // Display as many available as possible.

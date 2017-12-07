@@ -437,6 +437,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                 $subcattpl->id = $subcat->id;
                 $subcattpl->cb = $cb;
                 $subcattpl->name = $subcat->name;
+                $subcattpl->radioid = 'id-cb-detail-'.$subcat->id;
 
                 $subcattpl->barheadrow = $this->render_bar_head_row();
 
