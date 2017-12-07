@@ -141,6 +141,7 @@ function block_userquiz_monitor_init_rootcats($rootcategory, &$rootcats) {
         $rootcats[$catid]->ratioC = 0; // Ratio type C.
         $rootcats[$catid]->ratio = 0;
         $rootcats[$catid]->questiontypes = array();
+        $rootcats[$catid]->hassubs = $DB->count_records('question_categories', array('parent' => $catid));
 
         $catidarr = array($cat->id);
         $cattreelist = block_userquiz_monitor_get_cattreeids($cat->id, $catidarr);
