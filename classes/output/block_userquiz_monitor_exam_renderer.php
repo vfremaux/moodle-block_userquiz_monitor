@@ -94,11 +94,12 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
 
                 $usedattempttpl = new StdClass;
 
-                // $usedattempts = array($usedattempt);
+                // We need this to pass a single attempt by ref to compile function.
+                $usedattemptarr = array($usedattempt);
 
                 $overall = block_userquiz_monitor_init_overall();
 
-                $errors = block_userquiz_monitor_compute_all_results($usedattempts, $rootcategory, $rootcats,
+                $errors = block_userquiz_monitor_compute_all_results($usedattemptarr, $rootcategory, $rootcats,
                                                                                    $attempts, $overall, 'exam');
 
                 $passed = block_userquiz_monitor_is_passing($this->theblock, $overall);
