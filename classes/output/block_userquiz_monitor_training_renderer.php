@@ -89,6 +89,7 @@ class training_renderer extends \block_userquiz_monitor_renderer {
 
         $template->catid = $cat->id;
         $template->name = $cat->name;
+        $template->hassubs = $cat->hassubs;
         $template->loadingurl = $this->output->pix_url('i/ajaxloader');
 
         $template->pixurl = $this->get_area_url('detailsicon');
@@ -368,7 +369,6 @@ class training_renderer extends \block_userquiz_monitor_renderer {
             $notenum++;
         }
         $template->note2 = '<span class="smallnotes">'.get_string('columnnotesratio', 'block_userquiz_monitor', $notenum).'</span></div>';
-
 
         $template->categorydetail = $renderer->category_detail_container();
 
