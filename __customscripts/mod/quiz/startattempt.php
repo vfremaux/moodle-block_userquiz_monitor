@@ -67,6 +67,14 @@ $accessmanager = $quizobj->get_access_manager($timenow);
 
 // CHANGE+ : // all users can be forced to a new attempt!
 if ($forcenew) {
+
+    if ($unfinishedattempts = quiz_get_user_attempts($quizobj->get_quizid(), $USER->id, 'unfinished', true)) {
+        foreach ($unfinishedattempts as $attemptrec) {
+            $attempt = new quiz_attempt($attemptrec, $quizobj->get_quiz(), $cm, $course, true);
+            $attempt->process_finish(time(), true);
+        }
+    }
+
     $accessmanager->current_attempt_finished();
     // To force the creation of a new preview, we mark the current attempt (if any)
     // as finished. It will then automatically be deleted below.
