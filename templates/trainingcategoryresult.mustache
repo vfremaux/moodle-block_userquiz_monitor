@@ -16,7 +16,8 @@
                             style="padding-left:2px;" />
                 </div>
 
-                <div class="userquiz-monitor-cell categoryname">{{name}}</div>
+                <div class="userquiz-monitor-cell categoryname"><label for="id-cb-master-{{catid}}">{{name}}</label></div>
+{{#hassubs}}
                 <div class="userquiz-monitor-cell details-button" id="id-details-button-{{catid}}">
                     <label for="radio-main-item-{{catid}}">
 {{#pixurl}}
@@ -29,6 +30,7 @@
 {{/pixurl}}
                     </label>
                </div>
+{{/hassubs}}
             </div>
 
             <div class="userquiz-monitor-row">

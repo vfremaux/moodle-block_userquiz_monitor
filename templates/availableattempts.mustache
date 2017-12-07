@@ -30,7 +30,7 @@
 
 {{#printellipse}}
         <tr valign="top">
-            <td>...</td>';
+            <td>...</td>
             <td><img src="{{{ellipseiconurl}}}" /></td>
             <td></td>
         </tr>
@@ -71,18 +71,21 @@
             </td>
         </tr>
 {{/availables}}
-{{^available}}
-        <tr>';
+{{#hasstillavailable}}
+        <tr valign="top">
+            <td colspan="3" class="uq-more-attempts">{{{stillavailablestr}}}</td>
+        </tr>
+{{/hasstillavailable}}
+
+{{^hasstillavailable}}
+{{^availables}}
+        <tr>
             <td align="center">
             {{{noavailableattemptsstr}}}
             </td>
         </tr>
-{{/available}}
-{{#stillavailablestr}}
-        <tr valign="top">
-            <td colspan="3" class="uq-more-attempts">{{{stillavailablestr}}}</td>
-        </tr>
-{{/stillavailablestr}}
+{{/availables}}
+{{/hasstillavailable}}
 {{/limitsenabled}}
 
     </table>
