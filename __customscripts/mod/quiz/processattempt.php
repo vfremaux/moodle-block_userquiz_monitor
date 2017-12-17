@@ -104,7 +104,7 @@ if ($status == quiz_attempt::OVERDUE) {
 } else {
     // CHANGE+.
     // Attempt abandoned or finished.
-    if ($config->mode == 'exam') {
+    if ($config && $config->mode == 'exam') {
         if ($config->directreturn) {
             // If a userquiz examination, will force returning directly to course.
             $params = array('id' => $course->id);
