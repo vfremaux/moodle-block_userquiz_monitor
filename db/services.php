@@ -15,22 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details.
+ * Quiz external functions and service definitions.
  *
  * @package    block_userquiz_monitor
- * @category   blocks
- * @author     Valery Fremaux (valery.fremaux@gmail.com)
- * @copyright  2015 onwards Valery Fremaux (valery.fremaux@gmail.com)
+ * @category   external
+ * @copyright  2017 Valery Fremaux
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since      Moodle 3.1
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2017121704; // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2016120500; // Requires this Moodle version.
-$plugin->component = 'block_userquiz_monitor'; // Full name of the plugin (used for diagnostics).
-$plugin->maturity = MATURITY_RC;
-$plugin->release = '3.3.0 (Build 2017121704)';
-
-// Non moodle attributes.
-$plugin->codeincrement = '3.3.0003';
+$functions = array(
+    'block_userquiz_monitor_get_attempt_review' => array(
+        'classname'     => 'block_userquiz_monitor_external',
+        'methodname'    => 'get_attempt_review',
+        'description'   => 'Returns all data from finished attempts',
+        'type'          => 'read',
+        'capabilities'  => 'block/userquiz_monitor:view'
+    ),
+);
