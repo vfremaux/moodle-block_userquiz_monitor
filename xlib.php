@@ -91,6 +91,9 @@ function block_userquiz_monitor_add_body_classes($attemptobj) {
     global $PAGE;
 
     $uqconfig = block_userquiz_monitor_check_has_quiz_ext($attemptobj->get_course(), $attemptobj->get_quizid());
+    if (empty($uqconfig)) {
+        return;
+    }
     if (($uqconfig->mode == 'training' && $uqconfig->trainingforceanswer) ||
             ($uqconfig->mode == 'exam' && $uqconfig->examforceanswer)) {
         $PAGE->add_body_class('is-userquiz');
