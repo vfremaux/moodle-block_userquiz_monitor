@@ -67,6 +67,7 @@ $accessmanager = $quizobj->get_access_manager($timenow);
 
 // CHANGE+ : // all users can be forced to a new attempt!
 if ($forcenew) {
+    $accessmanager->current_attempt_finished();
 
     if ($unfinishedattempts = quiz_get_user_attempts($quizobj->get_quizid(), $USER->id, 'unfinished', true)) {
         foreach ($unfinishedattempts as $attemptrec) {

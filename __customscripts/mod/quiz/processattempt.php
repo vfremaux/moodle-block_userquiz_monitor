@@ -56,6 +56,12 @@ if (is_dir($CFG->dirroot.'/blocks/userquiz_monitor')) {
     $course = $attemptobj->get_course();
     $config = block_userquiz_monitor_check_has_quiz_ext($course, $attemptobj->get_quizid());
 }
+
+if (empty($config)) {
+    // Return to stadnard behaviour.
+    return;
+}
+
 // CHANGE-.
 // Set $nexturl now.
 if ($next) {

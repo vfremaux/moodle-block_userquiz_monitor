@@ -53,6 +53,11 @@ if (is_dir($CFG->dirroot.'/blocks/userquiz_monitor')) {
     block_userquiz_monitor_attempt_adds($attemptobj);
     $uqconfig = block_userquiz_monitor_add_body_classes($attemptobj);
 }
+
+if (empty($uqconfig)) {
+    // Return to standard processing.
+    return;
+}
 // CHANGE-.
 
 // Check login.
