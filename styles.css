@@ -356,6 +356,7 @@ img.userquiz-monitor-questiontype {
     margin-top: 30px;
 }
 
+.userquiz-monitor-exam-cat-button,
 .userquiz-monitor-cat-button {
 
     display: inline-block;
@@ -385,6 +386,7 @@ img.userquiz-monitor-questiontype {
     filter:alpha(opacity=30);
 }
 
+.userquiz-monitor-exam-cat-button.active,
 .userquiz-monitor-cat-button.active {
     opacity:1;
     -khtml-opacity: 1;
