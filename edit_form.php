@@ -218,7 +218,7 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
         $mform->addGroup($group, 'config_grserie2icon', $label, $separators, ' ', false);
 
         $label = get_string('localcss', 'block_userquiz_monitor');
-        $mform->addelement('textarea', 'localcss', $label, array('rows' => 10, 'cols' => 60));
+        $mform->addElement('textarea', 'config_localcss', $label, array('rows' => 10, 'cols' => 60));
         $mform->setType('config_localcss', PARAM_TEXT);
     }
 

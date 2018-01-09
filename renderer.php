@@ -634,7 +634,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
             }
         } else {
             // If only exam enabled, print exam tabs at first level.
-            if (in_array($selectedview, array('examination', 'examlaunch', 'examresults', 'examhistory'))) {
+            if (in_array($selectedview, array('examination', 'examlaunch', 'examresults', 'examdetails', 'examhistory'))) {
                 if ($selectedview == 'examination') {
                     $selectedview = 'examlaunch'; // The default.
                 }
@@ -646,6 +646,12 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                 $examtab = get_string('menuexamresults', 'block_userquiz_monitor');
                 $taburl = new moodle_url('/course/view.php', array('id' => $COURSE->id, 'selectedview' => 'examresults'));
                 $rows[0][] = new tabobject('examresults', $taburl, $examtab);
+
+                if (empty($conf->examhidescoringinterface)) {
+                    $examtab = get_string('menuexamdetails', 'block_userquiz_monitor');
+                    $taburl = new moodle_url('/course/view.php', array('id' => $COURSE->id, 'selectedview' => 'examdetails'));
+                    $rows[0][] = new tabobject('examdetails', $taburl, $examtab);
+                }
 
                 $examtab = get_string('menuexamhistories', 'block_userquiz_monitor');
                 $taburl = new moodle_url('/course/view.php', array('id' => $COURSE->id, 'selectedview' => 'examhistory'));
@@ -698,12 +704,15 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         return $this->output->render_from_template('block_userquiz_monitor/total', $template);
     }
 
-    public function program_headline($programname) {
+    public function program_headline($programname, $mode = 'training') {
 
         $template = new StdClass;
 
         $template->catstr = get_string('categories', 'block_userquiz_monitor', $programname);
-        $template->selectallcbstr = get_string('selectallcb', 'block_userquiz_monitor');
+        if ($mode == 'training') {
+            $template->selectall = true;
+            $template->selectallcbstr = get_string('selectallcb', 'block_userquiz_monitor');
+        }
 
         return $this->output->render_from_template('block_userquiz_monitor/programheadline', $template);
     }
