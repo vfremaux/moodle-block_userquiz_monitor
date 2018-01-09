@@ -15,15 +15,18 @@ define(['jquery', 'core/log'], function($, log) {
 
     var quizlist;
 
+    var examquiz;
+
     var rootcategory;
 
     var training = {
-        init: function(cid, bid, rc, ql) {
+        init: function(cid, bid, rc, ql, exq) {
 
             courseid = cid;
             blockid = bid;
             rootcategory = rc;
             quizlist = ql;
+            examquiz = exq;
 
             $('.cb-master').prop('disabled', false); // Disabled while checking we have enough questions to process.
             $('.cb-master').prop('checked', false); // Unchecked at start.
@@ -35,6 +38,8 @@ define(['jquery', 'core/log'], function($, log) {
             $('.cb-master').bind('click', this.update_selector_master_global);
             $('.userquiz-monitor-cat-button').bind('click', this.fetch_training_subcategories);
             $('.userquiz-monitor-cat-button').addClass('active');
+            $('.userquiz-monitor-exam-cat-button').bind('click', this.fetch_exam_subcategories);
+            $('.userquiz-monitor-exam-cat-button').addClass('active');
 
             log.debug('AMD Block_userquiz_monitor quizforceanswer initialized');
         },
@@ -378,8 +383,51 @@ define(['jquery', 'core/log'], function($, log) {
                 callback();
 
             }, 'html');
-        }
+        },
 
+        /**
+         * Display subcategories on the right part of the training dashbord. On narrow screens,
+         * will route the content to the special container under the category main block.
+         */
+        fetch_exam_subcategories: function(e) {
+
+            that = $(this);
+            categoryid = that.attr('id').replace('details-button-div-', '');
+
+            var params = "blockid=" + blockid + "&courseid=" + courseid + "&rootcategory=" + rootcategory;
+            params += "&categoryid=" + categoryid + "&quizzeslist=" + examquiz + "&mode=exam";
+            var url = M.cfg.wwwroot + "/blocks/userquiz_monitor/ajax/subcategoriescontent.php?" + params;
+
+            $.post(url, '', function(data) {
+                var localcatid;
+                if (isNaN(categoryid)) {
+                    localcatid = categoryid.replace('details-button-', '');
+                } else {
+                    localcatid = categoryid;
+                }
+
+                // Empty all subcategories.
+                $('.category-subpod').css('display', 'none');
+                $('#category-subcatpod-' + categoryid).html('');
+
+                // Setup category content.
+                $('#category-subcatpod-' + localcatid).html(data);
+                $('#category-subcatpod-' + localcatid).css('display', 'inline-block');
+                log.debug('AMD Block_userquiz_monitor detail ' + localcatid + ' loaded');
+
+                $('#id-cancel-detail-' + categoryid).bind('click', training.close_detail);
+                $('#id-detail-button-div-' + categoryid).removeClass('active');
+
+                // Inhibits all other master cats.
+                $('.div-main').addClass('trans50');
+                $('.div-main').removeClass('trans100');
+                $('#id-div-main-' + categoryid).removeClass('trans50');
+                $('#id-div-main-' + categoryid).addClass('trans100');
+
+                $('html,body').animate({scrollTop: $('#id-cat-' + categoryid).offset().top},'slow');
+
+            }, 'html');
+        }
 
     };
 

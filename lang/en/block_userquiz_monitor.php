@@ -110,6 +110,7 @@ $string['menuexamhistories'] = 'History';
 $string['menuexamination'] = 'Assessment';
 $string['menuexamlaunch'] = 'Launch an exam';
 $string['menuexamresults'] = 'Results';
+$string['menuexamdetails'] = 'Detailed results';
 $string['menuinformation'] = 'Information';
 $string['menupreferences'] = 'Preferences';
 $string['menutest'] = 'Training';
