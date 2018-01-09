@@ -111,7 +111,11 @@ class block_userquiz_monitor extends block_base {
         $this->content = new StdClass;
 
         $this->content->footer = '';
-        $this->content->text = $this->get_report();
+        $this->content->text = '';
+        if (!empty($this->config->localcss)) {
+            $this->content->text .= '<style>'.$this->config->localcss.'</style>';
+        }
+        $this->content->text .= $this->get_report();
 
         return $this->content;
     }
@@ -178,7 +182,7 @@ class block_userquiz_monitor extends block_base {
         }
 
         // Display examination.
-        if (in_array($selectedview, array('examination', 'examlaunch', 'examresults', 'examhistory'))) {
+        if (in_array($selectedview, array('examination', 'examlaunch', 'examresults', 'examdetails', 'examhistory'))) {
 
             require_once($CFG->dirroot.'/blocks/userquiz_monitor/classes/output/block_userquiz_monitor_exam_renderer.php');
             $renderer = $PAGE->get_renderer('block_userquiz_monitor', 'exam');
@@ -190,6 +194,7 @@ class block_userquiz_monitor extends block_base {
 
             if ((!empty($this->config->rootcategory)) && (!empty($this->config->examquiz))) {
                 switch ($selectedview) {
+
                     case 'examlaunch': {
                         $quizid = @$this->config->examquiz;
                         $available = block_userquiz_monitor_count_available_attempts($USER->id, $quizid);
@@ -237,6 +242,44 @@ class block_userquiz_monitor extends block_base {
                         break;
                     }
 
+                    case 'examdetails': {
+
+                        include($CFG->dirroot.'/blocks/userquiz_monitor/preferenceForm.php');
+
+                        $preferenceform = new PreferenceForm(null, array('mode' => 'examination', 'blockconfig' => $this->config));
+                        $params = array('userid' => $USER->id, 'blockid' => $this->instance->id);
+                        if ($prefs = $DB->get_record('userquiz_monitor_prefs', $params)) {
+                            $data = clone($prefs);
+                            unset($data->id);
+                        } else {
+                            $data = new StdClass;
+                        }
+                        $data->blockid = $this->instance->id;
+                        $data->selectedview = 'examdetails';
+                        $preferenceform->set_data($data);
+
+                        if (!$preferenceform->is_cancelled()) {
+                            if ($data = $preferenceform->get_data()) {
+                                $data->userid = $USER->id;
+                                if (!empty($prefs)) {
+                                    $prefs->examsdepth = 0 + @$data->examsdepth;
+                                    $DB->update_record('userquiz_monitor_prefs', $prefs);
+                                } else {
+                                    unset($data->id);
+                                    $DB->insert_record('userquiz_monitor_prefs', $data);
+                                }
+                            }
+                        }
+
+                        @ob_flush();
+                        ob_start();
+                        $preferenceform->display();
+                        $examination .= ob_get_clean();
+
+                        $examination .= $renderer->exam($COURSE->id, $this);
+                        break;
+                    }
+
                     case 'examhistory': {
                         $examination .= $renderer->history_widget();
                         break;
@@ -267,7 +310,7 @@ class block_userquiz_monitor extends block_base {
 
         $PAGE->requires->jquery_plugin('jqwidgets-bulletchart', 'local_vflibs');
         $trainquizlist = implode(",", $this->config->trainingquizzes);
-        $args = array($COURSE->id, $this->instance->id, $this->config->rootcategory, $trainquizlist);
+        $args = array($COURSE->id, $this->instance->id, $this->config->rootcategory, $trainquizlist, @$this->config->examquiz);
         $PAGE->requires->js_call_amd('block_userquiz_monitor/training', 'init', $args);
     }
 
