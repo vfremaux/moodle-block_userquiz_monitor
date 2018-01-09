@@ -268,7 +268,6 @@ if (is_dir($CFG->dirroot.'/blocks/userquiz_monitor')) {
     $output->set_uqconfig($uqconfig);
 }
 
-
 // Arrange for the navigation to be displayed.
 if (empty($uqconfig)) {
     $navbc = $attemptobj->get_navigation_panel($output, 'quiz_review_nav_panel', $page, $showall);

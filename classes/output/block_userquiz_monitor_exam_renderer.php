@@ -343,43 +343,217 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
         return $this->output->render_from_template('block_userquiz_monitor/examlaunchpanel', $template);
     }
 
-    public function main_category($cat) {
+    /**
+     * @param int $courseid the surrounding course
+     * @param object ref $block the userquiz_monitor instance
+     */
+    function exam($courseid, &$block) {
+        global $USER, $DB, $PAGE, $OUTPUT;
 
         $template = new StdClass;
 
-        $gaugerendererfunc = $this->gaugerendererfunc;
+        $renderer = $PAGE->get_renderer('block_userquiz_monitor', 'exam');
+
+        $rootcategory = @$block->config->rootcategory;
+        $quizid = @$block->config->examquiz;
+        $blockid = $block->instance->id;
+        $renderer->set_block($block);
+        $gaugerendererfunc = $renderer->get_gauge_renderer();
+
+        // Init variables.
+        $overall = block_userquiz_monitor_init_overall();
+
+        // Preconditions.
+        if (empty($quizid)) {
+            return $OUTPUT->notification(get_string('configwarningmonitor', 'block_userquiz_monitor'), 'notifyproblem');
+        }
+
+        $template->initerrorstr = block_userquiz_monitor_init_rootcats($rootcategory, $rootcats);
+
+        $userattempts = block_userquiz_monitor_get_user_attempts($blockid, $quizid);
+
+        $template->compileerrormsg = block_userquiz_monitor_compute_all_results($userattempts, $rootcategory, $rootcats, $attempts, $overall);
+        $template->errors = !empty($template->initerrorstr) || !empty($template->compileerrorstr);
+        if ($template->errors) {
+            return $this->output->render_from_template('block_userquiz_monitor/exam', $template);
+        }
+
+        $maxratio = block_userquiz_monitor_compute_ratios($rootcats);
+
+        $graphwidth = ($overall->ratio * 100) / $maxratio;
+
+        // Call javascript.
+        $template->formurl = new moodle_url('/blocks/userquiz_monitor/userpreset.php');
+        $template->blockid = $block->instance->id;
+
+        $components['accessorieslink'] = '';
+
+        $graphparams = array (
+            'boxheight' => 50,
+            /* 'boxwidth' => 300, */
+            'boxwidth' => '95%',
+            'skin' => 'A',
+            'type' => 'global',
+            'graphwidth' => $graphwidth,
+            'stop' => $block->config->rateAserie,
+            'successrate' => $overall->ratioA,
+        );
+        $components['progressbarA'] = $renderer->$gaugerendererfunc($rootcategory, $graphparams);
+
+        if (!empty($block->config->dualserie)) {
+            $graphparams = array (
+                'boxheight' => 50,
+                /* 'boxwidth' => 300, */
+                'boxwidth' => '95%',
+                'skin' => 'C',
+                'type' => 'global',
+                'graphwidth' => $graphwidth,
+                'stop' => $block->config->rateCserie,
+                'successrate' => $overall->ratioC,
+            );
+            $components['progressbarC'] = $renderer->$gaugerendererfunc($rootcategory, $graphparams);
+        }
+
+        $data = array('dualserie' => $block->config->dualserie,
+                      'goodA' => $overall->goodA,
+                      'cptA' => $overall->cptA,
+                      'goodC' => $overall->goodC,
+                      'cptC' => $overall->cptC);
+
+        $total = '<div id="divtotal" style="width:100%;">';
+        $total .= $renderer->total($components, $data, $quizid, 'exam');
+        $total .= '</div>';
+
+        $template->globalmonitor = $this->total_progress($overall, $rootcategory);
+
+        $cpt = 0;
+        $lcpt = 0;
+        $scale = '';
+        $globalcount = count($rootcats);
+
+        foreach ($rootcats as $catid => $cat) {
+
+            if ($catid == 0) {
+                $lcpt++;
+                continue; // But why.
+            }
+
+            $graphwidth = ($cat->ratio * 100) / $maxratio;
+
+            if ($graphwidth < 1) {
+                $graphwidth = 1;
+            }
+
+            $params = '';
+
+            if ($cpt == 0) {
+                $template->programheadline = $renderer->program_headline(@$block->config->trainingprogramname, 'exam');
+            }
+
+            $cat->accessorieslink = '';
+
+            $data = array (
+                'boxheight' => 50,
+                'boxwidth' => '95%',
+                'type' => 'local',
+                'skin' => 'A',
+                'graphwidth' => $graphwidth,
+                'stop' => $block->config->rateAserie,
+                'successrate' => $cat->ratioA,
+            );
+            $cat->progressbarA = $renderer->$gaugerendererfunc($cat->id, $data);
+
+            if ($block->config->dualserie) {
+                $data = array (
+                    'boxheight' => 50,
+                    'boxwidth' => '95%',
+                    'type' => 'local',
+                    'skin' => 'C',
+                    'graphwidth' => $graphwidth,
+                    'stop' => $block->config->rateCserie,
+                    'successrate' => $cat->ratioC,
+                );
+                $cat->progressbarC = $renderer->$gaugerendererfunc($cat->id, $data);
+            }
+
+            $cpt++;
+            $lcpt++;
+
+            $cattpl = new StdClass;
+            $cattpl->result = $this->category_result($cat, $lcpt == $globalcount);
+            $template->categoryresults[] = $cattpl;
+        }
+
+        $notenum = 1;
+        if ($block->config->dualserie) {
+            $template->note1 = '<span class="smallnotes">'.get_string('columnnotesdual', 'block_userquiz_monitor', $notenum).'</span>';
+            $notenum++;
+        }
+        $template->note2 = '<span class="smallnotes">'.get_string('columnnotesratio', 'block_userquiz_monitor', $notenum).'</span></div>';
+
+        $template->categorydetail = $renderer->category_detail_container();
+
+        return $this->output->render_from_template('block_userquiz_monitor/exam', $template);
+    }
+
+    public function category_result($cat, $islast = false) {
+
+        $template = new StdClass;
+
+        $template->islastclass = ($islast) ? 'is-last' : '';
 
         $template->catid = $cat->id;
         $template->name = $cat->name;
-        $template->buttons = $cat->buttons;
+        $template->hassubs = $cat->hassubs;
+        $template->loadingurl = $this->output->pix_url('i/ajaxloader');
 
-        $template->pixurl = $this->get_area_url('detailsicon', $this->output->pix_url('detail', 'block_userquiz_monitor'));
-        $template->seesubsstr = get_string('more', 'block_userquiz_monitor', $cat->name);
+        $template->pixurl = $this->get_area_url('detailsicon');
+        $template->seesubsstr = get_string('more', 'block_userquiz_monitor');
+        $template->accessorylink = $cat->accessorieslink;
+
+        if (optional_param('qdebug', false, PARAM_BOOL)) {
+            $qdebug = '';
+            if (!empty($cat->questions['A'])) {
+                $qdebug .= 'A questions'."\n";
+                foreach ($cat->questions['A'] as $catid => $catqs) {
+                    $qdebug .= $catid.' => '.implode(', ', $catqs)."\n";
+                }
+            }
+            if (!empty($cat->questions['C'])) {
+                $qdebug .= 'C questions'."\n";
+                foreach ($cat->questions['C'] as $catid => $catqs) {
+                    $qdebug .= $catid.' => '.implode(', ', $catqs)."\n";
+                }
+            }
+            $template->qdebug = $qdebug;
+        }
 
         $template->barheadrow = $this->render_bar_head_row('');
 
         if (!empty($cat->questiontypes)) {
-            ksort($cat->questiontypes);
-            $keys = array_keys($cat->questiontypes);
 
+            $keys = array_keys($cat->questiontypes);
             foreach ($keys as $questiontype) {
+
                 if ($questiontype == 'A') {
-                    $serieicon = $this->get_area_url('serie2icon', $this->output->pix_url('a', 'block_userquiz_monitor'));
-                    $cat->skin = 'A';
-                    $cat->progressbar = $this->$gaugerendererfunc($cat->id, $cat->dataA);
-                    $template->barrangerowA = $this->render_bar_range_row($cat->progressbar, $cat, $serieicon);
+                    $serieicon = $this->get_area_url('serie1icon', $this->output->pix_url('a', 'block_userquiz_monitor'));
+                    $catcounts = new  \StdClass;
+                    $catcounts->good = $cat->goodA;
+                    $catcounts->cpt = $cat->cptA;
+                    $template->barrangerowA = $this->render_bar_range_row($cat->progressbarA, $catcounts, $serieicon);
                 }
 
                 if ($this->theblock->config->dualserie && ($questiontype == 'C')) {
                     $serieicon = $this->get_area_url('serie2icon', $this->output->pix_url('c', 'block_userquiz_monitor'));
-                    $cat->skin = 'C';
-                    $cat->progressbar = $this->$gaugerendererfunc($cat->id, $cat->dataC);
-                    $template->barrangerowC = $this->render_bar_range_row($cat->progressbar, $cat, $serieicon);
+                    $catcounts = new \StdClass;
+                    $catcounts->good = $cat->goodC;
+                    $catcounts->cpt = $cat->cptC;
+                    $template->barrangerowC = $this->render_bar_range_row($cat->progressbarC, $catcounts, $serieicon);
                 }
             }
         }
 
-        return $this->output->render_from_template('block_userquiz_monitor/exammaincategory', $template);
+        return $this->output->render_from_template('block_userquiz_monitor/examcategoryresult', $template);
     }
 
     public function total_progress($overall, $rootcategory) {
@@ -414,12 +588,14 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
             $progressbarc = $this->$gaugerendererfunc($rootcategory, $data);
         }
 
+        $template->barheadrow = $this->render_bar_head_row('');
+
         $notenum = 1;
         if (!empty($this->theblock->config->dualserie)) {
             $template->levelstr = get_string('level', 'block_userquiz_monitor', $notenum);
             $notenum++;
         }
-        $template->ratiostr .= get_string('ratio', 'block_userquiz_monitor', $notenum);
+        $template->ratiostr = get_string('ratio', 'block_userquiz_monitor', $notenum);
 
         $count = new StdClass();
         $count->good = $overall->goodA;
