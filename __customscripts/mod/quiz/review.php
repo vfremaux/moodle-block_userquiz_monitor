@@ -59,8 +59,13 @@ $attemptobj->check_review_capability();
 // May bypass review step after an attempt on constraints.
 if (is_dir($CFG->dirroot.'/blocks/userquiz_monitor')) {
     require_once($CFG->dirroot.'/blocks/userquiz_monitor/xlib.php');
-    $uqconfig = block_userquiz_monitor_add_body_classes($attemptobj);
-    block_userquiz_monitor_protect_page($attemptobj);
+    if ($uqconfig = block_userquiz_monitor_add_body_classes($attemptobj)) {
+        block_userquiz_monitor_protect_page($attemptobj);
+    } else {
+        // CUSTOMSCRIPTS_ONLY
+        return;
+        // /CUSTOMSCRIPTS_ONLY
+    }
 }
 // CHANGE-.
 // Create an object to manage all the other (non-roles) access rules.
