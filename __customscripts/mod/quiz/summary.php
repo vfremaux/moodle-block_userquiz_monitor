@@ -62,7 +62,9 @@ if (is_dir($CFG->dirroot.'/blocks/userquiz_monitor')) {
 
 if (empty($uqconfig)) {
     // Return to standard processing.
+    // CUSTOMSCRIPT_ONLY
     return;
+    // /CUSTOMSCRIPT_ONLY
 }
 // CHANGE-.
 

@@ -58,8 +58,10 @@ if (is_dir($CFG->dirroot.'/blocks/userquiz_monitor')) {
 }
 
 if (empty($config)) {
-    // Return to stadnard behaviour.
+    // Return to standard behaviour.
+    // CUSTOMSCRIPT_ONLY
     return;
+    // /CUSTOMSCRIPT_ONLY
 }
 
 // CHANGE-.
