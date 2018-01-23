@@ -59,6 +59,13 @@ if (is_dir($CFG->dirroot.'/blocks/userquiz_monitor')) {
     include_once($CFG->dirroot.'/blocks/userquiz_monitor/xlib.php');
     $uqconfig = block_userquiz_monitor_add_body_classes($attemptobj);
 }
+
+if (empty($uqconfig)) {
+    // Return to standard processing.
+    // CUSTOMSCRIPTS_ONLY
+    return;
+    // /CUSTOMSCRIPTS_ONLY
+}
 // CHANGE-.
 
 // Check access.
