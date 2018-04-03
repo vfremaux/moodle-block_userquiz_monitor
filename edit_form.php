@@ -114,12 +114,15 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
         $select = $mform->addElement('select', 'config_trainingquizzes', $label, $quizzeslist);
         $select->setMultiple(true);
 
+        /*
+        // Now deferred to quiz_behaviour block.
         $label = get_string('configquizforceanswer', 'block_userquiz_monitor');
         $mform->addElement('advcheckbox', 'config_trainingforceanswer', $label);
         $mform->addHelpButton('config_trainingforceanswer', 'configquizforceanswer', 'block_userquiz_monitor');
 
         $label = get_string('configquiznobackwards', 'block_userquiz_monitor');
         $mform->addElement('advcheckbox', 'config_trainingnobackwards', $label);
+        */
 
         $label = get_string('configshowhistory', 'block_userquiz_monitor');
         $mform->addElement('advcheckbox', 'config_trainingshowhistory', $label, '', 0);
@@ -147,6 +150,8 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
         $mform->addElement('editor', 'config_examinstructions', $label, null, $editoroptions);
         $mform->setType('config_examinstructions', PARAM_CLEANHTML);
 
+        /*
+        // Now deferred to quiz_behaviour block.
         $label = get_string('configdirectreturn', 'block_userquiz_monitor');
         $mform->addElement('advcheckbox', 'config_directreturn', $label);
 
@@ -162,6 +167,7 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
 
         $label = get_string('configquiznobackwards', 'block_userquiz_monitor');
         $mform->addElement('advcheckbox', 'config_examnobackwards', $label);
+        */
 
         // Other configurations.
 

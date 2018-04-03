@@ -428,7 +428,6 @@ img.userquiz-monitor-questiontype {
 }
 
 .exam-launch-panel {
-    width: 40%;
     padding: 10px;
     background-color: #f0f0f0;
 }
@@ -635,23 +634,6 @@ td.detail-container {
     font-size: 1.7em;
 }
 
-.is-userquiz .mod_quiz-next-nav {
-    visibility: hidden;
-}
-
-/* put back visible in review screen */
-#page-mod-quiz-review .is-userquiz .mod_quiz-next-nav {
-    visibility: visible;
-}
-
-.is-userquiz .im-controls {
-    visibility: hidden;
-}
-
-.is-userquiz.userquiz-nobackward .mod_quiz-prev-nav {
-    visibility: hidden;
-}
-
 .userquiz-monitor-cell.details-button {
     float: right;
 }
@@ -664,31 +646,6 @@ td.detail-container {
     height: 20px;
     width: 20px;
     margin-left: 10px;
-}
-
-/* protect radio boxes until amd is here */
-/* is-userquiz assumes we force answer */
-.is-userquiz #responseform input[type=radio] {
-    visibility: hidden;
-}
-
-.is-userquiz #responseform input[type=radio] + label {
-    pointer-events:none;
-}
-
-/* hide all unnecessary links and buttons */
-.is-userquiz.no-backwards .mod_quiz-prev-nav {
-    display: none;
-}
-
-.is-userquiz.no-backwards .submitbtns-left a {
-    display: none;
-}
-.is-userquiz.no-backwards .footer-rts {
-    display: none;
-}
-.is-userquiz.no-backwards .header-rts a {
-    display: none;
 }
 
 .qinfo-label {
