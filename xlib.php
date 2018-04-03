@@ -50,6 +50,8 @@ function check_userquiz_monitor_review_applicability($attemptobj) {
 /**
  * Adds Jquery form control for single question quizzes
  */
+// NO MORE NEEDED. Everything is now deferred to block_quiz_behaviour.
+/*
 function block_userquiz_monitor_attempt_adds($attemptobj) {
     global $PAGE;
 
@@ -69,10 +71,13 @@ function block_userquiz_monitor_attempt_adds($attemptobj) {
         $PAGE->requires->js_call_amd('block_userquiz_monitor/quiztrapoutlinks', 'init');
     }
 }
+*/
 
 /**
  * Adds Jquery form control for single question quizzes
  */
+// NO MORE NEED : block_quiz_behaviour does it all now.
+/*
 function block_userquiz_monitor_protect_page($attemptobj) {
     global $PAGE;
 
@@ -106,6 +111,7 @@ function block_userquiz_monitor_add_body_classes($attemptobj) {
 
     return $uqconfig;
 }
+*/
 
 function block_userquiz_monitor_check_has_quiz_ext($course, $quizid) {
     return block_userquiz_monitor_check_has_quiz($course, $quizid);

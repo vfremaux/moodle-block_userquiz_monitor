@@ -213,7 +213,7 @@ class training_renderer extends \block_userquiz_monitor_renderer {
         $template->formurl = new moodle_url('/blocks/userquiz_monitor/userpreset.php');
         $template->blockid = $block->instance->id;
 
-        if ($block->config->trainingshowhistory) {
+        if (!empty($block->config->trainingshowhistory)) {
             if (!empty($userattempts)) {
                 $params = calcul_hist($rootcategory, $attempts);
                 $params = array('mode' => 'displayhist',

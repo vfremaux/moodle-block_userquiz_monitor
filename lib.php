@@ -27,6 +27,14 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot.'/blocks/moodleblock.class.php');
 require_once($CFG->dirroot.'/blocks/userquiz_monitor/block_userquiz_monitor.php');
 
+/**
+ * This function is not implemented in this plugin, but is needed to mark
+ * the vf documentation custom volume availability.
+ */
+function block_userquiz_monitor_supports_feature($feature) {
+    assert(1);
+}
+
 function block_userquiz_monitor_pluginfile($course, $birecordorcm, $context, $filearea, $args, $forcedownload) {
 
     if ($context->contextlevel != CONTEXT_BLOCK) {
