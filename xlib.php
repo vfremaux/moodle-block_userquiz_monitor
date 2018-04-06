@@ -47,71 +47,57 @@ function check_userquiz_monitor_review_applicability($attemptobj) {
     }
 }
 
-/**
- * Adds Jquery form control for single question quizzes
- */
-// NO MORE NEEDED. Everything is now deferred to block_quiz_behaviour.
-/*
-function block_userquiz_monitor_attempt_adds($attemptobj) {
-    global $PAGE;
+function block_userquiz_monitor_attempt_buttons($attemptobj, $page) {
+    global $OUTPUT, $CFG;
 
     $course = $attemptobj->get_course();
 
-    $PAGE->requires->jquery();
     $config = block_userquiz_monitor_check_has_quiz($course, $attemptobj->get_quizid());
     if ($config) {
-        if (($config->mode == 'exam' && !empty($config->examforceanswer)) ||
-                ($config->mode == 'training' && !empty($config->trainingforceanswer))) {
-            $PAGE->requires->js_call_amd('block_userquiz_monitor/quizforceanswer', 'init');
+        $template = new StdClass;
+
+        if (is_dir($CFG->dirroot.'/mod/quiz/accessrule/usernumattempts')) {
+            $ruleinstance = quizaccess_usernumattempts::make($attemptobj->get_quizobj(), time(), true);
+            if ($ruleinstance && $ruleinstance->is_enabled()) {
+                $template->label = get_string('returntotraining', 'block_userquiz_monitor');
+            } else {
+                $template->label = get_string('returntoquiz', 'block_userquiz_monitor');
+            }
+        } else {
+            $template->label = get_string('returntoquiz', 'block_userquiz_monitor');
         }
-        if ($config->protectcopy) {
-            $PAGE->requires->js_call_amd('block_userquiz_monitor/quizprotectcopy', 'init');
+
+        // Get the url for finishing and registering attempt.
+        $params = array(
+            'attempt' => $attemptobj->get_attemptid(),
+            'finishattempt' => 1,
+            'timeup' => 0,
+            'slots' => '',
+            'sesskey' => sesskey(),
+        );
+
+        $template->finishurl = new moodle_url($attemptobj->processattempt_url(), $params);
+
+        $template->isnotfirstpage = false;
+        if ($page > 0) {
+            $navmethod = $attemptobj->get_quiz()->navmethod;
+            if ($navmethod == 'free') {
+                // This accessorily disables back nav.
+                $template->isnotfirstpage = true;
+            }
+            $template->navigatepreviousstr = get_string('navigateprevious', 'quiz');
+        }
+        if ($lastpage) {
+            $template->nextlabelstr = get_string('endtest', 'quiz');
+        } else {
+            $template->nextlabelstr = get_string('navigatenext', 'quiz');
         }
 
-        $PAGE->requires->js_call_amd('block_userquiz_monitor/quiztrapoutlinks', 'init');
+        return $OUTPUT->render_from_template('block_userquiz_monitor/attemptpagenavigation', $template);
     }
+
+    return false;
 }
-*/
-
-/**
- * Adds Jquery form control for single question quizzes
- */
-// NO MORE NEED : block_quiz_behaviour does it all now.
-/*
-function block_userquiz_monitor_protect_page($attemptobj) {
-    global $PAGE;
-
-    $course = $attemptobj->get_course();
-
-    $PAGE->requires->jquery();
-    $config = block_userquiz_monitor_check_has_quiz($course, $attemptobj->get_quizid());
-    if ($config) {
-        if ($config->protectcopy) {
-            $PAGE->requires->js_call_amd('block_userquiz_monitor/quizprotectcopy', 'init');
-        }
-    }
-}
-
-function block_userquiz_monitor_add_body_classes($attemptobj) {
-    global $PAGE;
-
-    $uqconfig = block_userquiz_monitor_check_has_quiz_ext($attemptobj->get_course(), $attemptobj->get_quizid());
-    if (empty($uqconfig)) {
-        return;
-    }
-    if (($uqconfig->mode == 'training' && $uqconfig->trainingforceanswer) ||
-            ($uqconfig->mode == 'exam' && $uqconfig->examforceanswer)) {
-        $PAGE->add_body_class('is-userquiz');
-        $PAGE->add_body_class('userquiz-'.$uqconfig->mode);
-    }
-    if (($uqconfig->mode == 'training' && $uqconfig->trainingnobackwards) ||
-            ($uqconfig->mode == 'exam' && $uqconfig->examnobackwards)) {
-        $PAGE->add_body_class('no-backwards');
-    }
-
-    return $uqconfig;
-}
-*/
 
 function block_userquiz_monitor_check_has_quiz_ext($course, $quizid) {
     return block_userquiz_monitor_check_has_quiz($course, $quizid);
