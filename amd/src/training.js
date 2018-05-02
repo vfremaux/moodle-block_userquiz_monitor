@@ -53,9 +53,9 @@ define(['jquery', 'core/config', 'core/log'], function($, cfg, log) {
         init_detail: function() {
 
             var that = $(this);
-            regexp  = /[^0-9]*([0-9]+)$/;
-            matches = that.attr('id').match(regexp);
-            categoryid = matches[1];
+            var regexp  = /[^0-9]*([0-9]+)$/;
+            var matches = that.attr('id').match(regexp);
+            var categoryid = matches[1];
 
             $('#id-checkall-detail-' + categoryid).prop('checked', false);
             $('#id-checkall-detail-' + categoryid).bind('change', this.select_all_detail_categories);
@@ -106,13 +106,12 @@ define(['jquery', 'core/config', 'core/log'], function($, cfg, log) {
         update_selector_master_global: function(mode) {
 
             var categorieslist = '';
-            var cpt = 0;
 
             if (mode === 'all') {
                 this.select_all_master_cb();
             }
 
-            $('.cb-master').each(function(index) {
+            $('.cb-master').each(function() {
                 if ($(this).prop('checked')) {
                     var catid = $(this).attr('id').replace('id-cb-master-', '');
                     if (categorieslist === '') {
@@ -164,11 +163,10 @@ define(['jquery', 'core/config', 'core/log'], function($, cfg, log) {
                 }
             }
 
-            $('.cb-detail').each(function(index) {
+            $('.cb-detail').each(function() {
 
                 var that = $(this);
                 var categoryid = that.attr('id').replace('id-cb-detail-', '');
-                var allchecked = true;
 
                 if ($(this).prop('checked')) {
                     if (categorieslist === '') {
@@ -265,7 +263,7 @@ define(['jquery', 'core/config', 'core/log'], function($, cfg, log) {
             var params = "id=" + courseid + "&userid=" + userid + "&quizzeslist=" + quizlist;
             var url = cfg.wwwroot + "/blocks/userquiz_monitor/ajax/resettraining.php?" + params;
 
-            $.get(url, function (data, status) {
+            $.get(url, function (data) {
                 alert(data);
                 window.location = cfg.wwwroot + "/course/view.php?id=" + courseid;
             }, 'html');
@@ -331,7 +329,7 @@ define(['jquery', 'core/config', 'core/log'], function($, cfg, log) {
          * Display subcategories on the right part of the training dashbord. On narrow screens,
          * will route the content to the special container under the category main block.
          */
-        fetch_training_subcategories: function(e) {
+        fetch_training_subcategories: function() {
 
             var that = $(this);
             var categoryid = that.attr('id').replace('details-button-div-', '');
@@ -391,7 +389,7 @@ define(['jquery', 'core/config', 'core/log'], function($, cfg, log) {
          * Display subcategories on the right part of the training dashbord. On narrow screens,
          * will route the content to the special container under the category main block.
          */
-        fetch_exam_subcategories: function(e) {
+        fetch_exam_subcategories: function() {
 
             var that = $(this);
             var categoryid = that.attr('id').replace('details-button-div-', '');
