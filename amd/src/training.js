@@ -5,7 +5,6 @@
  * - being linnked to an enabling userquiz_monitor panel.
  */
 // jshint undef:false, unused:false
-/* globals $ */
 
 define(['jquery', 'core/config', 'core/log'], function($, cfg, log) {
 
@@ -150,7 +149,6 @@ define(['jquery', 'core/config', 'core/log'], function($, cfg, log) {
             log.debug("update_selector_detail");
 
             var categorieslist = '';
-            var cpt = 0;
             var allchecked = true;
             var parentid = 0;
 
