@@ -5,9 +5,8 @@
  * - being linnked to an enabling userquiz_monitor panel.
  */
 // jshint undef:false, unused:false
-/* globals $ */
 
-define(['jquery', 'core/log'], function($, log) {
+define(['jquery', 'core/config', 'core/log'], function($, cfg, log) {
 
     var courseid;
 
@@ -52,10 +51,10 @@ define(['jquery', 'core/log'], function($, log) {
          */
         init_detail: function() {
 
-            that = $(this);
-            regexp  = /[^0-9]*([0-9]+)$/;
-            matches = that.attr('id').match(regexp);
-            categoryid = matches[1];
+            var that = $(this);
+            var regexp  = /[^0-9]*([0-9]+)$/;
+            var matches = that.attr('id').match(regexp);
+            var categoryid = matches[1];
 
             $('#id-checkall-detail-' + categoryid).prop('checked', false);
             $('#id-checkall-detail-' + categoryid).bind('change', this.select_all_detail_categories);
@@ -73,7 +72,7 @@ define(['jquery', 'core/log'], function($, log) {
             var that = $(this);
 
             // Try first from a selector checkbox.
-            categoryid = parseInt(that.attr('id').replace('id-cb-master-', ''));
+            var categoryid = parseInt(that.attr('id').replace('id-cb-master-', ''));
             if (!categoryid) {
                 // Try if even not comes from the subcategory button.
                 categoryid = parseInt(that.attr('id').replace('details-button-', ''));
@@ -106,15 +105,14 @@ define(['jquery', 'core/log'], function($, log) {
         update_selector_master_global: function(mode) {
 
             var categorieslist = '';
-            var cpt = 0;
 
             if (mode === 'all') {
                 this.select_all_master_cb();
             }
 
-            $('.cb-master').each(function(index) {
+            $('.cb-master').each(function() {
                 if ($(this).prop('checked')) {
-                    catid = $(this).attr('id').replace('id-cb-master-', '');
+                    var catid = $(this).attr('id').replace('id-cb-master-', '');
                     if (categorieslist === '') {
                         categorieslist = catid;
                     } else {
@@ -151,22 +149,22 @@ define(['jquery', 'core/log'], function($, log) {
             log.debug("update_selector_detail");
 
             var categorieslist = '';
-            var cpt = 0;
             var allchecked = true;
+            var parentid = 0;
 
             var currentclasses = this.className.split(' ');
 
             for (var i in currentclasses) {
                 // Find the parent related class
                 if (currentclasses[i].match(/^cb-detail-/)) {
-                    var parentid = currentclasses[i].replace('cb-detail-', '');
+                    parentid = currentclasses[i].replace('cb-detail-', '');
                 }
             }
 
-            $('.cb-detail').each(function(index) {
+            $('.cb-detail').each(function() {
 
                 var that = $(this);
-                categoryid = that.attr('id').replace('id-cb-detail-', '');
+                var categoryid = that.attr('id').replace('id-cb-detail-', '');
 
                 if ($(this).prop('checked')) {
                     if (categorieslist === '') {
@@ -180,7 +178,7 @@ define(['jquery', 'core/log'], function($, log) {
             });
 
             // If not checked, uncheck the master category.
-            if (!allchecked) {
+            if (!allchecked && parentid) {
                 $('#id-cb-master-' + parentid).prop('checked', false);
             }
 
@@ -190,7 +188,7 @@ define(['jquery', 'core/log'], function($, log) {
 
             var params = "courseid=" + courseid + "&rootcategory=" + rootcategory + "&categoryid=" + categorieslist;
             params += "&location=mode1&quizlist=" + quizlist;
-            var url = M.cfg.wwwroot + '/blocks/userquiz_monitor/ajax/updateselector.php?' + params;
+            var url = cfg.wwwroot + '/blocks/userquiz_monitor/ajax/updateselector.php?' + params;
 
             $.get(url, function(data) {
                 $('.selectorcontainers').html(data);
@@ -210,10 +208,10 @@ define(['jquery', 'core/log'], function($, log) {
         refresh_selector: function () {
 
             var that = $(this);
-            categoryid = that.attr('id').replace();
+            var categoryid = that.attr('id').replace();
 
             var params = "rootcategory=" + rootcategory + "&categoryid=" + categoryid + "&quizzeslist=" + quizlist;
-            var url = M.cfg.wwwroot + "/blocks/userquiz_monitor/ajax/refreshselector.php?" + params;
+            var url = cfg.wwwroot + "/blocks/userquiz_monitor/ajax/refreshselector.php?" + params;
 
             $.get(url, function(data) {
                 $('.selectorcontainers').html(data);
@@ -245,8 +243,8 @@ define(['jquery', 'core/log'], function($, log) {
          */
         select_all_detail_categories: function () {
 
-            that = $(this);
-            categoryid = that.attr('id').replace('id-checkall-detail-', '');
+            var that = $(this);
+            var categoryid = that.attr('id').replace('id-checkall-detail-', '');
 
             if (that.prop('checked')) {
                 $('.cb-detail-' + categoryid).prop('checked', true);
@@ -254,18 +252,18 @@ define(['jquery', 'core/log'], function($, log) {
                 $('.cb-detail-' + categoryid).prop('checked', false);
             }
 
-            callback = $.proxy(training.update_selector_detail, this);
+            var callback = $.proxy(training.update_selector_detail, this);
             callback();
         },
 
         reset_training: function(userid) {
 
             var params = "id=" + courseid + "&userid=" + userid + "&quizzeslist=" + quizlist;
-            var url = M.cfg.wwwroot + "/blocks/userquiz_monitor/ajax/resettraining.php?" + params;
+            var url = cfg.wwwroot + "/blocks/userquiz_monitor/ajax/resettraining.php?" + params;
 
-            $.get(url, function (data, status) {
+            $.get(url, function (data) {
                 alert(data);
-                window.location = M.cfg.wwwroot + "/course/view.php?id=" + courseid;
+                window.location = cfg.wwwroot + "/course/view.php?id=" + courseid;
             }, 'html');
         },
 
@@ -275,12 +273,12 @@ define(['jquery', 'core/log'], function($, log) {
          */
         refresh_content: function () {
 
-            that = $(this);
-            categoryid = that.attr('id').replace('', '');
+            var that = $(this);
+            var categoryid = that.attr('id').replace('', '');
 
             var params = "courseid=" + courseid + "&rootcategory=" + rootcategory + "&id=" + categoryid;
 
-            var url = M.cfg.wwwroot + '/blocks/userquiz_monitor/ajax/schedulecontent.php?' + params;
+            var url = cfg.wwwroot + '/blocks/userquiz_monitor/ajax/schedulecontent.php?' + params;
 
             $.get(url, function(data) {
                 $('#divschedule').html(data);
@@ -291,7 +289,7 @@ define(['jquery', 'core/log'], function($, log) {
         highlight_training_cat: function(categoryid) {
             $('trainingcat').removeClass('active');
             $('trainingcat').addClass('inactive');
-            for (i = 0; i < 12; i++) {
+            for (var i = 0; i < 12; i++) {
                 if (i === categoryid) {
                     $('#trainingcat' + i).removeClass('inactive');
                     $('#trainingcat' + i).addClass('active');
@@ -301,9 +299,9 @@ define(['jquery', 'core/log'], function($, log) {
 
         close_detail: function() {
 
-            that = $(this);
+            var that = $(this);
 
-            categoryid = that.attr('id').replace('id-cancel-detail-', '');
+            var categoryid = that.attr('id').replace('id-cancel-detail-', '');
 
             $('#checkall-master').prop('checked', false);
             $('#checkall-master').prop('disabled', false);
@@ -321,7 +319,7 @@ define(['jquery', 'core/log'], function($, log) {
             $('.div-main').removeClass('trans50');
             $('.div-main').addClass('trans100');
 
-            callback = $.proxy(training.update_selector_detail, this);
+            var callback = $.proxy(training.update_selector_detail, this);
             callback();
         },
 
@@ -329,14 +327,14 @@ define(['jquery', 'core/log'], function($, log) {
          * Display subcategories on the right part of the training dashbord. On narrow screens,
          * will route the content to the special container under the category main block.
          */
-        fetch_training_subcategories: function(e) {
+        fetch_training_subcategories: function() {
 
-            that = $(this);
-            categoryid = that.attr('id').replace('details-button-div-', '');
+            var that = $(this);
+            var categoryid = that.attr('id').replace('details-button-div-', '');
 
             var params = "blockid=" + blockid + "&courseid=" + courseid + "&rootcategory=" + rootcategory;
             params += "&categoryid=" + categoryid + "&quizzeslist=" + quizlist + "&mode=training";
-            var url = M.cfg.wwwroot + "/blocks/userquiz_monitor/ajax/subcategoriescontent.php?" + params;
+            var url = cfg.wwwroot + "/blocks/userquiz_monitor/ajax/subcategoriescontent.php?" + params;
 
             $.post(url, '', function(data) {
                 var localcatid;
@@ -379,7 +377,7 @@ define(['jquery', 'core/log'], function($, log) {
 
                 $('html,body').animate({scrollTop: $('#id-cat-' + categoryid).offset().top},'slow');
 
-                callback = $.proxy(training.update_selector_detail, this);
+                var callback = $.proxy(training.update_selector_detail, this);
                 callback();
 
             }, 'html');
@@ -389,14 +387,14 @@ define(['jquery', 'core/log'], function($, log) {
          * Display subcategories on the right part of the training dashbord. On narrow screens,
          * will route the content to the special container under the category main block.
          */
-        fetch_exam_subcategories: function(e) {
+        fetch_exam_subcategories: function() {
 
-            that = $(this);
-            categoryid = that.attr('id').replace('details-button-div-', '');
+            var that = $(this);
+            var categoryid = that.attr('id').replace('details-button-div-', '');
 
             var params = "blockid=" + blockid + "&courseid=" + courseid + "&rootcategory=" + rootcategory;
             params += "&categoryid=" + categoryid + "&quizzeslist=" + examquiz + "&mode=exam";
-            var url = M.cfg.wwwroot + "/blocks/userquiz_monitor/ajax/subcategoriescontent.php?" + params;
+            var url = cfg.wwwroot + "/blocks/userquiz_monitor/ajax/subcategoriescontent.php?" + params;
 
             $.post(url, '', function(data) {
                 var localcatid;
