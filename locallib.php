@@ -526,7 +526,7 @@ function block_userquiz_monitor_get_cattreeids($catid, &$catids) {
 
     static $deepness = 0;
 
-    if ($subcats = $DB->get_records_menu('question_categories', array('parent' => $catid), 'id,name', 'sortorder')) {
+    if ($subcats = $DB->get_records_menu('question_categories', array('parent' => $catid), 'sortorder', 'id,name')) {
         $catids = array_merge($catids, array_keys($subcats));
         foreach (array_keys($subcats) as $subcatid) {
             $deepness++;

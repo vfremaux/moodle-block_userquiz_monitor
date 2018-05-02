@@ -307,7 +307,7 @@ class training_renderer extends \block_userquiz_monitor_renderer {
                 $template->programheadline = $renderer->program_headline(@$block->config->trainingprogramname);
             }
 
-            if ($block->config->trainingshowhistory) {
+            if (!empty($block->config->trainingshowhistory)) {
                 if (!empty($userattempts)) {
                     $params = array('mode' => 'displayhist',
                                     'datetype' => 'long',

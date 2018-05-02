@@ -87,7 +87,7 @@ function block_userquiz_monitor_attempt_buttons($attemptobj, $page) {
             }
             $template->navigatepreviousstr = get_string('navigateprevious', 'quiz');
         }
-        if ($lastpage) {
+        if ($attemptobj->is_last_page($page)) {
             $template->nextlabelstr = get_string('endtest', 'quiz');
         } else {
             $template->nextlabelstr = get_string('navigatenext', 'quiz');
