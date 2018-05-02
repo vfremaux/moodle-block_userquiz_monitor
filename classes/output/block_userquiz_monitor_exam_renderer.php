@@ -113,7 +113,7 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
                 if (!$maxdisplay || ($used < $maxdisplay)) {
                     $usedattempttpl->attemptsstr = get_string('attempt', 'quiz', $usedix);
                     $usedattempttpl->finishdate = userdate($usedattempt->timefinish);
-                    $usedattempttpl->iconurl = $this->output->pix_url($stateicon, 'block_userquiz_monitor');
+                    $usedattempttpl->iconurl = $this->output->image_url($stateicon, 'block_userquiz_monitor');
                     $params = array('q' => $quizid, 'attempt' => $usedattempt->id, 'showall' => 1);
                     $usedattempttpl->usedurl = new moodle_url('/mod/quiz/review.php', $params);
 
@@ -181,7 +181,7 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
         }
 
         $template->limitsenabled = $DB->get_field('qa_usernumattempts', 'enabled', array('quizid' => $quizid));
-        $template->availableiconurl = $this->output->pix_url('availableattempt', 'block_userquiz_monitor');
+        $template->availableiconurl = $this->output->image_url('availableattempt', 'block_userquiz_monitor');
 
         if ($maxattempts = $DB->get_record('qa_usernumattempts_limits', array('userid' => $userid, 'quizid' => $quizid))) {
             if ($availableattempts = $maxattempts->maxattempts - count($usedattempts)) {
@@ -505,7 +505,7 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
         $template->catid = $cat->id;
         $template->name = $cat->name;
         $template->hassubs = $cat->hassubs;
-        $template->loadingurl = $this->output->pix_url('i/ajaxloader');
+        $template->loadingurl = $this->output->image_url('i/ajaxloader');
 
         $template->pixurl = $this->get_area_url('detailsicon');
         $template->seesubsstr = get_string('more', 'block_userquiz_monitor');
@@ -536,7 +536,7 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
             foreach ($keys as $questiontype) {
 
                 if ($questiontype == 'A') {
-                    $serieicon = $this->get_area_url('serie1icon', $this->output->pix_url('a', 'block_userquiz_monitor'));
+                    $serieicon = $this->get_area_url('serie1icon', $this->output->image_url('a', 'block_userquiz_monitor'));
                     $catcounts = new  \StdClass;
                     $catcounts->good = $cat->goodA;
                     $catcounts->cpt = $cat->cptA;
@@ -544,7 +544,7 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
                 }
 
                 if ($this->theblock->config->dualserie && ($questiontype == 'C')) {
-                    $serieicon = $this->get_area_url('serie2icon', $this->output->pix_url('c', 'block_userquiz_monitor'));
+                    $serieicon = $this->get_area_url('serie2icon', $this->output->image_url('c', 'block_userquiz_monitor'));
                     $catcounts = new \StdClass;
                     $catcounts->good = $cat->goodC;
                     $catcounts->cpt = $cat->cptC;
@@ -600,14 +600,14 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
         $count = new StdClass();
         $count->good = $overall->goodA;
         $count->cpt = $overall->cptA;
-        $serieicon = $this->get_area_url('serie1icon', $this->output->pix_url('a', 'block_userquiz_monitor'));
+        $serieicon = $this->get_area_url('serie1icon', $this->output->image_url('a', 'block_userquiz_monitor'));
         $template->barrangerowA = $this->render_bar_range_row($progressbara, $count, $serieicon);
 
         if (!empty($this->theblock->config->dualserie)) {
             $count = new StdClass();
             $count->good = $overall->goodC;
             $count->cpt = $overall->cptC;
-            $serieicon = $this->get_area_url('serie2icon', $this->output->pix_url('c', 'block_userquiz_monitor'));
+            $serieicon = $this->get_area_url('serie2icon', $this->output->image_url('c', 'block_userquiz_monitor'));
             $template->barrangerowC = $this->render_bar_range_row($progressbarc, $count, $serieicon);
         }
 

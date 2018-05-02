@@ -34,21 +34,21 @@ function block_userquiz_monitor_get_categories_for_root() {
 
     $categories = array();
 
-    $categories = $categories + $DB->get_records_menu('question_categories', array('contextid' => $coursecontext->id));
+    $categories = $categories + $DB->get_records_menu('question_categories', array('contextid' => $coursecontext->id), 'id,name', 'sortorder');
 
     $coursecat = new StdClass;
     $coursecat->parent = $COURSE->category;
 
     while ($coursecat->parent != 0) {
         $catcontext = context_coursecat::instance($coursecat->parent);
-        $coursecatcats = $DB->get_records_menu('question_categories', array('contextid' => $catcontext->id));
+        $coursecatcats = $DB->get_records_menu('question_categories', array('contextid' => $catcontext->id), 'id,name', 'parent,sortorder');
         if ($coursecatcats) {
             $categories = $categories + $coursecatcats;
         }
         $coursecat = $DB->get_record('course_categories', array('id' => $coursecat->parent), 'id, parent');
     }
 
-    $systemcats = $DB->get_records_menu('question_categories', array('contextid' => context_system::instance()->id));
+    $systemcats = $DB->get_records_menu('question_categories', array('contextid' => context_system::instance()->id), 'id, name', 'parent,sortorder');
     if ($systemcats) {
         $categories = $categories + $systemcats;
     }
@@ -526,7 +526,7 @@ function block_userquiz_monitor_get_cattreeids($catid, &$catids) {
 
     static $deepness = 0;
 
-    if ($subcats = $DB->get_records_menu('question_categories', array('parent' => $catid), 'id,name')) {
+    if ($subcats = $DB->get_records_menu('question_categories', array('parent' => $catid), 'sortorder', 'id,name')) {
         $catids = array_merge($catids, array_keys($subcats));
         foreach (array_keys($subcats) as $subcatid) {
             $deepness++;
@@ -630,7 +630,7 @@ function block_userquiz_monitor_update_selector($courseid, $catidslist, $mode, $
             $cpt = 0;
 
             $select = " parent $insql ";
-            if ($subcats = $DB->get_records_select_menu('question_categories', $select, $inparams, 'id,name')) {
+            if ($subcats = $DB->get_records_select_menu('question_categories', $select, $inparams, 'id,name', 'sortorder')) {
                 $subcategorieslist = array_keys($subcats);
             }
 

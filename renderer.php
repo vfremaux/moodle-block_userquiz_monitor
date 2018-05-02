@@ -411,7 +411,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                     }
 
                     $canceltpl = new StdClass;
-                    $canceltpl->canceliconurl = $this->get_area_url('closesubsicon', $this->output->pix_url('cancel', 'block_userquiz_monitor'));
+                    $canceltpl->canceliconurl = $this->get_area_url('closesubsicon', $this->output->image_url('cancel', 'block_userquiz_monitor'));
                     $canceltpl->parentcatid = $categoryid;
                     /*
                     if ($mode == 'training') {
@@ -462,7 +462,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                         );
                         $progressbar = $this->$gaugerenderfunc($subcat->id, $data);
 
-                        $serieicon = $this->get_area_url('serie1icon', $this->output->pix_url('a', 'block_userquiz_monitor'));
+                        $serieicon = $this->get_area_url('serie1icon', $this->output->image_url('a', 'block_userquiz_monitor'));
                         $catcounts = new StdClass;
                         $catcounts->good = $subcat->goodA;
                         $catcounts->cpt = $subcat->cptA;
@@ -480,7 +480,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                         );
                         $progressbar = $this->$gaugerenderfunc($subcat->id, $data);
 
-                        $serieicon = $this->get_area_url('serie2icon', $this->output->pix_url('c', 'block_userquiz_monitor'));
+                        $serieicon = $this->get_area_url('serie2icon', $this->output->image_url('c', 'block_userquiz_monitor'));
                         $catcounts = new StdClass;
                         $catcounts->good = $subcat->goodC;
                         $catcounts->cpt = $subcat->cptC;
@@ -544,18 +544,17 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
             $absolutestart = $COURSE->startdate;
         }
 
+        $attrs = array('class' => 'userquiz-monitor-exam-pix');
         if ($domain == 'exams') {
             if ($prefs = $DB->get_record('userquiz_monitor_prefs', array('userid' => $USER->id, 'blockid' => $blockid))) {
                 if ($prefs->examsdepth > 0) {
                     $filterinfo = get_string('examsfilterinfo', 'block_userquiz_monitor', $prefs->examsdepth);
-                    $pixurl = $this->output->pix_url('examfilter_'.$prefs->examsdepth.'_'.$lang, 'block_userquiz_monitor');
-                    $pix = '<img class="userquiz-monitor-exam-pix" src="'.$pixurl.'" title="'.$filterinfo.'" />';
+                    $pix = $this->output->pix_icon('examfilter_'.$prefs->examsdepth.'_'.$lang, $filterinfo, 'block_userquiz_monitor', $attrs);
                     return get_string('filtering', 'block_userquiz_monitor').': '.$pix;
                 }
             }
             $filterinfo = get_string('allexamsfilterinfo', 'block_userquiz_monitor');
-            $pixurl = $this->output->pix_url('examfilter_0_'.$lang, 'block_userquiz_monitor');
-            $pix = '<img class="userquiz-monitor-exam-pix" src="'.$pixurl.'" title="'.$filterinfo.'" />';
+            $pix = $this->output->pix_icon('examfilter_0_'.$lang, $filterinfo, 'block_userquiz_monitor', $attrs);
             return get_string('filtering', 'block_userquiz_monitor').': '.$pix;
         } else {
             $dates = new StdClass;
@@ -567,15 +566,13 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                 }
                 $dates->to = userdate(time());
                 $filterinfo = get_string('filterinfo', 'block_userquiz_monitor', $dates);
-                $pixurl = $this->output->pix_url('filter_'.$prefs->resultsdepth.'_'.$lang, 'block_userquiz_monitor');
-                $pix = '<img class="userquiz-monitor-exam-pix" src="'.$pixurl.'" title="'.$filterinfo.'" />';
+                $pix = $this->output->pix_icon('filter_'.$prefs->resultsdepth.'_'.$lang, $filterinfo, 'block_userquiz_monitor', $attrs);
                 return get_string('filtering', 'block_userquiz_monitor').': '.$pix;
             }
             $dates->from = userdate($absolutestart);
             $dates->to = userdate(time());
             $filterinfo = get_string('filterinfo', 'block_userquiz_monitor', $dates);
-            $pixurl = $this->output->pix_url('filter_0_'.$lang, 'block_userquiz_monitor');
-            $pix = '<img class="userquiz-monitor-exam-pix" src="'.$pixurl.'" title="'.$filterinfo.'" />';
+            $pixurl = $this->output->pix_icon('filter_0_'.$lang, $filterinfo, 'block_userquiz_monitor', $attrs);
             return get_string('filtering', 'block_userquiz_monitor').': '.$pix;
         }
     }
@@ -686,15 +683,15 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
 
         $template->barheadrow = $this->render_bar_head_row('');
 
-        $serieicon = $this->get_area_url('serie1icon', $this->output->pix_url('a', 'block_userquiz_monitor'));
+        $serieicon = $this->get_area_url('serie1icon', $this->output->image_url('a', 'block_userquiz_monitor'));
         $catcounts = new \StdClass;
         $catcounts->good = $data['goodA'];
         $catcounts->cpt = $data['cptA'];
         $template->barrangerowA = $this->render_bar_range_row($components['progressbarA'], $catcounts, $serieicon);
 
         if (!empty($data['dualserie'])) {
-            $serie2iconurl = $this->get_area_url('serie2icon', $this->output->pix_url('c', 'block_userquiz_monitor'));
-            $serieicon = $this->get_area_url('serie2icon', $this->output->pix_url('c', 'block_userquiz_monitor'));
+            $serie2iconurl = $this->get_area_url('serie2icon', $this->output->image_url('c', 'block_userquiz_monitor'));
+            $serieicon = $this->get_area_url('serie2icon', $this->output->image_url('c', 'block_userquiz_monitor'));
             $catcounts = new \StdClass;
             $catcounts->good = $data['goodC'];
             $catcounts->cpt = $data['cptC'];
@@ -748,7 +745,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         if (!empty($alternateurl)) {
             $attributes['src'] = $alternateurl;
         } else {
-            $attributes['src'] = $this->pix_url($icon->pix, $icon->component);
+            $attributes['src'] = $this->image_url($icon->pix, $icon->component);
         }
         return html_writer::empty_tag('img', $attributes);
     }

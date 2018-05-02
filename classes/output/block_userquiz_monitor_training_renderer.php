@@ -90,7 +90,7 @@ class training_renderer extends \block_userquiz_monitor_renderer {
         $template->catid = $cat->id;
         $template->name = $cat->name;
         $template->hassubs = $cat->hassubs;
-        $template->loadingurl = $this->output->pix_url('i/ajaxloader');
+        $template->loadingurl = $this->output->image_url('i/ajaxloader');
 
         $template->pixurl = $this->get_area_url('detailsicon');
         $template->seesubsstr = get_string('more', 'block_userquiz_monitor');
@@ -121,7 +121,7 @@ class training_renderer extends \block_userquiz_monitor_renderer {
             foreach ($keys as $questiontype) {
 
                 if ($questiontype == 'A') {
-                    $serieicon = $this->get_area_url('serie1icon', $this->output->pix_url('a', 'block_userquiz_monitor'));
+                    $serieicon = $this->get_area_url('serie1icon', $this->output->image_url('a', 'block_userquiz_monitor'));
                     $catcounts = new  \StdClass;
                     $catcounts->good = $cat->goodA;
                     $catcounts->cpt = $cat->cptA;
@@ -129,7 +129,7 @@ class training_renderer extends \block_userquiz_monitor_renderer {
                 }
 
                 if ($this->theblock->config->dualserie && ($questiontype == 'C')) {
-                    $serieicon = $this->get_area_url('serie2icon', $this->output->pix_url('c', 'block_userquiz_monitor'));
+                    $serieicon = $this->get_area_url('serie2icon', $this->output->image_url('c', 'block_userquiz_monitor'));
                     $catcounts = new \StdClass;
                     $catcounts->good = $cat->goodC;
                     $catcounts->cpt = $cat->cptC;
@@ -213,7 +213,7 @@ class training_renderer extends \block_userquiz_monitor_renderer {
         $template->formurl = new moodle_url('/blocks/userquiz_monitor/userpreset.php');
         $template->blockid = $block->instance->id;
 
-        if ($block->config->trainingshowhistory) {
+        if (!empty($block->config->trainingshowhistory)) {
             if (!empty($userattempts)) {
                 $params = calcul_hist($rootcategory, $attempts);
                 $params = array('mode' => 'displayhist',
@@ -230,7 +230,7 @@ class training_renderer extends \block_userquiz_monitor_renderer {
                 $components['accessorieslink'] = $renderer->render_action_link($link, $alternateurl);
             } else {
                 $title = get_string('hist', 'block_userquiz_monitor');
-                $pixurl = $renderer->get_area_url('statsbuttonicon', $OUTPUT->pix_url('graph', 'block_userquiz_monitor'));
+                $pixurl = $renderer->get_area_url('statsbuttonicon', $OUTPUT->image_url('graph', 'block_userquiz_monitor'));
                 $components['accessorieslink'] = '<img class="userquiz-monitor-cat-button"  title="'.$title.'" src="'.$pixurl.'"/>';
             }
         } else {
@@ -324,7 +324,7 @@ class training_renderer extends \block_userquiz_monitor_renderer {
                     $cat->accessorieslink = $renderer->render_action_link($link, $alternateurl);
                 } else {
                     $title = get_string('hist', 'block_userquiz_monitor');
-                    $pixurl = $renderer->get_area_url('statsbuttonicon', $OUTPUT->pix_url('graph', 'block_userquiz_monitor'));
+                    $pixurl = $renderer->get_area_url('statsbuttonicon', $OUTPUT->image_url('graph', 'block_userquiz_monitor'));
                     $cat->accessorieslink = '<img class="userquiz-monitor-cat-button shadow" title="'.$title.'" src="'.$pixurl.'" />';
                 }
             } else {
