@@ -227,6 +227,7 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
                                                                                  0, array('subdirs' => true), $currenttext);
             $defaults->config_examinstructions['itemid'] = $draftideditor;
             $defaults->config_examinstructions['format'] = FORMAT_HTML;
+
         } else {
             $text = '';
         }

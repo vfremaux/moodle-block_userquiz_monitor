@@ -14,23 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Version details.
- *
- * @package    block_userquiz_monitor
- * @category   blocks
- * @author     Valery Fremaux (valery.fremaux@gmail.com)
- * @copyright  2015 onwards Valery Fremaux (valery.fremaux@gmail.com)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace block_user_quiz_monitor\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2017121704; // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2018042700; // Requires this Moodle version.
-$plugin->component = 'block_userquiz_monitor'; // Full name of the plugin (used for diagnostics).
-$plugin->maturity = MATURITY_RC;
-$plugin->release = '3.5.0 (Build 2017121704)';
-
-// Non moodle attributes.
-$plugin->codeincrement = '3.5.0004';
+class provider implements \core_privacy\local\metadata\null_provider {
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason() : string {
+        return 'privacy:metadata';
+    }
+}
