@@ -203,6 +203,11 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
         global $COURSE;
 
         if (!empty($this->block->config) && is_object($this->block->config)) {
+
+            /*
+             * As being in a block configuration standard editor preparation cannot be implemented
+             * as usual because of the expected name of the configuration attribute.
+             */
             $text = '';
             if (!empty($this->block->config->examinstructions)) {
                 if (is_array($this->block->config->examinstructions)) {
@@ -217,7 +222,7 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
             } else {
                 $currenttext = $text;
             }
-            $defaults->config_examinstructions['text'] = file_prepare_draft_area($draftideditor, $this->block->context->id,
+            $text = $defaults->config_examinstructions['text'] = file_prepare_draft_area($draftideditor, $this->block->context->id,
                                                                                  'block_userquiz_monitor', 'examinstructions',
                                                                                  0, array('subdirs' => true), $currenttext);
             $defaults->config_examinstructions['itemid'] = $draftideditor;
@@ -234,19 +239,8 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
             unset($this->block->config->title);
         }
 
-        // Have to delete text here, otherwise parent::set_data will empty content of editor.
+        // Have to delete examinstruction here, otherwise parent::set_data will empty content of editor.
         unset($this->block->config->examinstructions);
-
-        // Restore text.
-        if (!isset($this->block->config)) {
-            $this->block->config = new StdClass();
-        }
-        $this->block->config->examinstructions = $text;
-
-        if (isset($title)) {
-            // Reset the preserved title.
-            $this->block->config->title = $title;
-        }
 
         $context = context_block::instance($this->block->instance->id);
 
@@ -276,5 +270,16 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
         $defaults->config_grserie2icon = array('serie2icon' => $draftitemid);
 
         parent::set_data($defaults);
+
+        // Restore text.
+        if (!isset($this->block->config)) {
+            $this->block->config = new StdClass();
+        }
+        $this->block->config->examinstructions = $text;
+
+        if (isset($title)) {
+            // Reset the preserved title.
+            $this->block->config->title = $title;
+        }
     }
 }
