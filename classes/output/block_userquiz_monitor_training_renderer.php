@@ -307,7 +307,11 @@ class training_renderer extends \block_userquiz_monitor_renderer {
                 $template->programheadline = $renderer->program_headline(@$block->config->trainingprogramname);
             }
 
+<<<<<<< HEAD
             if ($block->config->trainingshowhistory) {
+=======
+            if (!empty($block->config->trainingshowhistory)) {
+>>>>>>> MOODLE_35_STABLE
                 if (!empty($userattempts)) {
                     $params = array('mode' => 'displayhist',
                                     'datetype' => 'long',

@@ -25,6 +25,9 @@
 $string['userquiz_monitor:view'] = 'View the dashboard';
 $string['userquiz_monitor:addinstance'] = 'Add a userquiz monitor board';
 
+// Privacy.
+$string['privacy:metadata'] = "The User Quiz Monitor needs to be implemented to reflect user preferences.";
+
 $string['adminresethist'] = '(Admin only, or impersonated : Reset training results : )';
 $string['allexamsfilterinfo'] = 'Results are calculated over all attempts';
 $string['attempt'] = 'Attempt';
