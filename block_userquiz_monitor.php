@@ -199,7 +199,13 @@ class block_userquiz_monitor extends block_base {
                         $quizid = @$this->config->examquiz;
                         $available = block_userquiz_monitor_count_available_attempts($USER->id, $quizid);
                         $params = array('userid' => $USER->id, 'quizid' => $quizid);
-                        $maxattempts = $DB->get_field('qa_usernumattempts_limits', 'maxattempts', $params);
+                        // TODO : check if the quiz has usernumattempts or standard attempts.
+                        $userlimitsenabled = $DB->get_field('qa_usernumattempts', 'enabled', array('quizid' => $quizid));
+                        if ($userlimitsenabled) {
+                            $maxattempts = $DB->get_field('qa_usernumattempts_limits', 'maxattempts', $params);
+                        } else {
+                            $maxattempts =  $DB->get_field('quiz', 'attempts', array('id' => $quizid));
+                        }
                         $examination .= $renderer->launch_widget($quizid, 0 + $available, max(0 + $available, 0 + $maxattempts));
                         break;
                     }
@@ -309,16 +315,22 @@ class block_userquiz_monitor extends block_base {
         parent::get_required_javascript();
 
         $PAGE->requires->jquery_plugin('jqwidgets-bulletchart', 'local_vflibs');
-        $trainquizlist = implode(",", $this->config->trainingquizzes);
-        $args = array($COURSE->id, $this->instance->id, $this->config->rootcategory, $trainquizlist, @$this->config->examquiz);
-        $PAGE->requires->js_call_amd('block_userquiz_monitor/training', 'init', $args);
+        if (!empty($this->config->trainingquizzes)) {
+            $trainquizlist = implode(',', $this->config->trainingquizzes);
+            $args = array($COURSE->id, $this->instance->id, $this->config->rootcategory, $trainquizlist, @$this->config->examquiz);
+            $PAGE->requires->js_call_amd('block_userquiz_monitor/training', 'init', $args);
+        }
     }
 
     protected function get_active_view() {
         global $SESSION, $USER, $COURSE;
 
         if (!in_array(@$SESSION->userquizview[$COURSE->id], array('training', 'examination'))) {
-            $SESSION->userquizview[$COURSE->id] = 'training';
+            if (!empty($this->config->examdefault) && !empty($this->config->examenabled)) {
+                $SESSION->userquizview[$COURSE->id] = 'examination';
+            } else {
+                $SESSION->userquizview[$COURSE->id] = 'training';
+            }
         }
 
         $selectedview = optional_param('selectedview', $SESSION->userquizview[$COURSE->id], PARAM_TEXT);
