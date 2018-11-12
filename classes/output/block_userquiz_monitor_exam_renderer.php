@@ -41,10 +41,14 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
 
     public function heading() {
 
+        if (empty($this->theblock->config)) {
+            return $this->output->notification(get_string('notconfigured', 'block_userquizmonitor'));
+        }
+
         if (!empty($this->theblock->config->alternateexamheading)) {
             $title = format_text($this->theblock->config->alternateexamheading);
         } else {
-            $title = get_string('examtitle', 'block_userquiz_monitor', $this->theblock->config->trainingprogramname);
+            $title = get_string('examtitle', 'block_userquiz_monitor', @$this->theblock->config->trainingprogramname);
         }
 
         $template = new StdClass;
@@ -63,6 +67,10 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
      */
     public function available_attempts($userid, $quizid, $maxdisplay = 0) {
         global $DB;
+
+        if (empty($this->theblock->config)) {
+            return '';
+        }
 
         $gaugerendererfunc = $this->gaugerendererfunc;
 
@@ -206,6 +214,10 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
     public function launch_widget($quizid, $remains, $total) {
         global $COURSE;
 
+        if (empty($this->theblock->config)) {
+            return '';
+        }
+
         $template = new StdClass;
 
         $template->remainingattemptsstr = get_string('remainingattempts', 'block_userquiz_monitor', "$remains / $total");
@@ -233,6 +245,10 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
      */
     public function results_widget() {
         global $DB, $USER;
+
+        if (empty($this->theblock->config)) {
+            return '';
+        }
 
         $total = '';
         $gaugerendererfunc = $this->gaugerendererfunc;
@@ -320,6 +336,10 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
     public function history_widget() {
         global $USER;
 
+        if (empty($this->theblock->config)) {
+            return '';
+        }
+
         $quizid = @$this->theblock->config->examquiz;
         return $this->available_attempts($USER->id, $quizid, 0);
     }
@@ -327,6 +347,10 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
 
     public function launch_gui($runlaunchform, $quizid, $totalexamstr, $total) {
         global $USER;
+
+        if (empty($this->theblock->config)) {
+            return '';
+        }
 
         $template = new StdClass;
 
@@ -349,6 +373,10 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
      */
     function exam($courseid, &$block) {
         global $USER, $DB, $PAGE, $OUTPUT;
+
+        if (empty($this->theblock->config)) {
+            return '';
+        }
 
         $template = new StdClass;
 
@@ -497,6 +525,10 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
     }
 
     public function category_result($cat, $islast = false) {
+
+        if (empty($this->theblock->config)) {
+            return '';
+        }
 
         $template = new StdClass;
 
