@@ -721,16 +721,6 @@ input.radio-hidden[type="radio"] + div.category-subpod {
     max-width: 10px;
 }
 
-#quiz-progress-indicator {
-    height: 6px;
-    background-color: #a3a3dc;
-}
-
-.quiz-progress-bar {
-    height: 6px;
-    background-color: #21277c;
-}
-
 .category-check {
     padding-left: 10px;
 }
