@@ -57,13 +57,12 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
 
         $quizzes = $DB->get_records('quiz', array('course' => $COURSE->id), 'id', 'id,name');
 
-        if (!empty($quizzes)) {
-            /*
-             * Get all categories in course context or higher : There is no sense to dig down in a specific quiz context as
-             * question banks may not ne shared between quiz instances.
-             */
-            $categorymenu = block_userquiz_monitor_get_categories_for_root();
-        }
+        $categorymenu = array();
+        /*
+         * Get all categories in course context or higher : There is no sense to dig down in a specific quiz context as
+         * question banks may not ne shared between quiz instances.
+         */
+        $categorymenu = block_userquiz_monitor_get_categories_for_root();
 
         $label = get_string('configrootcategory', 'block_userquiz_monitor');
         $mform->addElement('select', 'config_rootcategory', $label, $categorymenu);
@@ -107,6 +106,10 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
         $label = get_string('configtrainingenabled', 'block_userquiz_monitor');
         $mform->addElement('advcheckbox', 'config_trainingenabled', $label);
 
+        $label = get_string('configtrainingdefault', 'block_userquiz_monitor');
+        $option = get_string('trainingisdefault', 'block_userquiz_monitor');
+        $mform->addElement('radio', 'config_examdefault', $label, $option, 0);
+
         // Get quizzes list.
         $quizzeslist = $DB->get_records_menu('quiz', array('course' => $COURSE->id), 'name', 'id,name');
 
@@ -123,6 +126,10 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
 
         $label = get_string('configexamenabled', 'block_userquiz_monitor');
         $mform->addElement('advcheckbox', 'config_examenabled', $label);
+
+        $label = get_string('configexamdefault', 'block_userquiz_monitor');
+        $option = get_string('examisdefault', 'block_userquiz_monitor');
+        $mform->addElement('radio', 'config_examdefault', $label, $option, 1);
 
         $label = get_string('configexamtab', 'block_userquiz_monitor');
         $mform->addElement('text', 'config_examtab', $label);

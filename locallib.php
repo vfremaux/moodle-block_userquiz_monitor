@@ -33,22 +33,21 @@ function block_userquiz_monitor_get_categories_for_root() {
     $coursecontext = context_course::instance($COURSE->id);
 
     $categories = array();
-
-    $categories = $categories + $DB->get_records_menu('question_categories', array('contextid' => $coursecontext->id), 'id,name', 'sortorder');
+    $categories = $categories + $DB->get_records_menu('question_categories', array('contextid' => $coursecontext->id), 'sortorder', 'id,name');
 
     $coursecat = new StdClass;
     $coursecat->parent = $COURSE->category;
 
     while ($coursecat->parent != 0) {
         $catcontext = context_coursecat::instance($coursecat->parent);
-        $coursecatcats = $DB->get_records_menu('question_categories', array('contextid' => $catcontext->id), 'id,name', 'parent,sortorder');
+        $coursecatcats = $DB->get_records_menu('question_categories', array('contextid' => $catcontext->id), 'parent,sortorder', 'id,name');
         if ($coursecatcats) {
             $categories = $categories + $coursecatcats;
         }
         $coursecat = $DB->get_record('course_categories', array('id' => $coursecat->parent), 'id, parent');
     }
 
-    $systemcats = $DB->get_records_menu('question_categories', array('contextid' => context_system::instance()->id), 'id, name', 'parent,sortorder');
+    $systemcats = $DB->get_records_menu('question_categories', array('contextid' => context_system::instance()->id), 'parent,sortorder', 'id, name');
     if ($systemcats) {
         $categories = $categories + $systemcats;
     }
@@ -510,8 +509,13 @@ function block_userquiz_monitor_count_available_attempts($userid, $quizid) {
     ";
     $usedattempts = $DB->get_records_select('quiz_attempts', $select, array($userid, $quizid));
     $params = array('userid' => $userid, 'quizid' => $quizid);
-    $limitsenabled = $DB->get_field('qa_usernumattempts', 'enabled', array('quizid' => $quizid));
-    if (!$limitsenabled) {
+    $userlimitsenabled = $DB->get_field('qa_usernumattempts', 'enabled', array('quizid' => $quizid));
+    if (!$userlimitsenabled) {
+        if ($availableattempts = $DB->get_field('quiz', 'attempts', array('id' => $quizid))) {
+            // globally limited quiz.
+            $userattemptscount = (is_array($usedattempts)) ? count($usedattempts) : 0;
+            return max(0, $availableattempts - $userattemptscount);
+        }
         // Always give a new attempts to requirer.
         return 1;
     }
