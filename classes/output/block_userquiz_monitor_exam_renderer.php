@@ -134,7 +134,7 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
                     } else {
                         // If no detail image loaded keep a single button.
                         $usedattempttpl->detailbutton = '<input type="button"
-                                      class="userquiz-monitor-cat-button btn"
+                                      class="userquiz-monitor-cat-button btn active"
                                       title="'.$seedetailsstr.'"
                                       value="'.$seedetailsstr.'"/>';
                     }
@@ -188,14 +188,23 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
             }
         }
 
-        $template->limitsenabled = $DB->get_field('qa_usernumattempts', 'enabled', array('quizid' => $quizid));
         $template->availableiconurl = $this->output->image_url('availableattempt', 'block_userquiz_monitor');
 
-        if ($maxattempts = $DB->get_record('qa_usernumattempts_limits', array('userid' => $userid, 'quizid' => $quizid))) {
-            if ($availableattempts = $maxattempts->maxattempts - count($usedattempts)) {
+        $maxattempts = $this->theblock->get_max_attempts($quizid);
+
+        if ($maxattempts) {
+            $template->limitsenabled = true;
+
+            if ($availableattempts = $maxattempts - count($usedattempts)) {
+
+                if (!$maxdisplay) {
+                    $maxdisplay = 99999;
+                }
+
                 $attemptsleft = $availableattempts;
                 for ($i = 0; $i < min($maxdisplay, $availableattempts); $i++) {
                     // Display as many available as possible.
+
                     $availtpl = new StdClass;
                     // Empty tpl to iterate.
                     $template->availables[] = $availtpl;
