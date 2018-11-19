@@ -28,92 +28,102 @@
 <!-- availableattempts -->
 <div class="available-attempts-container trans100">
 
-    <table class="available-attempts">
+    <div class="userquiz-monitor-history">
 
 {{#hasusedattempts}}
 
 {{#usedattempts}}
-        <tr valign="middle">
+        <div class="userquiz-monitor-attempts">
+            <table width="100%">
+                <tr valign="middle">
 
-            <td class="exam-history-attempt">
-                {{{attemptsstr}}} {{{finishdate}}}<br/>
-                {{{passingstr}}}
-                <img src="{{{iconurl}}}" />
-            </td>
+                    <td class="exam-history-attempt">
+                        {{{attemptsstr}}} {{{finishdate}}}<br/>
+                        {{{passingstr}}}
+                        <img src="{{{iconurl}}}" />
+                    </td>
 
-            <td class="detail-container">
-                <a href="{{{usedurl}}}">{{{detailbutton}}}</a>
-            </td>
-        </tr>
+                    <td class="detail-container">
+                        <a href="{{{usedurl}}}">{{{detailbutton}}}</a>
+                    </td>
+                </tr>
 
-        <tr>
-            <td colspan="2">
-                {{{totalgraph}}}
-            </td>
-        </tr>
+                <tr>
+                    <td colspan="2">
+                        {{{totalgraph}}}
+                    </td>
+                </tr>
+            </table>
+        </div>
 {{/usedattempts}}
 
 {{#printellipse}}
-        <tr valign="top">
-            <td>...</td>
-            <td><img src="{{{ellipseiconurl}}}" /></td>
-            <td></td>
-        </tr>
+        <div class="userquiz-monitor-ellipse">
+            <table width="100%">
+                <tr valign="top">
+                    <td>...</td>
+                    <td><img src="{{{ellipseiconurl}}}" /></td>
+                    <td></td>
+                </tr>
+             </table>
+         </div>
 {{/printellipse}}
 
 {{/hasusedattempts}}
 
 {{^hasusedattempts}}
-        <tr>
-            <td colspan="3">{{{nousedattemptsstr}}}</td>
-        </tr>
+        <div class="userquiz-monitor-attempts padded">
+            <div>{{{nousedattemptsstr}}}</div>
+        </div>
 {{/hasusedattempts}}
 
 {{^limitsenabled}}
-        <tr valign="top">
-            <td>
-                {{attemptstr}} {{availablestr}}
-            </td>
-            <td>
-                <img src="{{{availableiconurl}}}" />
-            </td>
-            <td>
-            </td>
-        </tr>
+        <div class="userquiz-monitor-attempts padded">
+            <table width="100%">
+                <tr valign="top">
+                    <td align="center">
+                        {{attemptstr}} {{availablestr}}
+                    </td>
+                </tr>
+            </table>
+        </div>
 {{/limitsenabled}}
 
 {{#limitsenabled}}
 {{#availables}}
         {{! Loop untill all displayable units are done }}
-        <tr valign="top">
-            <td>
-                {{attemptstr}} {{availablestr}}
-            </td>
-            <td>
-                <img src="{{{availableiconurl}}}" />
-            </td>
-            <td>
-            </td>
-        </tr>
+        <div class="userquiz-monitor-attempts padded">
+            <table width="100%">
+                <tr valign="top">
+                    <td align="center">
+                        {{attemptstr}} {{availablestr}}
+                    </td>
+                </tr>
+            </table>
+        </div>
 {{/availables}}
 {{#hasstillavailable}}
-        <tr valign="top">
-            <td colspan="3" class="uq-more-attempts">{{{stillavailablestr}}}</td>
-        </tr>
+        <div class="userquiz-monitor-attempts padded">
+            <div class="uq-more-attempts">{{{stillavailablestr}}}</div>
+        </div>
 {{/hasstillavailable}}
 
 {{^hasstillavailable}}
 {{^availables}}
-        <tr>
-            <td align="center">
-            {{{noavailableattemptsstr}}}
-            </td>
-        </tr>
+        <div class="userquiz-monitor-attempts padded">
+        <table width="100%">
+            <tr>
+                <td align="center">
+                {{{noavailableattemptsstr}}}
+                </td>
+            </tr>
+        </table>
+        </div>
 {{/availables}}
 {{/hasstillavailable}}
 {{/limitsenabled}}
 
-    </table>
+    </div>
 
 </div>
 <!-- /availableattempts -->
