@@ -54,6 +54,14 @@ class block_userquiz_monitor extends block_base {
         if (!isset($this->config->dualserie)) {
             $this->config->dualserie = 1;
         }
+
+        if (!isset($this->config->examshowdetails)) {
+            $this->config->examshowdetails = 1;
+        }
+
+        if (!isset($this->config->examshowhistory)) {
+            $this->config->examshowhistory = 1;
+        }
     }
 
     public function applicable_formats() {
@@ -198,14 +206,7 @@ class block_userquiz_monitor extends block_base {
                     case 'examlaunch': {
                         $quizid = @$this->config->examquiz;
                         $available = block_userquiz_monitor_count_available_attempts($USER->id, $quizid);
-                        $params = array('userid' => $USER->id, 'quizid' => $quizid);
-                        // TODO : check if the quiz has usernumattempts or standard attempts.
-                        $userlimitsenabled = $DB->get_field('qa_usernumattempts', 'enabled', array('quizid' => $quizid));
-                        if ($userlimitsenabled) {
-                            $maxattempts = $DB->get_field('qa_usernumattempts_limits', 'maxattempts', $params);
-                        } else {
-                            $maxattempts =  $DB->get_field('quiz', 'attempts', array('id' => $quizid));
-                        }
+                        $maxattempts = $this->get_max_attempts($quizid);
                         $examination .= $renderer->launch_widget($quizid, 0 + $available, max(0 + $available, 0 + $maxattempts));
                         break;
                     }
@@ -353,6 +354,21 @@ class block_userquiz_monitor extends block_base {
 
         $SESSION->userquizview[$COURSE->id] = $selectedview;
         return $selectedview;
+    }
+
+    public function get_max_attempts($quizid) {
+        global $USER, $DB;
+
+        $params = array('userid' => $USER->id, 'quizid' => $quizid);
+        // Check if the quiz has usernumattempts or standard attempts.
+        $userlimitsenabled = $DB->get_field('qa_usernumattempts', 'enabled', array('quizid' => $quizid));
+        if ($userlimitsenabled) {
+            $maxattempts = $DB->get_field('qa_usernumattempts_limits', 'maxattempts', $params);
+        } else {
+            $maxattempts =  $DB->get_field('quiz', 'attempts', array('id' => $quizid));
+        }
+
+        return $maxattempts;
     }
 
     static public function get_fileareas() {
