@@ -147,6 +147,12 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
         $mform->addElement('editor', 'config_examinstructions', $label, null, $editoroptions);
         $mform->setType('config_examinstructions', PARAM_CLEANHTML);
 
+        $label = get_string('configshowdetailedresults', 'block_userquiz_monitor');
+        $mform->addElement('advcheckbox', 'config_examshowdetails', $label, '', 1);
+
+        $label = get_string('configshowhistory', 'block_userquiz_monitor');
+        $mform->addElement('advcheckbox', 'config_examshowhistory', $label, '', 1);
+
         // Other configurations.
 
         $mform->addElement('header', 'configheader3', get_string('graphicassets', 'block_userquiz_monitor'));

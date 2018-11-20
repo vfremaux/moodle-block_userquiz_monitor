@@ -597,6 +597,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
          * $rows[0][] = new tabobject('schedule', "view.php?id=".$COURSE->id."&selectedview=schedule", $label);
          */
         $activated = null;
+        $hasexamtabs = false;
         if (!empty($conf->trainingenabled)) {
 
             if (empty($conf->examenabled)) {
@@ -611,48 +612,40 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
             $taburl = new moodle_url('/course/view.php', array('id' => $COURSE->id, 'selectedview' => 'examination'));
             $rows[0][] = new tabobject('examination', $taburl, $examtab);
 
-            if (in_array($selectedview, array('examination', 'examlaunch', 'examresults', 'examhistory'))) {
+            $hasexamtabs = true;
+            $examrow = 1;
+            if (!in_array($selectedview, array('examination', 'examlaunch', 'examresults', 'examhistory'))) {
                 $activated = array('examination');
-                if ($selectedview == 'examination') {
-                    $selectedview = 'examlaunch'; // The default.
-                }
-
-                $examtab = get_string('menuexamlaunch', 'block_userquiz_monitor');
-                $taburl = new moodle_url('/course/view.php', array('id' => $COURSE->id, 'selectedview' => 'examlaunch'));
-                $rows[1][] = new tabobject('examlaunch', $taburl, $examtab);
-
-                $examtab = get_string('menuexamresults', 'block_userquiz_monitor');
-                $taburl = new moodle_url('/course/view.php', array('id' => $COURSE->id, 'selectedview' => 'examresults'));
-                $rows[1][] = new tabobject('examresults', $taburl, $examtab);
-
-                $examtab = get_string('menuexamhistories', 'block_userquiz_monitor');
-                $taburl = new moodle_url('/course/view.php', array('id' => $COURSE->id, 'selectedview' => 'examhistory'));
-                $rows[1][] = new tabobject('examhistory', $taburl, $examtab);
             }
         } else {
             // If only exam enabled, print exam tabs at first level.
-            if (in_array($selectedview, array('examination', 'examlaunch', 'examresults', 'examdetails', 'examhistory'))) {
-                if ($selectedview == 'examination') {
-                    $selectedview = 'examlaunch'; // The default.
-                }
+            $hasexamtabs = true;
+            $examrow = 0;
+        }
 
-                $examtab = get_string('menuexamlaunch', 'block_userquiz_monitor');
-                $taburl = new moodle_url('/course/view.php', array('id' => $COURSE->id, 'selectedview' => 'examlaunch'));
-                $rows[0][] = new tabobject('examlaunch', $taburl, $examtab);
+        if ($selectedview == 'examination') {
+            $selectedview = 'examlaunch'; // The default.
+        }
 
-                $examtab = get_string('menuexamresults', 'block_userquiz_monitor');
-                $taburl = new moodle_url('/course/view.php', array('id' => $COURSE->id, 'selectedview' => 'examresults'));
-                $rows[0][] = new tabobject('examresults', $taburl, $examtab);
+        if ($hasexamtabs) {
+            $examtab = get_string('menuexamlaunch', 'block_userquiz_monitor');
+            $taburl = new moodle_url('/course/view.php', array('id' => $COURSE->id, 'selectedview' => 'examlaunch'));
+            $rows[$examrow][] = new tabobject('examlaunch', $taburl, $examtab);
 
-                if (empty($conf->examhidescoringinterface)) {
-                    $examtab = get_string('menuexamdetails', 'block_userquiz_monitor');
-                    $taburl = new moodle_url('/course/view.php', array('id' => $COURSE->id, 'selectedview' => 'examdetails'));
-                    $rows[0][] = new tabobject('examdetails', $taburl, $examtab);
-                }
+            $examtab = get_string('menuexamresults', 'block_userquiz_monitor');
+            $taburl = new moodle_url('/course/view.php', array('id' => $COURSE->id, 'selectedview' => 'examresults'));
+            $rows[$examrow][] = new tabobject('examresults', $taburl, $examtab);
 
+            if (!empty($conf->examshowdetails)) {
+                $examtab = get_string('menuexamdetails', 'block_userquiz_monitor');
+                $taburl = new moodle_url('/course/view.php', array('id' => $COURSE->id, 'selectedview' => 'examdetails'));
+                $rows[$examrow][] = new tabobject('examdetails', $taburl, $examtab);
+            }
+
+            if (!empty($conf->examshowhistory)) {
                 $examtab = get_string('menuexamhistories', 'block_userquiz_monitor');
                 $taburl = new moodle_url('/course/view.php', array('id' => $COURSE->id, 'selectedview' => 'examhistory'));
-                $rows[0][] = new tabobject('examhistory', $taburl, $examtab);
+                $rows[$examrow][] = new tabobject('examhistory', $taburl, $examtab);
             }
         }
 

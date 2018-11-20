@@ -69,6 +69,7 @@ $string['configrateaserie'] = 'First serie threshold (% on A type)';
 $string['configratecserie'] = 'Second serie threshold (% on C type)';
 $string['configrootcategory'] = 'Parent category for the whole training system';
 $string['configshowhistory'] = 'Show results history';
+$string['configshowdetailedresults'] = 'Show detailed results';
 $string['configtest'] = 'Add belonging quizzes tests';
 $string['configtrainingenabled'] = 'Enable training';
 $string['configtrainingprogramname'] = 'Name of the training program (enters in titling and labels)';
