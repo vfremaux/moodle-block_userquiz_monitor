@@ -364,6 +364,11 @@ class block_userquiz_monitor extends block_base {
         $userlimitsenabled = $DB->get_field('qa_usernumattempts', 'enabled', array('quizid' => $quizid));
         if ($userlimitsenabled) {
             $maxattempts = $DB->get_field('qa_usernumattempts_limits', 'maxattempts', $params);
+            $quizmaxattempts =  $DB->get_field('quiz', 'attempts', array('id' => $quizid));
+            if (!empty($quizmaxattempts)) {
+                // Take the min of both activated limitations for consistent display. (anyway the attempt will be rejected).
+                $maxattempts = min($maxattempts, $quizmaxattempts);
+            }
         } else {
             $maxattempts =  $DB->get_field('quiz', 'attempts', array('id' => $quizid));
         }
