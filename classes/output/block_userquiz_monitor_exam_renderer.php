@@ -239,6 +239,7 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
 
         $context = \context_system::instance();
 
+        $template->nousedattemptsstr = $this->output->notification(get_string('nousedattemptsstr', 'block_userquiz_monitor'), 'notifyproblem');
         $template->canexam = $remains || has_capability('moodle/site:config', $context);
         $template->formurl = new moodle_url('/blocks/userquiz_monitor/userpreset.php');
         $template->blockid = $this->theblock->instance->id;
