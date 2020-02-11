@@ -48,7 +48,7 @@ class exam_renderer extends \block_userquiz_monitor_renderer {
         if (!empty($this->theblock->config->alternateexamheading)) {
             $title = format_text($this->theblock->config->alternateexamheading);
         } else {
-            $title = get_string('examtitle', 'block_userquiz_monitor', @$this->theblock->config->trainingprogramname);
+            $title = get_string('examtitle', 'block_userquiz_monitor', ''.@$this->theblock->config->trainingprogramname);
         }
 
         $template = new StdClass;

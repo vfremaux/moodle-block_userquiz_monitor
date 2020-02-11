@@ -28,4 +28,11 @@
     <version>3.0</version>
     <licenseversion>3.0</licenseversion>
   </library>
+  <library>
+    <location>extralibs/PHPExcel-1.8</location>
+    <name>External PHP Reader libraries</name>
+    <license>GPL</license>
+    <version>1.8</version>
+    <licenseversion>3.0</licenseversion>
+  </library>
 </libraries>

@@ -486,8 +486,9 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                         $catcounts->cpt = $subcat->cptC;
                         $subcattpl->barrangerowC = $this->render_bar_range_row($progressbar, $catcounts, $serieicon);
                     }
-                    $template->subcategories[] = $subcattpl;
                 }
+
+                $template->subcategories[] = $subcattpl;
 
                 $cpt++;
             }
@@ -605,8 +606,9 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                 return;
             }
 
+            $trainingtab = get_string('menutest', 'block_userquiz_monitor');
             $taburl = new moodle_url('/course/view.php', array('id' => $COURSE->id, 'selectedview' => 'training'));
-            $rows[0][] = new tabobject('training', $taburl, get_string('menutest', 'block_userquiz_monitor'));
+            $rows[0][] = new tabobject('training', $taburl, $trainingtab);
 
             $examtab = get_string('menuexamination', 'block_userquiz_monitor');
             $taburl = new moodle_url('/course/view.php', array('id' => $COURSE->id, 'selectedview' => 'examination'));
@@ -614,7 +616,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
 
             $hasexamtabs = true;
             $examrow = 1;
-            if (!in_array($selectedview, array('examination', 'examlaunch', 'examresults', 'examhistory'))) {
+            if (in_array($selectedview, array('examination', 'examlaunch', 'examresults', 'examhistory'))) {
                 $activated = array('examination');
             }
         } else {
