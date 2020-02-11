@@ -634,7 +634,7 @@ function block_userquiz_monitor_update_selector($courseid, $catidslist, $mode, $
             $cpt = 0;
 
             $select = " parent $insql ";
-            if ($subcats = $DB->get_records_select_menu('question_categories', $select, $inparams, 'id,name', 'sortorder')) {
+            if ($subcats = $DB->get_records_select_menu('question_categories', $select, $inparams, 'sortorder', 'id,name')) {
                 $subcategorieslist = array_keys($subcats);
             }
 
