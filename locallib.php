@@ -27,13 +27,18 @@ require_once($CFG->dirroot.'/blocks/userquiz_monitor/generators/history_chart.ph
 require_once($CFG->dirroot.'/blocks/userquiz_monitor/generators/attempts.php');
 require_once($CFG->dirroot.'/blocks/userquiz_monitor/generators/progress_bar.php');
 
+/**
+ * Identifies all possible categories for choosing a root category for the userquiz_monitor block.
+ * Searches from course level to system level all accessible categories.
+ * @return an array of categoryid => categoryname for a select list.
+ */
 function block_userquiz_monitor_get_categories_for_root() {
     global $COURSE, $DB;
 
     $coursecontext = context_course::instance($COURSE->id);
 
     $categories = array();
-    $currentcoursecats = $DB->get_records('question_categories', array('contextid' => $coursecontext->id), 'sortorder', 'id,name,parent');
+    $currentcoursecats = $DB->get_records('question_categories', array('contextid' => $coursecontext->id), 'parent, sortorder', 'id,name,parent');
     $currentcoursecatsmenu = [];
     foreach ($currentcoursecats as $catid => $cat) {
         $climbup = $cat;
@@ -54,7 +59,7 @@ function block_userquiz_monitor_get_categories_for_root() {
     // Get all categories in all upper course categories.
     while ($coursecat) {
         $catcontext = context_coursecat::instance($coursecat->id);
-        $coursecatcats = $DB->get_records('question_categories', array('contextid' => $catcontext->id), 'parent,sortorder', 'id,name,parent');
+        $coursecatcats = $DB->get_records('question_categories', array('contextid' => $catcontext->id), 'parent, sortorder', 'id,name,parent');
         $idnumber = $coursecat->idnumber;
         if (empty($idnumber)) {
             $idnumber = shorten_text(format_text($coursecat->name), 25);
@@ -83,7 +88,7 @@ function block_userquiz_monitor_get_categories_for_root() {
     }
 
     // Get all categories in context system.
-    $systemcats = $DB->get_records('question_categories', array('contextid' => context_system::instance()->id), 'parent,sortorder', 'id, name, parent');
+    $systemcats = $DB->get_records('question_categories', array('contextid' => context_system::instance()->id), 'parent, sortorder', 'id, name, parent');
     if ($systemcats) {
         $systemcatsmenu = [];
         foreach ($systemcats as $catid => $cat) {
@@ -737,6 +742,7 @@ function block_userquiz_monitor_update_selector($courseid, $catidslist, $mode, $
                 */
                 $nbquestions = $recordsgetnbquestions;
 
+                /*
                 if (strlen($nbquestions) > 1) {
                     // Group nb questions per 10.
                     $val = 10;
@@ -755,6 +761,15 @@ function block_userquiz_monitor_update_selector($courseid, $catidslist, $mode, $
                         $options .= '<option value="'.$i.'">'.$i.'</option>';
                     }
                 }
+                */
+
+                $optionnums = [1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,100];
+                foreach ($optionnums as $num) {
+                    if ($num <= $nbquestions) {
+                        $options .= '<option value="'.$num.'">'.$num.'</option>';
+                    }
+                }
+
                 $response .= $renderer->launch_gui($options, $quizzeslist);
             }
         } else {
@@ -767,7 +782,15 @@ function block_userquiz_monitor_update_selector($courseid, $catidslist, $mode, $
             ";
             $nbquestions = $DB->count_records_select('question', $select, $inparams);
 
+            $optionnums = [1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,100];
+            foreach ($optionnums as $num) {
+                if ($num <= $nbquestions) {
+                    $options .= '<option value="'.$num.'">'.$num.'</option>';
+                }
+            }
+
             // Make question amount choice options.
+            /*
             if (strlen($nbquestions) > 1) {
                 $nbquestionstest = (substr($nbquestions, 0, -1)) * 10;
 
@@ -785,6 +808,7 @@ function block_userquiz_monitor_update_selector($courseid, $catidslist, $mode, $
                     $options .= '<option value="'.$i.'">'.$i.'</option>';
                 }
             }
+            */
 
             $response .= $renderer->launch_gui($options, $quizzeslist);
         }

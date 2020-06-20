@@ -27,6 +27,9 @@ namespace block_userquiz_monitor\output;
 
 use \moodle_url;
 use \StdClass;
+use \popup_action;
+use \pix_icon;
+use \action_link;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -146,9 +149,6 @@ class training_renderer extends \block_userquiz_monitor_renderer {
 
         $template = new StdClass;
 
-        $template->numberofquestionsstr = get_string('numberquestions', 'block_userquiz_monitor');
-        $template->runteststr = get_string('runtest', 'block_userquiz_monitor');
-        $template->runtraininghelpstr = get_string('runtraininghelp', 'block_userquiz_monitor');
         $template->jshandler = 'sync_training_selectors(this)';
         $template->quizlist = $quizzeslist;
         $template->options = $options;

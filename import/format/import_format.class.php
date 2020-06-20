@@ -33,5 +33,5 @@ abstract class import_format {
 
     protected abstract function parse();
 
-    protected abstract function update(array $amfcats, $remotes, array $options);
+    protected abstract function update(array $amfcats, &$remotes, array $options);
 }

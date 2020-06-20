@@ -63,6 +63,7 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
          * question banks may not ne shared between quiz instances.
          */
         $categorymenu = block_userquiz_monitor_get_categories_for_root();
+        asort($categorymenu);
 
         $label = get_string('configrootcategory', 'block_userquiz_monitor');
         $mform->addElement('select', 'config_rootcategory', $label, $categorymenu);

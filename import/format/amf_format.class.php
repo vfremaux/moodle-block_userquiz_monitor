@@ -4,6 +4,7 @@ namespace block_userquiz_monitor\import;
 
 require_once($CFG->dirroot.'/blocks/userquiz_monitor/import/format/import_format.class.php');
 require_once($CFG->dirroot.'/blocks/userquiz_monitor/extralibs/PHPExcel-1.8/Classes/PHPExcel.php');
+require_once($CFG->dirroot.'/blocks/userquiz_monitor/extralibs/PHPExcel-1.8/Classes/PHPExcel/Shared/Date.php');
 
 use \PHPExcel_IOFactory;
 use StdClass;
@@ -398,7 +399,7 @@ class amf_format extends import_format {
         global $CFG;
 
         $this->filepath = $this->file->copy_content_to_temp($dir = 'files', $fileprefix = 'amfexcel_');
-        mtrace("Reading excel sheet in $filepath ");
+        mtrace("Reading excel sheet in {$this->filepath} ");
 
         /**  Identify the type of $inputFileName  **/
         $inputType = PHPExcel_IOFactory::identify($this->filepath);
@@ -606,7 +607,7 @@ class amf_format extends import_format {
      * @param array $amfcats AMF categories (flat array) keyed by idnumber.
      * @param array $remotes Remote set of questions.
      */
-    protected function update(array $amfcats, $remotes, array $options) {
+    protected function update(array $amfcats, &$remotes, array $options) {
         global $DB, $USER;
 
         if (!empty($options['simulate']) && empty($amfcats)) {
@@ -629,7 +630,7 @@ class amf_format extends import_format {
         }
         unset($oldquestionsrecs); // Free some memory.
 
-        foreach ($remotes as &$amfq) {
+        foreach ($remotes as $amfq) {
 
             // Get some old question in this questionset scope.
             if (!array_key_exists($amfq->idnumber, $oldquestions)) {
@@ -641,6 +642,7 @@ class amf_format extends import_format {
             }
 
             $amfq->status = 'nochange';
+            $amfq->updatetime = 0;
             $catkey = 'AMF_'.$amfq->subcat;
             $qrecord->category = $amfcats[$catkey]->id;
             $qrecord->parent = 0;
@@ -693,6 +695,26 @@ class amf_format extends import_format {
                }
             }
 
+            // Create multichoice qtype record if missing.
+            $params = ['questionid' => $qrecord->id];
+            if (!$oldrec = $DB->get_record('qtype_multichoice_options', $params)) {
+                $qtyperec = new Stdclass;
+                $qtyperec->questionid = $qrecord->id;
+                $qtyperec->layout = 0;
+                $qtyperec->single = 1;
+                $qtyperec->shuffleanswers = 1;
+                $qtyperec->correctfeedback = '';
+                $qtyperec->correctfeedbackformat = 1;
+                $qtyperec->partiallycorrectfeedback = '';
+                $qtyperec->partiallycorrectfeedbackformat = 1;
+                $qtyperec->incorrectfeedback = '';
+                $qtyperec->incorrectfeedbackformat = 1;
+                $qtyperec->answernumbering = '123';
+                $qtyperec->shownumcorrect = 0;
+
+                $DB->insert_record('qtype_multichoice_options', $qtyperec);
+            }
+
             // Update/create answers.
             /*
              * We should take care NOT to alter the good answer.
@@ -713,7 +735,7 @@ class amf_format extends import_format {
                         $amfq->updatetime = time();
                     }
                     $oa->answer = $amfq->$textkey;
-                    if ($aix == $amfq->a) {
+                    if ($letters[$aix] == $amfq->a) {
                         $oa->fraction = 1.0;
                     } else {
                         $oa->fraction = 0.0;
@@ -726,7 +748,7 @@ class amf_format extends import_format {
             } else {
                 // All are new answers. Just create them.
                 $letters = ['A', 'B', 'C'];
-                foreach ($letters as $aix) {
+                foreach ($letters as $let) {
                     $answer = new Stdclass;
                     if (empty($options['simulate'])) {
                         $answer->question = $qrecord->id;
@@ -734,7 +756,7 @@ class amf_format extends import_format {
                     $textkey = 'qatext'.$aix;
                     $answer->answer = $amfq->$textkey;
                     $answer->answerformat = FORMAT_HTML;
-                    if ($aix == $amfq->a) {
+                    if ($let == $amfq->a) {
                         $answer->fraction = 1.0;
                     } else {
                         $answer->fraction = 0.0;
@@ -772,20 +794,20 @@ class amf_format extends import_format {
         foreach ($remotes as $amfq) {
             // Status cell
             $worksheet->setCellValue('K'.$amfq->row, $amfq->status);
-            $worksheet->setCellValue('L'.$amfq->row, PHPExcel_Shared_Date::PHPToExcel($amfq->updatetime));
-            $dateformat = PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH;
-            $worksheet->getStyle('L'.$amfq->aix)->getNumberFormat()->setFormatCode($dateformat);
+            $worksheet->setCellValue('L'.$amfq->row, \PHPExcel_Shared_Date::PHPToExcel($amfq->updatetime));
+            $dateformat = \PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH;
+            $worksheet->getStyle('L'.$amfq->row)->getNumberFormat()->setFormatCode($dateformat);
         }
 
         // Write a temp response.
-        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, "Excel2007");
+        $objWriter = \PHPExcel_IOFactory::createWriter($this->objExcel, "Excel2007");
         $outputpath = $this->filepath;
         $outputpath = str_replace('.xls', '_output.xls', $this->filepath);
         $objWriter->save($outputpath);
 
         // Get back temp response in a moodle filearea
         $filerecord = new StdClass;
-        $filerecord->contextid = context_system::instance()->id;
+        $filerecord->contextid = \context_system::instance()->id;
         $filerecord->component = 'block_userquiz_monitor';
         $filerecord->filearea = 'importresult';
         $filerecord->itemid = 0;
