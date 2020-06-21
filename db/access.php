@@ -46,4 +46,14 @@ $capabilities = array(
         )
     ),
 
+    'block/userquiz_monitor:import' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
+
 );

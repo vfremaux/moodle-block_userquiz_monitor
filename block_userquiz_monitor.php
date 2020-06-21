@@ -111,6 +111,7 @@ class block_userquiz_monitor extends block_base {
     }
 
     public function get_content() {
+        global $COURSE;
 
         if ($this->content !== null) {
             return $this->content;
@@ -118,7 +119,16 @@ class block_userquiz_monitor extends block_base {
 
         $this->content = new StdClass;
 
-        $this->content->footer = '';
+        $blockcontext = context_block::instance($this->instance->id);
+
+        if (has_capability('block/userquiz_monitor:import', $blockcontext)) {
+            $params = ['id' => $COURSE->id, 'blockid' => $this->instance->id];
+            $importurl = new moodle_url('/blocks/userquiz_monitor/import/import.php', $params);
+            $this->content->footer = '<a href="'.$importurl.'">'.get_string('importquestions', 'block_userquiz_monitor').'</a>';
+        } else {
+            $this->content->footer = '';
+        }
+
         $this->content->text = '';
         if (!empty($this->config->localcss)) {
             $this->content->text .= '<style>'.$this->config->localcss.'</style>';

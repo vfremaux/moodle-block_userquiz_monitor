@@ -25,19 +25,19 @@
     Data attributes required for JS:
     * none
 }}
-<!-- traininglaunchgui -->
+<!-- block_userquiz_monitor/traininglaunchgui -->
 <div class="userquiz-monitor-categorycontainer">
 
     <div class="userquiz-monitor-row">
         <div class="userquiz-monitor-cell">
-            <p>{{{runtraininghelpstr}}}</p>
+            <p>{{#str}}runtraininghelp, block_userquiz_monitor{{/str}}</p>
         </div>
     </div>
 
 {{#quizlist}}
     <div class="userquiz-monitor-row">
         <div class="userquiz-monitor-cell">
-             {{{numberofquestionsstr}}}
+            {{#str}}numberquestions, block_userquiz_monitor{{/str}}
             <select class="selectorsnbquestions" id="id-selector-nb-questions" name="selectornbquestions" size="1">
                 {{{options}}}
             </select>
@@ -52,9 +52,9 @@
 {{#quizlist}}
              <input type="hidden" name="quizlist" value="{{quizlist}}" />
 {{/quizlist}}
-             <input type="submit" id="id-training-go-button" class="enabled" value="{{runteststr}}" id="submit" {{{disabled}}} />
+             <input type="submit" id="id-training-go-button" class="enabled" value="{{#str}}runtest, block_userquiz_monitor{{/str}}" id="submit" {{{disabled}}} />
          </div>
      </div>
 </div>
-<!-- /traininglaunchgui -->
+<!-- /block_userquiz_monitor/traininglaunchgui -->
 

@@ -26,6 +26,11 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/blocks/userquiz_monitor/locallib.php');
+require_once($CFG->dirroot.'/blocks/userquiz_monitor/classes/manager.php');
+
+function get_block_userquiz_monitor_manager() {
+    return block_userquiz_monitor\manager::instance();
+}
 
 /**
  * Cheks an attempt to see if it is bound to any usermonitor examquiz and
@@ -47,6 +52,12 @@ function check_userquiz_monitor_review_applicability($attemptobj) {
     }
 }
 
+/**
+ * Renders attempt link buttons at bottom of quiz page.
+ * @param object $attemptobj the current quiz_attempt instance
+ * @param int $page the current quiz page.
+ * @see : called by the block_quiz_behaviour overriden quiz_renderer
+ */
 function block_userquiz_monitor_attempt_buttons($attemptobj, $page) {
     global $OUTPUT, $CFG;
 
@@ -61,10 +72,10 @@ function block_userquiz_monitor_attempt_buttons($attemptobj, $page) {
             if ($ruleinstance && $ruleinstance->is_enabled()) {
                 $template->label = get_string('returntotraining', 'block_userquiz_monitor');
             } else {
-                $template->label = get_string('returntoquiz', 'block_userquiz_monitor');
+                // $template->label = get_string('returntoquiz', 'block_userquiz_monitor');
             }
         } else {
-            $template->label = get_string('returntoquiz', 'block_userquiz_monitor');
+            // $template->label = get_string('returntoquiz', 'block_userquiz_monitor');
         }
 
         // Get the url for finishing and registering attempt.

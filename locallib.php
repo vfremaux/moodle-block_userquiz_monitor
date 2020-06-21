@@ -27,29 +27,83 @@ require_once($CFG->dirroot.'/blocks/userquiz_monitor/generators/history_chart.ph
 require_once($CFG->dirroot.'/blocks/userquiz_monitor/generators/attempts.php');
 require_once($CFG->dirroot.'/blocks/userquiz_monitor/generators/progress_bar.php');
 
+/**
+ * Identifies all possible categories for choosing a root category for the userquiz_monitor block.
+ * Searches from course level to system level all accessible categories.
+ * @return an array of categoryid => categoryname for a select list.
+ */
 function block_userquiz_monitor_get_categories_for_root() {
     global $COURSE, $DB;
 
     $coursecontext = context_course::instance($COURSE->id);
 
     $categories = array();
-    $categories = $categories + $DB->get_records_menu('question_categories', array('contextid' => $coursecontext->id), 'sortorder', 'id,name');
-
-    $coursecat = new StdClass;
-    $coursecat->parent = $COURSE->category;
-
-    while ($coursecat->parent != 0) {
-        $catcontext = context_coursecat::instance($coursecat->parent);
-        $coursecatcats = $DB->get_records_menu('question_categories', array('contextid' => $catcontext->id), 'parent,sortorder', 'id,name');
-        if ($coursecatcats) {
-            $categories = $categories + $coursecatcats;
+    $currentcoursecats = $DB->get_records('question_categories', array('contextid' => $coursecontext->id), 'parent, sortorder', 'id,name,parent');
+    $currentcoursecatsmenu = [];
+    foreach ($currentcoursecats as $catid => $cat) {
+        $climbup = $cat;
+        $catname = '';
+        while ($climbup->parent) {
+            $catname = $climbup->name.'/'.$catname;
+            $climbup = $currentcoursecats[$climbup->parent];
         }
-        $coursecat = $DB->get_record('course_categories', array('id' => $coursecat->parent), 'id, parent');
+
+        chop($catname); // remove last slash.
+        $catfullname = 'C['.$COURSE->shortname.'] '.$catname;
+        $currentcoursecatsmenu[$catid] = $catfullname;
+    }
+    $categories = $categories + $currentcoursecatsmenu;
+
+    $coursecat = $DB->get_record('course_categories', ['id' => $COURSE->category], 'id, parent, name, idnumber');
+
+    // Get all categories in all upper course categories.
+    while ($coursecat) {
+        $catcontext = context_coursecat::instance($coursecat->id);
+        $coursecatcats = $DB->get_records('question_categories', array('contextid' => $catcontext->id), 'parent, sortorder', 'id,name,parent');
+        $idnumber = $coursecat->idnumber;
+        if (empty($idnumber)) {
+            $idnumber = shorten_text(format_text($coursecat->name), 25);
+        }
+        $coursecatcatsmenu = [];
+        if ($coursecatcats) {
+            foreach ($coursecatcats as $catid => $cat) {
+                $climbup = $cat;
+                $catname = '';
+                while ($climbup->parent) {
+                    $catname = $climbup->name.'/'.$catname;
+                    $climbup = $coursecatcats[$climbup->parent];
+                }
+
+                chop($catname); // remove last slash.
+                $catfullname = 'CC['.$idnumber.'] '.$catname;
+                $coursecatcatsmenu[$catid] = $catfullname;
+            }
+            $categories = $categories + $coursecatcatsmenu;
+        }
+        if ($coursecat->parent != 0) {
+            $coursecat = $DB->get_record('course_categories', array('id' => $coursecat->parent), 'id, parent, name, idnumber');
+        } else {
+            $coursecat = false;
+        }
     }
 
-    $systemcats = $DB->get_records_menu('question_categories', array('contextid' => context_system::instance()->id), 'parent,sortorder', 'id, name');
+    // Get all categories in context system.
+    $systemcats = $DB->get_records('question_categories', array('contextid' => context_system::instance()->id), 'parent, sortorder', 'id, name, parent');
     if ($systemcats) {
-        $categories = $categories + $systemcats;
+        $systemcatsmenu = [];
+        foreach ($systemcats as $catid => $cat) {
+            $climbup = $cat;
+            $catname = '';
+            while ($climbup->parent) {
+                $catname = $climbup->name.'/'.$catname;
+                $climbup = $systemcats[$climbup->parent];
+            }
+
+            chop($catname); // remove last slash.
+            $catfullname = '[S] '.$catname;
+            $systemcatsmenu[$catid] = $catfullname;
+        }
+        $categories = $categories + $systemcatsmenu;
     }
 
     return $categories;
@@ -525,24 +579,53 @@ function block_userquiz_monitor_count_available_attempts($userid, $quizid) {
     return max(0, $availableattempts - $userattemptscount);
 }
 
-function block_userquiz_monitor_get_cattreeids($catid, &$catids) {
+function block_userquiz_monitor_get_cattreeids($catid, array &$catids, $levels = 0) {
     global $DB;
 
     static $deepness = 0;
 
     if ($subcats = $DB->get_records_menu('question_categories', array('parent' => $catid), 'sortorder', 'id,name')) {
         $catids = array_merge($catids, array_keys($subcats));
-        foreach (array_keys($subcats) as $subcatid) {
-            $deepness++;
-            if ($deepness > 10) {
-                die('too deep');
+        if ($levels == 0 || ($levels - $deepness > 0)) {
+            foreach (array_keys($subcats) as $subcatid) {
+                $deepness++;
+                if ($deepness > 10) {
+                    die('too deep');
+                }
+                block_userquiz_monitor_get_cattreeids($subcatid, $catids);
+                $deepness--;
             }
-            block_userquiz_monitor_get_cattreeids($subcatid, $catids);
-            $deepness--;
         }
     }
 }
 
+function block_userquiz_monitor_get_cattree($catid, &$cats, $levels = 0) {
+    global $DB;
+
+    static $deepness = 0;
+
+    if ($subcats = $DB->get_records('question_categories', array('parent' => $catid), 'sortorder')) {
+        $cats = array_merge($cats, $subcats);
+        if ($levels == 0 || ($levels - $deepness > 0)) {
+            foreach (array_keys($subcats) as $subcatid) {
+                $deepness++;
+                if ($deepness > 10) {
+                    die('too deep');
+                }
+                block_userquiz_monitor_get_cattree($subcatid, $cats);
+                $deepness--;
+            }
+        }
+    }
+}
+
+/**
+ * Find the quiz instance in the course that is equipped with thin number of questions.
+ * @param int $courseid
+ * @param object $theblock the UserQUiz Monitor block instance
+ * @param int $nbquestions number of equiped questions
+ * @return int the quiz id
+ */
 function block_userquiz_monitor_get_quiz_by_numquestions($courseid, $theblock, $nbquestions) {
     global $DB;
 
@@ -634,7 +717,7 @@ function block_userquiz_monitor_update_selector($courseid, $catidslist, $mode, $
             $cpt = 0;
 
             $select = " parent $insql ";
-            if ($subcats = $DB->get_records_select_menu('question_categories', $select, $inparams, 'id,name', 'sortorder')) {
+            if ($subcats = $DB->get_records_select_menu('question_categories', $select, $inparams, 'sortorder', 'id,name')) {
                 $subcategorieslist = array_keys($subcats);
             }
 
@@ -659,6 +742,7 @@ function block_userquiz_monitor_update_selector($courseid, $catidslist, $mode, $
                 */
                 $nbquestions = $recordsgetnbquestions;
 
+                /*
                 if (strlen($nbquestions) > 1) {
                     // Group nb questions per 10.
                     $val = 10;
@@ -677,6 +761,15 @@ function block_userquiz_monitor_update_selector($courseid, $catidslist, $mode, $
                         $options .= '<option value="'.$i.'">'.$i.'</option>';
                     }
                 }
+                */
+
+                $optionnums = [1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,100];
+                foreach ($optionnums as $num) {
+                    if ($num <= $nbquestions) {
+                        $options .= '<option value="'.$num.'">'.$num.'</option>';
+                    }
+                }
+
                 $response .= $renderer->launch_gui($options, $quizzeslist);
             }
         } else {
@@ -689,7 +782,15 @@ function block_userquiz_monitor_update_selector($courseid, $catidslist, $mode, $
             ";
             $nbquestions = $DB->count_records_select('question', $select, $inparams);
 
+            $optionnums = [1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,100];
+            foreach ($optionnums as $num) {
+                if ($num <= $nbquestions) {
+                    $options .= '<option value="'.$num.'">'.$num.'</option>';
+                }
+            }
+
             // Make question amount choice options.
+            /*
             if (strlen($nbquestions) > 1) {
                 $nbquestionstest = (substr($nbquestions, 0, -1)) * 10;
 
@@ -707,6 +808,7 @@ function block_userquiz_monitor_update_selector($courseid, $catidslist, $mode, $
                     $options .= '<option value="'.$i.'">'.$i.'</option>';
                 }
             }
+            */
 
             $response .= $renderer->launch_gui($options, $quizzeslist);
         }
