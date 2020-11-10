@@ -83,25 +83,16 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
         $mform->setType('config_colorAserie', PARAM_TEXT);
         $mform->setDefault('config_colorAserie', '#C00000');
 
-        $label = get_string('configdualserie', 'block_userquiz_monitor');
-        $mform->addElement('advcheckbox', 'config_dualserie', $label);
-        $mform->setType('config_dualserie', PARAM_BOOL);
-
-        $label = get_string('configratecserie', 'block_userquiz_monitor');
-        $mform->addElement('text', 'config_rateCserie', $label);
-        $mform->disabledIf('config_rateCserie', 'config_dualserie', 0);
-        $mform->setType('config_rateCserie', PARAM_INT);
-
-        $label = get_string('configcolorcserie', 'block_userquiz_monitor');
-        $mform->addElement('text', 'config_colorCserie', $label);
-        $mform->setType('config_colorCserie', PARAM_TEXT);
-        $mform->setDefault('config_colorCserie', '#0000C0');
-
-        $label = get_string('configprotectcopy', 'block_userquiz_monitor');
-        $mform->addElement('advcheckbox', 'config_protectcopy', $label);
+        if (block_userquiz_monitor_supports_feature('series/dualseries')) {
+            include_once($CFG->dirroot.'/blocks/userquiz_monitor/pro/edit_form.php');
+            \block_userquiz_monitor\edit_form_pro_extensions::add_dualseries_settings(&$mform);
+        }
+        if (block_userquiz_monitor_supports_feature('question/protection')) {
+            include_once($CFG->dirroot.'/blocks/userquiz_monitor/pro/edit_form.php');
+            \block_userquiz_monitor\edit_form_pro_extensions::add_question_protection_settings(&$mform)
+        }
 
         // Configuration for training system.
-
         $mform->addElement('header', 'configheader1', get_string('trainingsettings', 'block_userquiz_monitor'));
 
         $label = get_string('configtrainingenabled', 'block_userquiz_monitor');
@@ -118,8 +109,10 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
         $select = $mform->addElement('select', 'config_trainingquizzes', $label, $quizzeslist);
         $select->setMultiple(true);
 
-        $label = get_string('configshowhistory', 'block_userquiz_monitor');
-        $mform->addElement('advcheckbox', 'config_trainingshowhistory', $label, '', 0);
+        if (block_userquiz_monitor_supports_feature('monitor/histories')) {
+            include_once($CFG->dirroot.'/blocks/userquiz_monitor/pro/edit_form.php');
+            \block_userquiz_monitor\edit_form_pro_extensions::add_monitor_history_settings(&$mform, 'training');
+        }
 
         // Configuration for exam system.
 
@@ -151,8 +144,10 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
         $label = get_string('configshowdetailedresults', 'block_userquiz_monitor');
         $mform->addElement('advcheckbox', 'config_examshowdetails', $label, '', 1);
 
-        $label = get_string('configshowhistory', 'block_userquiz_monitor');
-        $mform->addElement('advcheckbox', 'config_examshowhistory', $label, '', 1);
+        if (block_userquiz_monitor_supports_feature('monitor/histories')) {
+            include_once($CFG->dirroot.'/blocks/userquiz_monitor/pro/edit_form.php');
+            \block_userquiz_monitor\edit_form_pro_extensions::add_monitor_history_settings(&$mform, 'exam');
+        }
 
         // Other configurations.
 
@@ -168,45 +163,10 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
         $select = $mform->addElement('select', 'config_gaugerenderer', $label, $rendereroptions);
         $mform->setDefault('config_gaugerenderer', 'jqw');
 
-        $group = array();
-        $group[0] = & $mform->createElement('filepicker', 'statsbuttonicon', '', $this->imgfilepickerattrs);
-        $group[1] = & $mform->createElement('advcheckbox', 'clearstatsbuttonicon', '');
-
-        $label = get_string('statsbuttonicon', 'block_userquiz_monitor');
-        $separators = array(get_string('clear', 'block_userquiz_monitor').'&nbsp;:&nbsp;');
-        $mform->addGroup($group, 'config_grstatsbuttonicon', $label, $separators, ' ', false);
-
-        $group = array();
-        $group[0] = & $mform->createElement('filepicker', 'detailsicon', '', $this->imgfilepickerattrs);
-        $group[1] = & $mform->createElement('advcheckbox', 'cleardetailsicon', '');
-
-        $label = get_string('detailsicon', 'block_userquiz_monitor');
-        $separators = array(get_string('clear', 'block_userquiz_monitor').'&nbsp;:&nbsp;');
-        $mform->addGroup($group, 'config_grdetailsicon', $label, $separators, ' ', false);
-
-        $group = array();
-        $group[0] = & $mform->createElement('filepicker', 'closesubsicon', '', $this->imgfilepickerattrs);
-        $group[1] = & $mform->createElement('advcheckbox', 'clearclosesubsicon', '');
-
-        $label = get_string('closesubsicon', 'block_userquiz_monitor');
-        $separators = array(get_string('clear', 'block_userquiz_monitor').'&nbsp;:&nbsp;');
-        $mform->addGroup($group, 'config_grclosesubsicon', $label, $separators, ' ', false);
-
-        $group = array();
-        $group[0] = & $mform->createElement('filepicker', 'serie1icon', '', $this->imgfilepickerattrs);
-        $group[1] = & $mform->createElement('advcheckbox', 'clearserie1icon', '');
-
-        $label = get_string('serie1icon', 'block_userquiz_monitor');
-        $separators = array(get_string('clear', 'block_userquiz_monitor').'&nbsp;:&nbsp;');
-        $mform->addGroup($group, 'config_grserie1icon', $label, $separators, ' ', false);
-
-        $group = array();
-        $group[0] = & $mform->createElement('filepicker', 'serie2icon', '', $this->imgfilepickerattrs);
-        $group[1] = & $mform->createElement('advcheckbox', 'clearserie2icon', '');
-
-        $label = get_string('serie2icon', 'block_userquiz_monitor');
-        $separators = array(get_string('clear', 'block_userquiz_monitor').'&nbsp;:&nbsp;');
-        $mform->addGroup($group, 'config_grserie2icon', $label, $separators, ' ', false);
+        if (block_userquiz_monitor_supports_feature('icon/customisation')) {
+            include_once($CFG->dirroot.'/blocks/userquiz_monitor/pro/edit_form.php');
+            \block_userquiz_monitor\edit_form_pro_extensions::add_icon_customisation_settings($mform);
+        }
 
         $label = get_string('localcss', 'block_userquiz_monitor');
         $mform->addElement('textarea', 'config_localcss', $label, array('rows' => 10, 'cols' => 60));
@@ -258,30 +218,10 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
 
         $context = context_block::instance($this->block->instance->id);
 
-        $draftitemid = file_get_submitted_draft_itemid('statsbuttonicon');
-        file_prepare_draft_area($draftitemid, $context->id, 'block_userquiz_monitor', 'statsbuttonicon', 0,
-                                $this->imgfilepickerattrs);
-        $defaults->config_grstatsbuttonicon = array('statsbuttonicon' => $draftitemid);
-
-        $draftitemid = file_get_submitted_draft_itemid('detailsicon');
-        file_prepare_draft_area($draftitemid, $context->id, 'block_userquiz_monitor', 'detailsicon', 0,
-                                $this->imgfilepickerattrs);
-        $defaults->config_grdetailsicon = array('detailsicon' => $draftitemid);
-
-        $draftitemid = file_get_submitted_draft_itemid('closesubsicon');
-        file_prepare_draft_area($draftitemid, $context->id, 'block_userquiz_monitor', 'closesubsicon', 0,
-                                $this->imgfilepickerattrs);
-        $defaults->config_grclosesubsicon = array('closesubsicon' => $draftitemid);
-
-        $draftitemid = file_get_submitted_draft_itemid('serie1icon');
-        file_prepare_draft_area($draftitemid, $context->id, 'block_userquiz_monitor', 'serie1icon', 0,
-                                $this->imgfilepickerattrs);
-        $defaults->config_grserie1icon = array('serie1icon' => $draftitemid);
-
-        $draftitemid = file_get_submitted_draft_itemid('serie2icon');
-        file_prepare_draft_area($draftitemid, $context->id, 'block_userquiz_monitor', 'serie2icon', 0,
-                                $this->imgfilepickerattrs);
-        $defaults->config_grserie2icon = array('serie2icon' => $draftitemid);
+        if (block_userquiz_monitor_supports_feature('icon/customisation')) {
+            include_once($CFG->dirroot.'/blocks/userquiz_monitor/pro/edit_form.php');
+            \block_userquiz_monitor\edit_form_pro_extensions::set_data($defaults, $context);
+        }
 
         parent::set_data($defaults);
 

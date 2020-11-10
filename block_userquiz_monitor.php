@@ -27,11 +27,15 @@ require_once($CFG->dirroot.'/blocks/userquiz_monitor/locallib.php');
 
 class block_userquiz_monitor extends block_base {
 
+    protected $extensions;
+
     public function init() {
         $this->title = get_string('blockname', 'block_userquiz_monitor');
     }
 
     public function specialization() {
+        global $CFG;
+
         if (empty($this->config)) {
             $this->config = new StdClass;
         }
@@ -43,24 +47,10 @@ class block_userquiz_monitor extends block_base {
             $this->config->colorAserie = '#C00000';
         }
 
-        if (empty($this->config->rateCserie)) {
-            $this->config->rateCserie = 75;
-        }
-
-        if (empty($this->config->colorCserie)) {
-            $this->config->colorCserie = '#0000C0';
-        }
-
-        if (!isset($this->config->dualserie)) {
-            $this->config->dualserie = 1;
-        }
-
-        if (!isset($this->config->examshowdetails)) {
-            $this->config->examshowdetails = 1;
-        }
-
-        if (!isset($this->config->examshowhistory)) {
-            $this->config->examshowhistory = 1;
+        if ('pro' == block_userquiz_monitor_supports_feature()) {
+            include_once($CFG->dirroot.'/block/userquiz_monitor/pro/block_userquiz_monitor.php');
+            $this->extensions = new block_userquiz_monitor\pro_extensions($this);
+            $this->extensions->specialization();
         }
     }
 
@@ -76,29 +66,14 @@ class block_userquiz_monitor extends block_base {
      * Serialize and store config data
      */
     public function instance_config_save($data, $nolongerused = false) {
-        global $USER;
+        global $CFG;
 
         $fs = get_file_storage();
 
-        $usercontext = context_user::instance($USER->id);
-        $context = context_block::instance($this->instance->id);
-
-        foreach (self::get_fileareas() as $fa) {
-            $groupkey = 'gr'.$fa;
-            $groupdata = @$data->$groupkey;
-            if (!empty($groupdata['clear'.$fa])) {
-                $fs->delete_area_files($context->id, 'block_userquiz_monitor', $fa, 0);
-            } else {
-                $filepickeritemid = $groupdata[$fa];
-                if (!$fs->is_area_empty($usercontext->id, 'user', 'draft', $filepickeritemid, true)) {
-                    file_save_draft_area_files($filepickeritemid, $context->id, 'block_userquiz_monitor', $fa, 0);
-                }
-            }
-
-            // Clean structure for block config.
-            if (!empty($data->$groupkey)) {
-                unset($data->$groupkey);
-            }
+        if ('pro' == block_userquiz_monitor_supports_feature()) {
+            include_once($CFG->dirroot.'/block/userquiz_monitor/pro/block_userquiz_monitor.php');
+            $this->extensions = new block_userquiz_monitor\pro_extensions($this);
+            $this->extensions->instance_config_save($data);
         }
 
         // Move embedded files into a proper filearea and adjust HTML links.
@@ -379,13 +354,5 @@ class block_userquiz_monitor extends block_base {
         }
 
         return $maxattempts;
-    }
-
-    static public function get_fileareas() {
-        return array('statsbuttonicon',
-                     'detailsicon',
-                     'closesubsicon',
-                     'serie1icon',
-                     'serie2icon');
     }
 }

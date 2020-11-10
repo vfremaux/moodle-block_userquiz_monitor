@@ -80,6 +80,7 @@ $string['configwarning'] = 'Beware if a quiz is selected in the test, then it ca
 $string['configwarningemptycats'] = 'The root cat you have choose seems not having subcats.';
 $string['configwarningmonitor'] = 'Warning, be sure to configure the block to separate the types of quizzes test and quiz-type examination.';
 $string['detailsicon'] = 'Icon for subcategory button';
+$string['emulatecommunity'] = 'Emulate community version';
 $string['error1'] = 'Unable to retrieve information from the user questions. <br/>';
 $string['error2'] = 'Actualy, you don\'t have finished test. <br/>';
 $string['error3'] = 'Impossible to get categories. <br/>';
@@ -108,6 +109,10 @@ $string['generalsettings'] = 'General settings';
 $string['graphicassets'] = 'Graphic assets';
 $string['importquestions'] = 'Import question set';
 $string['importformat'] = 'Import format';
+$string['licenseprovider'] = 'Pro License provider';
+$string['licenseprovider_desc'] = 'Input here your provider key';
+$string['licensekey'] = 'Pro license key';
+$string['licensekey_desc'] = 'Input here the product license key you got from your provider';
 $string['questionimport'] = 'Question import';
 $string['hist'] = 'Histogram';
 $string['info1'] = '* Be sure to select at least one category or subcategory before releasing training. <br/>';
@@ -146,6 +151,7 @@ $string['optthreeweeks'] = '3 passed weeks';
 $string['opttwoexams'] = '2 passed exams';
 $string['opttwoweeks'] = '2 passed weeks';
 $string['pluginname'] = 'Userquiz monitoring';
+$string['plugindist'] = 'Plugin distribution';
 $string['questiontype'] = 'Questions\'s types:&ensp;';
 $string['ratio'] = '<b>Ratio<sup>{$a}</sup></b>';
 $string['ratio1'] = 'RATIO';
@@ -218,3 +224,6 @@ $string['resultsdepth_help'] = 'Choose how long in the past you want results to 
 $string['configrootcategory_help'] = 'The choice of this category is very important for the training system. When training,
 it will be the start of the quiz area choice by the user. When making an exam, it will also be the root of the results analysis
 questionning space.';
+
+$string['emulatecommunity_desc'] = 'If enabled, the plugin will behave as the public community version.
+This will increas compatibility with other implementations but will loose features !';

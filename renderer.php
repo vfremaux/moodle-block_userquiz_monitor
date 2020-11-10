@@ -65,18 +65,10 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
 
     public function category_detail_container() {
 
-        $catdetailstr = get_string('categorydetail', 'block_userquiz_monitor', $this->theblock->config->trainingprogramname);
+        $template = new Stdclass;
+        $template->catdetailstr = get_string('categorydetail', 'block_userquiz_monitor', $this->theblock->config->trainingprogramname);
 
-        $str = '<div class="tablemonitorcategorycontainer">';
-        $str .= '<div class="userquiz-monitor-row" style="display:none">';
-        $str .= '<div class="userquiz-monitor-cell"><h1>'.$catdetailstr.'</h1></div>';
-        $str .= '</div>';
-        $str .= '</div>';
-
-        $str .= '<div id="displaysubcategories">';
-        $str .= '</div>';
-
-        return $str;
+        return $this->output->render_from_template('block_userquiz_monitor/catdetailcontainer', $template);
     }
 
     /**
@@ -413,13 +405,6 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                     $canceltpl = new StdClass;
                     $canceltpl->canceliconurl = $this->get_area_url('closesubsicon', $this->output->image_url('cancel', 'block_userquiz_monitor'));
                     $canceltpl->parentcatid = $categoryid;
-                    /*
-                    if ($mode == 'training') {
-                        $canceltpl->jshandler = 'closepr()';
-                    } else {
-                        $canceltpl->jshanlder = 'closeprexam()';
-                    }
-                    */
                     $canceltpl->cb = $cb;
                     $template->cancelrow = $this->output->render_from_template('block_userquiz_monitor/cancelrow', $canceltpl);
                 }
