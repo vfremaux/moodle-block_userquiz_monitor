@@ -41,7 +41,7 @@ function block_userquiz_monitor_supports_feature($feature) {
         $supports = array(
             'pro' => array(
                 'series' => array('dualseries'),
-                'question' => array('protection'),
+.                'question' => array('protection'),
                 'icon' => array('customisation'),
             ),
             'community' => array(
