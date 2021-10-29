@@ -1,0 +1,48 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_userquiz_monitor/programheadline
+
+    A HTML based Gauge version
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+}}
+<!-- block_userquiz_monitor/progressbarhtml -->
+<div class="html-gauge-container" style="width: {{boxwidth}}; height: {{boxheight}}">
+    <div class="html-gauge-value-label {{{skin}}}">
+        {{successrate}} %
+    </div>
+
+    <table width="100%" class="html-gauge">
+        <tr>
+            <td class="html-gauge-valuebar {{{skin}}}" style="background-color: {{{barcolor}}}" width="{{successrate}}%">
+            </td>
+
+            <td class="html-gauge-remainbar {{{skin}}}" width="{{remains}}%">
+            </td>
+        </tr>
+    </table>
+    <div class="html-gauge-targetvalue-label {{{skin}}}" style="color: {{barcolor}};left: {{stop}}%">
+        {{stop}} %
+    </div>
+    <div class="html-gauge-targetvalue-mark {{{skin}}}" style="background-color: {{barcolor}};left: {{stop}}%"></div>
+</div>
+<!-- /block_userquiz_monitor/progressbarhtml -->

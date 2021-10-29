@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>generators/external</location>
+    <name>Extra code</name>
+    <license>Macromedia</license>
+    <version>1.6</version>
+    <licenseversion>2005</licenseversion>
+  </library>
+  <library>
+    <location>generators/history</location>
+    <name>Extra code</name>
+    <license></license>
+    <version>1.6</version>
+    <licenseversion>2005</licenseversion>
+  </library>
+  <library>
+    <location>__customscripts</location>
+    <name>Customscripting code</name>
+    <license>GPL</license>
+    <version>3.0</version>
+    <licenseversion>3.0</licenseversion>
+  </library>
+  <library>
+    <location>__reference</location>
+    <name>Moodle core references</name>
+    <license>GPL</license>
+    <version>3.0</version>
+    <licenseversion>3.0</licenseversion>
+  </library>
+  <library>
+    <location>extralibs/PHPExcel-1.8</location>
+    <name>External PHP Reader libraries</name>
+    <license>GPL</license>
+    <version>1.8</version>
+    <licenseversion>3.0</licenseversion>
+  </library>
+</libraries>

@@ -1,0 +1,58 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_userquiz_monitor/examlaunchpanel
+
+    Template displaying the launch panel in exams
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+}}
+<!-- block_userquiz_monitor/examlaunchpanel -->
+<div>
+    <div class="userquiz-monitor-row">
+
+        <div class="userquiz-monitor-cell vertical-centered span3">
+            <h1>{{runexamstr}}</h1>
+            <div class="trans100" style="text-align:center;">
+                {{{runlaunchform}}}
+            </div>
+
+            {{{availableattempts}}}
+
+        </div>
+
+{{^examhidescoringinterface}}
+        <div class="userquiz-monitor-cell vertical-centered  userquiz-cat-progress span9">
+            <h1>{{totalheader}}</h1>
+            <div class="trans100">
+                <div class="userquiz-monitor-container">
+
+                    <div class="userquiz-monitor-row colspaned"></div>
+
+                    {{{total}}}
+
+                </div>
+            </div>
+        </div>
+{{/examhidescoringinterface}}
+    </div>
+</div>
+<!-- /block_userquiz_monitor/examlaunchpanel -->

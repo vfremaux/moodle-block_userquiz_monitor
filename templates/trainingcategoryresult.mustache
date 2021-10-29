@@ -1,0 +1,97 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_userquiz_monitor/trainingcategoryresult
+
+    Template displaying the results for main categories in training mode.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+}}
+<!-- block_userquiz_monitor/trainingcategoryresult -->
+<a id="id-cat-{{catid}}" name="name-cat-{{catid}}"></a>
+<div class="trans100 {{islastclass}} div-main" id="id-div-main-{{catid}}">
+    <div class="userquiz-monitor-categorycontainer">
+
+        <div class="userquiz-monitor-main-item">
+            <div class="userquiz-monitor-row">
+
+                <div class="userquiz-monitor-cell categorychoice">
+                    <input type="checkbox"
+                            name="cb_pl{{catid}}"
+                            id="id-cb-master-{{catid}}"
+                            class="cb-master"
+                            style="padding-left:2px;" />
+                </div>
+
+                <div class="userquiz-monitor-cell categoryname"><label for="id-cb-master-{{catid}}">{{name}}</label></div>
+{{#hassubs}}
+                <div class="userquiz-monitor-cell details-button" id="id-details-button-{{catid}}">
+                    <label for="radio-main-item-{{catid}}">
+{{#pixurl}}
+                        <img class="userquiz-monitor-cat-button"
+                              title="{{seesubsstr}}"
+                              src="{{{pixurl}}} "/>
+{{/pixurl}}
+{{^pixurl}}
+                        <div id="details-button-div-{{catid}}" class="userquiz-monitor-cat-button">{{seesubsstr}}</div>
+{{/pixurl}}
+                    </label>
+               </div>
+{{/hassubs}}
+            </div>
+
+            <div class="userquiz-monitor-row">
+
+                <div class="userquiz-monitor-cell">
+                    {{{accessorieslink}}}
+                    <input type="hidden" name="h_cb_pl{{catid}}" value="h_cb_pl{{catid}}"/>
+                </div>
+
+                <div class="userquiz-monitor-cell"><!-- Blank cell -->
+{{#qdebug}}
+                <div class="qdebug">
+                    <pre>
+                    {{{qdebug}}}
+                    </pre>
+                </div>
+{{/qdebug}}
+                </div>
+
+            </div>
+
+            <div class="category-bargraph">
+                <table width="100%">
+
+                    {{{barheadrow}}}
+                    {{{barrangerowA}}}
+                    {{{barrangerowC}}}
+
+                </table>
+            </div>
+
+        </div>
+        <input id="radio-main-item-{{catid}}" type="radio" name="radio-main-item" class="radio-hidden" value="{{catid}}" />
+        <div id="category-subcatpod-{{catid}}" class="category-subpod">
+            <!-- container for subcategories --><img src="{{{loadingurl}}}" />
+        </div>
+    </div>
+</div>
+<!-- /block_userquiz_monitor/trainingcategoryresult -->
