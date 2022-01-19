@@ -32,19 +32,6 @@ require_once($CFG->dirroot.'/blocks/userquiz_monitor/locallib.php');
  */
 class block_userquiz_monitor_edit_form extends block_edit_form {
 
-    public $imgfilepickerattrs;
-
-    public function __construct($url, $block, $page) {
-        global $COURSE;
-
-        $this->imgfilepickerattrs = array('maxfiles' => 1,
-                                       'subdirs' => false,
-                                       'maxbytes' => $COURSE->maxbytes,
-                                       'accepted_types' => array('.jpg', '.gif', '.png'));
-
-        parent::__construct($url, $block, $page);
-    }
-
     protected function specific_definition($mform) {
         global $DB, $COURSE, $CFG;
 
@@ -85,11 +72,11 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
 
         if (block_userquiz_monitor_supports_feature('series/dualseries')) {
             include_once($CFG->dirroot.'/blocks/userquiz_monitor/pro/edit_form.php');
-            \block_userquiz_monitor\edit_form_pro_extensions::add_dualseries_settings(&$mform);
+            \block_userquiz_monitor\edit_form_pro_extensions::add_dualseries_settings($mform);
         }
         if (block_userquiz_monitor_supports_feature('question/protection')) {
             include_once($CFG->dirroot.'/blocks/userquiz_monitor/pro/edit_form.php');
-            \block_userquiz_monitor\edit_form_pro_extensions::add_question_protection_settings(&$mform)
+            \block_userquiz_monitor\edit_form_pro_extensions::add_question_protection_settings($mform);
         }
 
         // Configuration for training system.
@@ -111,7 +98,7 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
 
         if (block_userquiz_monitor_supports_feature('monitor/histories')) {
             include_once($CFG->dirroot.'/blocks/userquiz_monitor/pro/edit_form.php');
-            \block_userquiz_monitor\edit_form_pro_extensions::add_monitor_history_settings(&$mform, 'training');
+            \block_userquiz_monitor\edit_form_pro_extensions::add_monitor_history_settings($mform, 'training');
         }
 
         // Configuration for exam system.
@@ -146,7 +133,7 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
 
         if (block_userquiz_monitor_supports_feature('monitor/histories')) {
             include_once($CFG->dirroot.'/blocks/userquiz_monitor/pro/edit_form.php');
-            \block_userquiz_monitor\edit_form_pro_extensions::add_monitor_history_settings(&$mform, 'exam');
+            \block_userquiz_monitor\edit_form_pro_extensions::add_monitor_history_settings($mform, 'exam');
         }
 
         // Other configurations.
@@ -174,7 +161,7 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
     }
 
     public function set_data($defaults) {
-        global $COURSE;
+        global $COURSE, $CFG;
 
         if (!empty($this->block->config) && is_object($this->block->config)) {
 
@@ -220,7 +207,7 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
 
         if (block_userquiz_monitor_supports_feature('icon/customisation')) {
             include_once($CFG->dirroot.'/blocks/userquiz_monitor/pro/edit_form.php');
-            \block_userquiz_monitor\edit_form_pro_extensions::set_data($defaults, $context);
+            \block_userquiz_monitor\edit_form_pro_extensions::set_icon_data($defaults, $context);
         }
 
         parent::set_data($defaults);
