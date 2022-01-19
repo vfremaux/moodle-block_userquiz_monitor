@@ -32,19 +32,6 @@ require_once($CFG->dirroot.'/blocks/userquiz_monitor/locallib.php');
  */
 class block_userquiz_monitor_edit_form extends block_edit_form {
 
-    public $imgfilepickerattrs;
-
-    public function __construct($url, $block, $page) {
-        global $COURSE;
-
-        $this->imgfilepickerattrs = array('maxfiles' => 1,
-                                       'subdirs' => false,
-                                       'maxbytes' => $COURSE->maxbytes,
-                                       'accepted_types' => array('.jpg', '.gif', '.png'));
-
-        parent::__construct($url, $block, $page);
-    }
-
     protected function specific_definition($mform) {
         global $DB, $COURSE, $CFG;
 
@@ -220,7 +207,7 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
 
         if (block_userquiz_monitor_supports_feature('icon/customisation')) {
             include_once($CFG->dirroot.'/blocks/userquiz_monitor/pro/edit_form.php');
-            \block_userquiz_monitor\edit_form_pro_extensions::set_data($defaults, $context);
+            \block_userquiz_monitor\edit_form_pro_extensions::set_icon_data($defaults, $context);
         }
 
         parent::set_data($defaults);
