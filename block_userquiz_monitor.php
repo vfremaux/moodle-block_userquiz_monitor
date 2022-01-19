@@ -23,6 +23,7 @@
  */
 defined('MOODLE_INTERNAL') || die;
 
+require_once($CFG->dirroot.'/blocks/userquiz_monitor/lib.php');
 require_once($CFG->dirroot.'/blocks/userquiz_monitor/locallib.php');
 
 class block_userquiz_monitor extends block_base {
@@ -48,7 +49,7 @@ class block_userquiz_monitor extends block_base {
         }
 
         if ('pro' == block_userquiz_monitor_supports_feature()) {
-            include_once($CFG->dirroot.'/block/userquiz_monitor/pro/block_userquiz_monitor.php');
+            include_once($CFG->dirroot.'/blocks/userquiz_monitor/pro/block_userquiz_monitor.php');
             $this->extensions = new block_userquiz_monitor\pro_extensions($this);
             $this->extensions->specialization();
         }
@@ -71,7 +72,7 @@ class block_userquiz_monitor extends block_base {
         $fs = get_file_storage();
 
         if ('pro' == block_userquiz_monitor_supports_feature()) {
-            include_once($CFG->dirroot.'/block/userquiz_monitor/pro/block_userquiz_monitor.php');
+            include_once($CFG->dirroot.'/blocks/userquiz_monitor/pro/block_userquiz_monitor.php');
             $this->extensions = new block_userquiz_monitor\pro_extensions($this);
             $this->extensions->instance_config_save($data);
         }

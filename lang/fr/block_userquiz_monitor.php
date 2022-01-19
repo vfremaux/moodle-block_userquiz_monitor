@@ -78,8 +78,6 @@ $string['configwarning'] = '* Attention si un test est sélectionné dans la par
 $string['configwarningemptycats'] = 'La catégorie racine que vous avez choisie pour les entrainements ne semble pas avoir de sous-catégories.';
 $string['configwarningmonitor'] = 'Attention, veillez à configurer le bloc pour dissocier les tests d\'entrainement, et le test pour l\'examen.';
 $string['detailsicon'] = 'Icone pour le bouton de sous-categorie';
-$string['emulatecommunity'] = 'Emuler la version communautaire';
-$string['emulatecommunity_desc'] = 'Bascule le code sur la version communautaire. Le résultat est plus compatible avec d\'autres installations, mais certaines fonctionnalités avancées ne seront plus disponibles.';
 $string['error1'] = 'Impossible de récupérer les informations de certaines questions posées à l\'utilisateur. Il est possible que la base de questions ait été modifiée pour des tentatives anciennes.<br/>';
 $string['error2'] = 'Vous n\'avez pas encore cloturé de test. Ceci peut être un effet du filtrage sur les résultats que vous avez défini dans vos préférences.<br/>';
 $string['error3'] = 'Impossible de récupérer les catégories. <br/>';
@@ -115,10 +113,6 @@ $string['jqw'] = 'JQWidget';
 $string['launch'] = '';
 $string['level'] = '<b>Niveau<sup>{$a}</sup></b>';
 $string['level1'] = 'NIVEAU';
-$string['licenseprovider'] = 'Fournisseur version Pro';
-$string['licenseprovider_desc'] = 'Entrez la clef de votre distributeur.';
-$string['licensekey'] = 'Clef de license pro';
-$string['licensekey_desc'] = 'Entrez ici la clef de produit que vous avez reçu de votre distributeur.';
 $string['localcss'] = 'Css locale additionnelle';
 $string['meanscore'] = 'Moyenne des scores';
 $string['menuamfref'] = 'Référentiel {$a}';
@@ -149,7 +143,6 @@ $string['optthreeweeks'] = '3 dernières semaines';
 $string['opttwoexams'] = '2 derniers examens';
 $string['opttwoweeks'] = '2 dernières semaines';
 $string['pluginname'] = 'Plateau de révisions';
-$string['plugindist'] = 'Distribution du plugin';
 $string['questiontype'] = 'Type des questions&nbsp;:&ensp;';
 $string['ratio'] = '<b>Ratio<sup>{$a}</sup></b>';
 $string['ratio1'] = 'RATIO';
@@ -241,3 +234,15 @@ $string['configrootcategory_help'] = 'Le choix de cette catégorie a un impact m
 il détermine la racine de l\'espace de questions que l\'apprenant peut choisir de réviser. Les quiz proposés en mode entrainement
 utilisant des questions aléatoires à contraintes ne pourront choisir les questions que dans cet espace. En mode examen, il limite l\'espace dans
 lequel les résultats des quiz sera calculé. Le quiz d\'examen doit être constitué de questions (aléaoires ou non) dans cet espace de questionnement';
+
+$string['importformat_help'] = '
+Format AMF : Un fichier Excel (Excel 5 .xls de préférence) avec une première ligne de titres de colonnes : 
+
+t	Thème	Sous-Thème	Catégorie	Libellé Question	Réponse A	Réponse B	Réponse C
+
+Le sous-thème DOIT être renseigné, et prendre une valuer par défaut de 1. Vérifiez le fichier fourni.
+Thème et sous-theme doivent être décrits dans la classe du format. voir __construct() de la classe amf_format.class.php.
+
+';
+
+include(__DIR__.'/pro_additional_strings.php');

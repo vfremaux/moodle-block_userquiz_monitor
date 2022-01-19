@@ -31,11 +31,13 @@ require_once($CFG->dirroot.'/blocks/userquiz_monitor/block_userquiz_monitor.php'
  * This function is not implemented in this plugin, but is needed to mark
  * the vf documentation custom volume availability.
  */
-function block_userquiz_monitor_supports_feature($feature) {
+function block_userquiz_monitor_supports_feature($feature=null, $getsupported=null) {
     global $CFG;
     static $supports;
 
-    $config = get_config('local_shop');
+    if (!during_initial_install()) {
+        $config = get_config('block_userquiz_monitor');
+    }
 
     if (!isset($supports)) {
         $supports = array(
@@ -48,6 +50,10 @@ function block_userquiz_monitor_supports_feature($feature) {
                 'series' => array('monoserie'),
             ),
         );
+    }
+
+    if ($getsupported) {
+        return $supports;
     }
 
     // Check existance of the 'pro' dir in plugin.

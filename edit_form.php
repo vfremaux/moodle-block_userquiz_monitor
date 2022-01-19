@@ -85,11 +85,11 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
 
         if (block_userquiz_monitor_supports_feature('series/dualseries')) {
             include_once($CFG->dirroot.'/blocks/userquiz_monitor/pro/edit_form.php');
-            \block_userquiz_monitor\edit_form_pro_extensions::add_dualseries_settings(&$mform);
+            \block_userquiz_monitor\edit_form_pro_extensions::add_dualseries_settings($mform);
         }
         if (block_userquiz_monitor_supports_feature('question/protection')) {
             include_once($CFG->dirroot.'/blocks/userquiz_monitor/pro/edit_form.php');
-            \block_userquiz_monitor\edit_form_pro_extensions::add_question_protection_settings(&$mform)
+            \block_userquiz_monitor\edit_form_pro_extensions::add_question_protection_settings($mform);
         }
 
         // Configuration for training system.
@@ -111,7 +111,7 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
 
         if (block_userquiz_monitor_supports_feature('monitor/histories')) {
             include_once($CFG->dirroot.'/blocks/userquiz_monitor/pro/edit_form.php');
-            \block_userquiz_monitor\edit_form_pro_extensions::add_monitor_history_settings(&$mform, 'training');
+            \block_userquiz_monitor\edit_form_pro_extensions::add_monitor_history_settings($mform, 'training');
         }
 
         // Configuration for exam system.
@@ -146,7 +146,7 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
 
         if (block_userquiz_monitor_supports_feature('monitor/histories')) {
             include_once($CFG->dirroot.'/blocks/userquiz_monitor/pro/edit_form.php');
-            \block_userquiz_monitor\edit_form_pro_extensions::add_monitor_history_settings(&$mform, 'exam');
+            \block_userquiz_monitor\edit_form_pro_extensions::add_monitor_history_settings($mform, 'exam');
         }
 
         // Other configurations.

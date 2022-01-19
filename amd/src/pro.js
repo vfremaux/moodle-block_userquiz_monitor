@@ -1,20 +1,39 @@
-/*
- *
- */
-// jshint unused:false, undef:false
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+// jshint unused: true, undef:true
 
 define(['jquery', 'core/log', 'core/config'], function($, log, cfg) {
 
-    var blockuserquizmonitorpro = {
+    var userquiz_monitorpro = {
+
+        component: 'blocks_userquiz_monitor',
+        shortcomponent: 'blocks_userquiz_monitor',
+        componentpath: '/blocks/userquiz_monitor',
 
         init: function() {
 
-            $('#id_s_local_shop_licensekey').bind('change', this.check_product_key);
-            $('#id_s_local_shop_licensekey').trigger('change');
-            log.debug('AMD Pro js initialized for block userquiz monitor');
+            var licensekeyid = '#id_s_' + userquiz_monitorpro.component + '_licensekey';
+            $(licensekeyid).bind('change', this.check_product_key);
+            $(licensekeyid).trigger('change');
+            log.debug('AMD Pro js initialized for ' + userquiz_monitorpro.component + ' system');
         },
 
         check_product_key: function() {
+
+            var licensekeyid = '#id_s_' + userquiz_monitorpro.component + '_licensekey';
 
             var that = $(this);
 
@@ -22,35 +41,41 @@ define(['jquery', 'core/log', 'core/config'], function($, log, cfg) {
             var payload = productkey.substr(0, 14);
             var crc = productkey.substr(14, 2);
 
-            var calculated = blockuserquizmonitorpro.checksum(payload);
+            var calculated = userquiz_monitorpro.checksum(payload);
 
             var validicon = ' <img src="' + cfg.wwwroot + '/pix/i/valid.png' + '">';
             var cautionicon = ' <img src="' + cfg.wwwroot + '/pix/i/warning.png' + '">';
             var invalidicon = ' <img src="' + cfg.wwwroot + '/pix/i/invalid.png' + '">';
             var waiticon = ' <img src="' + cfg.wwwroot + '/pix/i/ajaxloader.gif' + '">';
+            var found;
 
             if (crc === calculated) {
-                var url = cfg.wwwroot + '/blocks/userquiz_monitor/pro/ajax/services.php?';
+                var url = cfg.wwwroot + '/' + userquiz_monitorpro.componentpath + '/pro/ajax/services.php?';
                 url += 'what=license';
                 url += '&service=check';
                 url += '&customerkey=' + that.val();
-                url += '&provider=' + $('#id_s_block_userquizmonitor_licenseprovider').val();
+                url += '&provider=' + $('#id_s_' + userquiz_monitorpro.component + '_licenseprovider').val();
 
-                $('#id_s_local_shop_licensekey + img').remove();
-                $('#id_s_local_shop_licensekey').after(waiticon);
+                $(licensekeyid + ' + img').remove();
+                $(licensekeyid).after(waiticon);
 
                 $.get(url, function(data) {
                     if (data.match(/SET OK/)) {
-                        $('#id_s_local_shop_licensekey + img').remove();
-                        $('#id_s_local_shop_licensekey').after(validicon);
+                        if (found = data.match(/-\d+.*$/)) {
+                            $(licensekeyid + ' + img').remove();
+                            $(licensekeyid).after(cautionicon);
+                        } else {
+                            $(licensekeyid + ' + img').remove();
+                            $(licensekeyid).after(validicon);
+                        }
                     } else {
-                        $('#id_s_local_shop_licensekey + img').remove();
-                        $('#id_s_local_shop_licensekey').after(invalidicon);
+                        $(licensekeyid + ' + img').remove();
+                        $(licensekeyid).after(invalidicon);
                     }
                 }, 'html');
             } else {
-                $('#id_s_local_shop_licensekey + img').remove();
-                $('#id_s_local_shop_licensekey').after(cautionicon);
+                $(licensekeyid + ' + img').remove();
+                $(licensekeyid).after(cautionicon);
             }
         },
 
@@ -76,5 +101,5 @@ define(['jquery', 'core/log', 'core/config'], function($, log, cfg) {
         }
     };
 
-    return blockuserquizmonitorpro;
+    return userquiz_monitorpro;
 });

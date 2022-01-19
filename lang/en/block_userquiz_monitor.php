@@ -109,10 +109,6 @@ $string['generalsettings'] = 'General settings';
 $string['graphicassets'] = 'Graphic assets';
 $string['importquestions'] = 'Import question set';
 $string['importformat'] = 'Import format';
-$string['licenseprovider'] = 'Pro License provider';
-$string['licenseprovider_desc'] = 'Input here your provider key';
-$string['licensekey'] = 'Pro license key';
-$string['licensekey_desc'] = 'Input here the product license key you got from your provider';
 $string['questionimport'] = 'Question import';
 $string['hist'] = 'Histogram';
 $string['info1'] = '* Be sure to select at least one category or subcategory before releasing training. <br/>';
@@ -151,7 +147,6 @@ $string['optthreeweeks'] = '3 passed weeks';
 $string['opttwoexams'] = '2 passed exams';
 $string['opttwoweeks'] = '2 passed weeks';
 $string['pluginname'] = 'Userquiz monitoring';
-$string['plugindist'] = 'Plugin distribution';
 $string['questiontype'] = 'Questions\'s types:&ensp;';
 $string['ratio'] = '<b>Ratio<sup>{$a}</sup></b>';
 $string['ratio1'] = 'RATIO';
@@ -225,5 +220,13 @@ $string['configrootcategory_help'] = 'The choice of this category is very import
 it will be the start of the quiz area choice by the user. When making an exam, it will also be the root of the results analysis
 questionning space.';
 
-$string['emulatecommunity_desc'] = 'If enabled, the plugin will behave as the public community version.
-This will increas compatibility with other implementations but will loose features !';
+$string['importformat_help'] = '
+AMF Format : An Excel (better Excel 5 file .xls) with 1 first line as column names : 
+
+t	Thème	Sous-Thème	Catégorie	Libellé Question	Réponse A	Réponse B	Réponse C
+
+Subtopic must be filled, at least with 1 as default. Check this in file.
+Topic and subtopic node must be allowed in the imported format description. See __construct of the format class.
+';
+
+include(__DIR__.'/pro_additional_strings.php');
