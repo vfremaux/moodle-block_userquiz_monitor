@@ -80,6 +80,7 @@ $string['configwarning'] = 'Beware if a quiz is selected in the test, then it ca
 $string['configwarningemptycats'] = 'The root cat you have choose seems not having subcats.';
 $string['configwarningmonitor'] = 'Warning, be sure to configure the block to separate the types of quizzes test and quiz-type examination.';
 $string['detailsicon'] = 'Icon for subcategory button';
+$string['emulatecommunity'] = 'Emulate community version';
 $string['error1'] = 'Unable to retrieve information from the user questions. <br/>';
 $string['error2'] = 'Actualy, you don\'t have finished test. <br/>';
 $string['error3'] = 'Impossible to get categories. <br/>';
@@ -218,3 +219,14 @@ $string['resultsdepth_help'] = 'Choose how long in the past you want results to 
 $string['configrootcategory_help'] = 'The choice of this category is very important for the training system. When training,
 it will be the start of the quiz area choice by the user. When making an exam, it will also be the root of the results analysis
 questionning space.';
+
+$string['importformat_help'] = '
+AMF Format : An Excel (better Excel 5 file .xls) with 1 first line as column names : 
+
+t	Thème	Sous-Thème	Catégorie	Libellé Question	Réponse A	Réponse B	Réponse C
+
+Subtopic must be filled, at least with 1 as default. Check this in file.
+Topic and subtopic node must be allowed in the imported format description. See __construct of the format class.
+';
+
+include(__DIR__.'/pro_additional_strings.php');

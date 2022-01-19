@@ -31,8 +31,61 @@ require_once($CFG->dirroot.'/blocks/userquiz_monitor/block_userquiz_monitor.php'
  * This function is not implemented in this plugin, but is needed to mark
  * the vf documentation custom volume availability.
  */
-function block_userquiz_monitor_supports_feature($feature) {
-    assert(1);
+function block_userquiz_monitor_supports_feature($feature=null, $getsupported=null) {
+    global $CFG;
+    static $supports;
+
+    if (!during_initial_install()) {
+        $config = get_config('block_userquiz_monitor');
+    }
+
+    if (!isset($supports)) {
+        $supports = array(
+            'pro' => array(
+                'series' => array('dualseries'),
+                'question' => array('protection'),
+                'icon' => array('customisation'),
+            ),
+            'community' => array(
+                'series' => array('monoserie'),
+            ),
+        );
+    }
+
+    if ($getsupported) {
+        return $supports;
+    }
+
+    // Check existance of the 'pro' dir in plugin.
+    if (is_dir(__DIR__.'/pro')) {
+        if ($feature == 'emulate/community') {
+            return 'pro';
+        }
+        if (empty($config->emulatecommunity)) {
+            $versionkey = 'pro';
+        } else {
+            $versionkey = 'community';
+        }
+    } else {
+        $versionkey = 'community';
+    }
+
+    if (empty($feature)) {
+        // Just return version.
+        return $versionkey;
+    }
+
+    list($feat, $subfeat) = explode('/', $feature);
+
+    if (!array_key_exists($feat, $supports[$versionkey])) {
+        return false;
+    }
+
+    if (!in_array($subfeat, $supports[$versionkey][$feat])) {
+        return false;
+    }
+
+    return $versionkey;
 }
 
 function block_userquiz_monitor_pluginfile($course, $birecordorcm, $context, $filearea, $args, $forcedownload) {
