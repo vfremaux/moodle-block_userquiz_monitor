@@ -15,23 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details.
- *
- * @package    block_userquiz_monitor
- * @category   blocks
- * @author     Valery Fremaux (valery.fremaux@gmail.com)
- * @copyright  2015 onwards Valery Fremaux (valery.fremaux@gmail.com)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   local_courseindex
+ * @category  local
+ * @copyright 2006 Valery Fremaux
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2021102100; // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2019051100; // Requires this Moodle version.
-$plugin->component = 'block_userquiz_monitor'; // Full name of the plugin (used for diagnostics).
-$plugin->maturity = MATURITY_RC;
-$plugin->release = '3.7.0 (Build 2021102100)';
-
-// Non moodle attributes.
-$plugin->codeincrement = '3.7.0007';
-$plugin->privacy = 'dualrelease';
+$definitions = array(
+    'pro' => array(
+        'mode' => cache_store::MODE_APPLICATION
+    )
+);

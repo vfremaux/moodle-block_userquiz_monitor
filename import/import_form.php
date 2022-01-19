@@ -46,6 +46,7 @@ class ImportForm extends moodleform {
 
         $options = ['amf' => get_string('amfxslx', 'block_userquiz_monitor')];
         $mform->addElement('select', 'importformat', get_string('importformat', 'block_userquiz_monitor'), $options);
+        $mform->addHelpButton('importformat', 'importformat', 'block_userquiz_monitor');
 
         $mform->addElement('filepicker', 'importfile', get_string('importfile', 'block_userquiz_monitor'), $this->fileoptions);
 

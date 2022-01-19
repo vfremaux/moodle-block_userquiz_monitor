@@ -163,6 +163,16 @@ function block_userquiz_monitor_init_overall() {
     $overall->ratioA = 0;
     $overall->ratioC = 0;
 
+    $overall->lastweekcpt = 0;
+    $overall->lastweekcptA = 0;
+    $overall->lastweekcptC = 0;
+    $overall->lastweekgood = 0;
+    $overall->lastweekgoodA = 0;
+    $overall->lastweekgoodC = 0;
+    $overall->lastweekratio = 0;
+    $overall->lastweekratioA = 0;
+    $overall->lastweekratioC = 0;
+
     return $overall;
 }
 
@@ -265,6 +275,7 @@ function block_userquiz_monitor_get_exam_attempts($quizid) {
 function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategory, &$rootcats, &$attempts, &$overall, $mode = 'training') {
     global $USER, $DB, $OUTPUT;
     static $qstates = array();
+    static $weekstart;
 
     $errormsg = false;
     $rootcatkeys = array_keys($rootcats);
@@ -274,8 +285,20 @@ function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategor
         $graded = 'answered';
     }
 
+    if (is_null($weekstart)) {
+        $weekstart = strtotime("last monday");
+        debug_trace($weekstart);
+    }
+
     if (!empty($userattempts)) {
         foreach ($userattempts as $ua) {
+
+            if ($USER->id == 7198) {
+                // special debug : fetch all records to count them properly as recordset is a non countable Iterator.
+                $allstates = block_userquiz_monitor_get_all_user_records($ua->uniqueid, $USER->id, $graded, false);
+                debug_trace("{$ua->uniqueid} gives ".count($allstates).' records');
+            }
+
             if ($allstates = block_userquiz_monitor_get_all_user_records($ua->uniqueid, $USER->id, $graded, true)) {
 
                 if ($allstates->valid()) {
@@ -283,6 +306,10 @@ function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategor
 
                         if (($mode == 'training') && is_null($state->grade)) {
                             continue;
+                        }
+
+                        if ($USER->id == 7198) {
+                            debug_trace($state);
                         }
 
                         // Get question informations.
@@ -341,6 +368,9 @@ function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategor
                         @$attempts[$state->uaid][$rootcategory]->cpt++;
 
                         $overall->cpt++;
+                        if ($ua->timefinish > $weekstart) {
+                            $overall->lastweekcpt++;
+                        }
 
                         if ($question->defaultmark == '1000') {
                             $rootcats[$parent]->cptC++;
@@ -348,12 +378,18 @@ function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategor
                             @$attempts[$state->uaid][$parent]->cptC++;
                             @$attempts[$state->uaid][$rootcategory]->cptC++;
                             $overall->cptC++;
+                            if ($ua->timefinish > $weekstart) {
+                                $overall->lastweekcptC++;
+                            }
                             if ($state->grade > 0) {
                                 $rootcats[$parent]->goodC++;
                                 @$attempts[$state->uaid][$question->category]->goodC++;
                                 @$attempts[$state->uaid][$parent]->goodC++;
                                 @$attempts[$state->uaid][$rootcategory]->goodC++;
                                 $overall->goodC++;
+                                if ($ua->timefinish > $weekstart) {
+                                    $overall->lastweekgoodC++;
+                                }
                             }
                         } else {
                             $rootcats[$parent]->cptA++;
@@ -361,12 +397,18 @@ function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategor
                             @$attempts[$state->uaid][$parent]->cptA++;
                             @$attempts[$state->uaid][$rootcategory]->cptA++;
                             $overall->cptA++;
+                            if ($ua->timefinish > $weekstart) {
+                                $overall->lastweekcptA++;
+                            }
                             if ($state->grade > 0) {
                                 $rootcats[$parent]->goodA++;
                                 @$attempts[$state->uaid][$question->category]->goodA++;
                                 @$attempts[$state->uaid][$parent]->goodA++;
                                 @$attempts[$state->uaid][$rootcategory]->goodA++;
                                 $overall->goodA++;
+                                if ($ua->timefinish > $weekstart) {
+                                    $overall->lastweekgoodA++;
+                                }
                             }
                         }
                         if ($state->grade > 0) {
@@ -375,6 +417,9 @@ function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategor
                             @$attempts[$state->uaid][$parent]->good++;
                             @$attempts[$state->uaid][$rootcategory]->good++;
                             $overall->good++;
+                            if ($ua->timefinish > $weekstart) {
+                                $overall->lastweekgood++;
+                            }
                         }
                     }
                 }
@@ -388,6 +433,10 @@ function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategor
         $overall->ratioA = ($overall->cptA) ? round($overall->goodA / $overall->cptA * 100) : 0 ;
         $overall->ratioC = ($overall->cptC) ? round($overall->goodC / $overall->cptC * 100) : 0 ;
         $overall->ratio = ($overall->cpt) ? round($overall->good / $overall->cpt * 100) : 0 ;
+
+        $overall->lastweekratioA = ($overall->lastweekcptA) ? round($overall->lastweekgoodA / $overall->lastweekcptA * 100) : 0 ;
+        $overall->lastweekratioC = ($overall->lastweekcptC) ? round($overall->lastweekgoodC / $overall->lastweekcptC * 100) : 0 ;
+        $overall->lastweekratio = ($overall->lastweekcpt) ? round($overall->lastweekgood / $overall->lastweekcpt * 100) : 0 ;
 
         return $errormsg;
     }
@@ -529,14 +578,17 @@ function block_userquiz_monitor_get_all_user_records($attemptuniqueid, $userid, 
             qas.questionattemptid,
             qa.questionid as question,
             MAX(qas.fraction) as grade,
+            q.defaultmark as questiongrade,
             qa.questionusageid as uaid
         FROM
             {question_attempt_steps} qas,
-            {question_attempts} qa
+            {question_attempts} qa,
+            {question} q
         WHERE
             qas.questionattemptid = qa.id AND
             qa.questionusageid = ? AND
-            qas.state != 'todo'
+            qas.state != 'todo' AND
+            qa.questionid = q.id
             $gradeclause
         GROUP BY
             qas.questionattemptid
@@ -763,7 +815,7 @@ function block_userquiz_monitor_update_selector($courseid, $catidslist, $mode, $
                 }
                 */
 
-                $optionnums = [1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,100];
+                $optionnums = [1,2,3,4,5,6,7,8,9,10,15,20,30,40,50,60,70,80,90,100];
                 foreach ($optionnums as $num) {
                     if ($num <= $nbquestions) {
                         $options .= '<option value="'.$num.'">'.$num.'</option>';
@@ -782,7 +834,7 @@ function block_userquiz_monitor_update_selector($courseid, $catidslist, $mode, $
             ";
             $nbquestions = $DB->count_records_select('question', $select, $inparams);
 
-            $optionnums = [1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,100];
+            $optionnums = [1,2,3,4,5,6,7,8,9,10,15,20,30,40,50,60,70,80,90,100];
             foreach ($optionnums as $num) {
                 if ($num <= $nbquestions) {
                     $options .= '<option value="'.$num.'">'.$num.'</option>';

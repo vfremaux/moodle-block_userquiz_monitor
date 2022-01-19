@@ -6,11 +6,12 @@ require_once($CFG->dirroot.'/blocks/userquiz_monitor/import/format/import_format
 require_once($CFG->dirroot.'/blocks/userquiz_monitor/extralibs/PHPExcel-1.8/Classes/PHPExcel.php');
 require_once($CFG->dirroot.'/blocks/userquiz_monitor/extralibs/PHPExcel-1.8/Classes/PHPExcel/Shared/Date.php');
 
-use \PHPExcel_IOFactory;
+use PHPExcel_IOFactory;
 use StdClass;
-use \stored_file;
-use \context_course;
-use \moodle_url;
+use stored_file;
+use context_course;
+use moodle_url;
+use moodle_exception;
 
 class amf_format extends import_format {
 
@@ -403,6 +404,7 @@ class amf_format extends import_format {
 
         /**  Identify the type of $inputFileName  **/
         $inputType = PHPExcel_IOFactory::identify($this->filepath);
+        mtrace("Excel sheet identified as {$inputType} ");
         /**  Create a new Reader of the type that has been identified  **/
         $objReader = PHPExcel_IOFactory::createReader($inputType);
         /**  Load $inputFileName to a PHPExcel Object  **/
@@ -411,11 +413,18 @@ class amf_format extends import_format {
 
         // $data = new SpreadsheetReader($filepath, true);
 
+        $lastrow = $excelSheet->getHighestDataRow();
+        if ($lastrow <= 1) {
+            debug_trace("Bad last row at row $lastrow ", TRACE_ERROR);
+        }
+        debug_trace("Found last row as $lastrow ", TRACE_DEBUG_FINE);
+
         // Find real data start.
-        for ($i = 1; $i < $excelSheet->getHighestDataRow(); $i++) {
+        for ($i = 1; $i < $lastrow; $i++) {
 //            $val = $data->val($i, 'B');
             $val = $excelSheet->getCell("B$i")->getValue();
-            if ($val == "Theme") {
+            if (substr($val, 0,2) == "Th") {
+                // Stronger test : allors Theme or other accent versions.
                 $i++;
                 break;
             }
@@ -643,7 +652,7 @@ class amf_format extends import_format {
 
             $amfq->status = 'nochange';
             $amfq->updatetime = 0;
-            $catkey = 'AMF_'.$amfq->subcat;
+            $catkey = 'AMF_'.$amfq->cat.'.'.$amfq->subcat;
             $qrecord->category = $amfcats[$catkey]->id;
             $qrecord->parent = 0;
             $qrecord->name = 'AMF '.$amfq->idnumber;
@@ -677,42 +686,45 @@ class amf_format extends import_format {
 
             if (!empty($qrecord->id)) {
                 if (!empty($options['simulate'])) {
-                    mtrace("[SIMULATION] : Update question [{$qrecord->idnumber}]{$qrecord->id}");
+                    mtrace("[SIMULATION] : Update question [{$qrecord->idnumber}]{$qrecord->id} in {$catkey}");
                 } else {
-                    mtrace("Update question [{$qrecord->idnumber}]{$qrecord->id}");
+                    mtrace("Update question [{$qrecord->idnumber}]{$qrecord->id} in {$catkey}");
                     $DB->update_record('question', $qrecord);
                 }
                 // Unmark for future deletions.
                 unset($oldquestions[$amfq->idnumber]);
             } else {
                 if (!empty($options['simulate'])) {
-                    mtrace("[SIMULATION] : Create question [{$qrecord->idnumber}]");
+                    mtrace("[SIMULATION] : Create question [{$qrecord->idnumber}] in {$catkey}");
                 } else {
-                    mtrace("Create question [{$qrecord->idnumber}]");
+                    mtrace("Create question [{$qrecord->idnumber}] in {$catkey}");
                     $qrecord->id = $DB->insert_record('question', $qrecord);
                     $amfq->status = 'created';
                     $amfq->updatetime = time();
                }
             }
 
-            // Create multichoice qtype record if missing.
-            $params = ['questionid' => $qrecord->id];
-            if (!$oldrec = $DB->get_record('qtype_multichoice_options', $params)) {
-                $qtyperec = new Stdclass;
-                $qtyperec->questionid = $qrecord->id;
-                $qtyperec->layout = 0;
-                $qtyperec->single = 1;
-                $qtyperec->shuffleanswers = 1;
-                $qtyperec->correctfeedback = '';
-                $qtyperec->correctfeedbackformat = 1;
-                $qtyperec->partiallycorrectfeedback = '';
-                $qtyperec->partiallycorrectfeedbackformat = 1;
-                $qtyperec->incorrectfeedback = '';
-                $qtyperec->incorrectfeedbackformat = 1;
-                $qtyperec->answernumbering = '123';
-                $qtyperec->shownumcorrect = 0;
+            if (!empty($qrecord->id)) {
+                // Supposes NOT being in simulation.
+                // Create multichoice qtype record if missing.
+                $params = ['questionid' => $qrecord->id];
+                if (!$oldrec = $DB->get_record('qtype_multichoice_options', $params)) {
+                    $qtyperec = new Stdclass;
+                    $qtyperec->questionid = $qrecord->id;
+                    $qtyperec->layout = 0;
+                    $qtyperec->single = 1;
+                    $qtyperec->shuffleanswers = 1;
+                    $qtyperec->correctfeedback = '';
+                    $qtyperec->correctfeedbackformat = 1;
+                    $qtyperec->partiallycorrectfeedback = '';
+                    $qtyperec->partiallycorrectfeedbackformat = 1;
+                    $qtyperec->incorrectfeedback = '';
+                    $qtyperec->incorrectfeedbackformat = 1;
+                    $qtyperec->answernumbering = '123';
+                    $qtyperec->shownumcorrect = 0;
 
-                $DB->insert_record('qtype_multichoice_options', $qtyperec);
+                    $DB->insert_record('qtype_multichoice_options', $qtyperec);
+                }
             }
 
             // Update/create answers.
@@ -749,11 +761,13 @@ class amf_format extends import_format {
                 // All are new answers. Just create them.
                 $letters = ['A', 'B', 'C'];
                 foreach ($letters as $let) {
-                    $answer = new Stdclass;
-                    if (empty($options['simulate'])) {
-                        $answer->question = $qrecord->id;
+                    if (!empty($options['simulate'])) {
+                        mtrace("[SIMULATION] : Create answer for letter [{$let}] : ");
+                        continue;
                     }
-                    $textkey = 'qatext'.$aix;
+                    $answer = new Stdclass;
+                    $answer->question = $qrecord->id;
+                    $textkey = 'qatext'.$let;
                     $answer->answer = $amfq->$textkey;
                     $answer->answerformat = FORMAT_HTML;
                     if ($let == $amfq->a) {
@@ -763,11 +777,7 @@ class amf_format extends import_format {
                     }
                     $answer->feedback = '';
                     $answer->feedbackformat = FORMAT_HTML;
-                    if (!empty($options['simulate'])) {
-                        mtrace("[SIMULATION] : Create answer [{$textkey}] : {$answer->answer} / {$answer->fraction}");
-                    } else {
-                        $DB->insert_record('question_answers', $answer);
-                    }
+                    $DB->insert_record('question_answers', $answer);
                 }
             }
         }

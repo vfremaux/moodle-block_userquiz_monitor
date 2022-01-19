@@ -234,3 +234,15 @@ $string['configrootcategory_help'] = 'Le choix de cette catégorie a un impact m
 il détermine la racine de l\'espace de questions que l\'apprenant peut choisir de réviser. Les quiz proposés en mode entrainement
 utilisant des questions aléatoires à contraintes ne pourront choisir les questions que dans cet espace. En mode examen, il limite l\'espace dans
 lequel les résultats des quiz sera calculé. Le quiz d\'examen doit être constitué de questions (aléaoires ou non) dans cet espace de questionnement';
+
+$string['importformat_help'] = '
+Format AMF : Un fichier Excel (Excel 5 .xls de préférence) avec une première ligne de titres de colonnes : 
+
+t	Thème	Sous-Thème	Catégorie	Libellé Question	Réponse A	Réponse B	Réponse C
+
+Le sous-thème DOIT être renseigné, et prendre une valuer par défaut de 1. Vérifiez le fichier fourni.
+Thème et sous-theme doivent être décrits dans la classe du format. voir __construct() de la classe amf_format.class.php.
+
+';
+
+include(__DIR__.'/pro_additional_strings.php');
