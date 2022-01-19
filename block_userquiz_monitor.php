@@ -34,6 +34,10 @@ class block_userquiz_monitor extends block_base {
         $this->title = get_string('blockname', 'block_userquiz_monitor');
     }
 
+    public function has_config() {
+        return true;
+    }
+
     public function specialization() {
         global $CFG;
 

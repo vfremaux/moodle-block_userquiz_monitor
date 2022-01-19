@@ -161,7 +161,7 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
     }
 
     public function set_data($defaults) {
-        global $COURSE;
+        global $COURSE, $CFG;
 
         if (!empty($this->block->config) && is_object($this->block->config)) {
 
