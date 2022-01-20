@@ -198,15 +198,8 @@ class training_renderer extends \block_userquiz_monitor_renderer {
         $quizlist = '\''.$quizlist.'\'';
 
         $userattempts = block_userquiz_monitor_get_user_attempts($blockid, $quizzesids);
-        if ($USER->id == 7198) {
-            debug_trace("Interactive : Attempts : ".count($userattempts).' Quizzes: '.count($quizzesids));
-            debug_trace($userattempts);
-        }
 
         $template->compileerrormsg = block_userquiz_monitor_compute_all_results($userattempts, $rootcategory, $rootcats, $attempts, $overall);
-        if ($USER->id == 7198) {
-            debug_trace($overall);
-        }
         $template->errors = !empty($template->initerrorstr) || !empty($template->compileerrorstr);
         if ($template->errors) {
             return $this->output->render_from_template('block_userquiz_monitor/training', $template);

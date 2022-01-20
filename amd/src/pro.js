@@ -19,9 +19,9 @@ define(['jquery', 'core/log', 'core/config'], function($, log, cfg) {
 
     var userquiz_monitorpro = {
 
-        component: 'blocks_userquiz_monitor',
-        shortcomponent: 'blocks_userquiz_monitor',
-        componentpath: '/blocks/userquiz_monitor',
+        component: 'block_userquiz_monitor',
+        shortcomponent: 'block_userquiz_monitor',
+        componentpath: 'blocks/userquiz_monitor',
 
         init: function() {
 
