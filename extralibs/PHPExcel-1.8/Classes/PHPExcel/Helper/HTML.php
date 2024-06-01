@@ -663,7 +663,7 @@ class PHPExcel_Helper_HTML
         foreach ($values[0] as &$value) {
             $value = str_pad(dechex($value), 2, '0', STR_PAD_LEFT);
         }
-        return implode($values[0]);
+        return implode('', $values[0]);
     }
 
     protected function colourNameLookup($rgb)

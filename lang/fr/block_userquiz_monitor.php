@@ -27,7 +27,11 @@ $string['userquiz_monitor:addinstance'] = 'Ajouter un plateau de révision';
 $string['userquiz_monitor:import'] = 'Importer les questions dans le plateau de révision';
 
 $string['amfxslx'] = 'Format AMF';
+$string['fdxslx'] = 'Format FD (Finance Durable)';
+$string['fdenxslx'] = 'Format FD (Finance Durable - Version anglaise)';
 $string['amfinfo'] = 'Base de questions AMF';
+$string['fdinfo'] = 'Base de question AMF Finance durable';
+$string['fdeninfo'] = 'Base de questions AMF Sustainable (EN)';
 $string['adminresethist'] = '(Admin seulement ou "connecté sous" : Réinitialiser les résultats : )';
 $string['allexamsfilterinfo'] = 'Résultats calculés sur tous les examens';
 $string['attempt'] = 'Tentative';
@@ -62,11 +66,17 @@ $string['configexaminstructions'] = 'Instructions pour les examens';
 $string['configexamtab'] = 'Onglet pour le dispositif d\'examen';
 $string['configgaugerenderer'] = 'Rendu des jauges';
 $string['configinformationpageid'] = 'Identifiant de la page d\'accueil du cours. <br/>';
+$string['confignameaserie'] = 'Nom de la première série';
+$string['confignamecserie'] = 'Nom de la seconde série';
 $string['configprotectcopy'] = 'Protégrer contre la copie de contenu';
 $string['configquizforceanswer'] = 'Forcer la réponse';
 $string['configquiznobackwards'] = 'Empêcher le retour en arrière dans le quiz';
+$string['configinfopageid'] = 'Page d\'instructions';
 $string['configrateaserie'] = 'Seuil de réussite première série (A)';
 $string['configratecserie'] = 'Seuil de réussite deuxième série (C)';
+$string['confignameserie'] = 'Nom de la série';
+$string['configrateserie'] = 'Taux de réussite de la série';
+$string['configdualserie'] = 'Double série';
 $string['configrootcategory'] = 'Catégorie de question parente pour le système de révision';
 $string['configshowdetailedresults'] = 'Afficher les résultats détaillés';
 $string['configshowhistory'] = 'Afficher les historiques';
@@ -106,9 +116,11 @@ $string['generalsettings'] = 'Réglages généraux';
 $string['graphicassets'] = 'Paramètres graphiques';
 $string['importquestions'] = 'Importer des questions';
 $string['importformat'] = 'Format de fichier d\'import';
+$string['keyprefix'] = 'Préfixe d\'identifiants de questions';
 $string['questionimport'] = 'Import de questions';
 $string['hist'] = 'Histogramme';
 $string['info1'] = '* Veillez à selectionner au moins une catégorie ou sous-catégorie avant de lancer l\'entraînement. <br/>';
+$string['importcategory'] = 'Catégorie de question pour l\'import';
 $string['jqw'] = 'JQWidget';
 $string['launch'] = '';
 $string['level'] = '<b>Niveau<sup>{$a}</sup></b>';
@@ -234,3 +246,34 @@ $string['configrootcategory_help'] = 'Le choix de cette catégorie a un impact m
 il détermine la racine de l\'espace de questions que l\'apprenant peut choisir de réviser. Les quiz proposés en mode entrainement
 utilisant des questions aléatoires à contraintes ne pourront choisir les questions que dans cet espace. En mode examen, il limite l\'espace dans
 lequel les résultats des quiz sera calculé. Le quiz d\'examen doit être constitué de questions (aléaoires ou non) dans cet espace de questionnement';
+
+$string['importformat_help'] = '
+Format AMF : Un fichier Excel (Excel 5 .xls de préférence) avec une première ligne de titres de colonnes : 
+
+t	Thème	Sous-Thème	Catégorie	Libellé Question	Réponse A	Réponse B	Réponse C
+
+Le sous-thème DOIT être renseigné, et prendre une valuer par défaut de 1. Vérifiez le fichier fourni.
+Thème et sous-theme doivent être décrits dans la classe du format. voir __construct() de la classe amf_format.class.php.
+
+';
+
+$string['configinfopageid_help'] = '
+Dans un format "page", vous pouvez donner des instructions d\'utilisation à vos utilisateurs dans une page de cours séparée.
+Définir l\'id de page ici permet d\'ajouter un onglet vers cette page informative.
+';
+
+$string['confignameserie_help'] = '
+Cette étiquette permet de différencier les séries en mode "Double série".
+';
+
+$string['configrateserie_help'] = '
+Définissez ici quel pourcentage de réussite est attendu pour la série.
+';
+
+$string['configrateserie_help'] = '
+Vous pouvez utiliser une banque de question à deux niveaux (double série), chacune avec un taux de réussite différent. Lorsque vous activez
+le mode double série, programmez, dans votre banque de questions, un score de 1.000 pour les questions de la première série, et 1000.000 pour
+les questions de la seconde série.
+';
+
+include(__DIR__.'/pro_additional_strings.php');

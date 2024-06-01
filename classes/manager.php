@@ -77,7 +77,7 @@ class manager {
     }
 
     /**
-     * Get al lquiz instnaces in course.
+     * Get all quiz instances in course.
      */
     public function get_quizzes() {
         global $DB, $COURSE;

@@ -65,18 +65,10 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
 
     public function category_detail_container() {
 
-        $catdetailstr = get_string('categorydetail', 'block_userquiz_monitor', $this->theblock->config->trainingprogramname);
+        $template = new Stdclass;
+        $template->catdetailstr = get_string('categorydetail', 'block_userquiz_monitor', $this->theblock->config->trainingprogramname);
 
-        $str = '<div class="tablemonitorcategorycontainer">';
-        $str .= '<div class="userquiz-monitor-row" style="display:none">';
-        $str .= '<div class="userquiz-monitor-cell"><h1>'.$catdetailstr.'</h1></div>';
-        $str .= '</div>';
-        $str .= '</div>';
-
-        $str .= '<div id="displaysubcategories">';
-        $str .= '</div>';
-
-        return $str;
+        return $this->output->render_from_template('block_userquiz_monitor/catdetailcontainer', $template);
     }
 
     /**
@@ -221,6 +213,12 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
 
     /**
      * Displaying the subcategories of a category
+     * @see Called by ajax/subcategorycontent.php
+     * @param int $courseid
+     * @param int $rootcategory
+     * @param int $categoryid
+     * @param array $quizzeslist
+     * @param int $mode
      */
     public function subcategories($courseid, $rootcategory, $categoryid, $quizzeslist, $mode) {
         global $USER, $DB;
@@ -239,7 +237,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
         list($insql, $inparams) = $DB->get_in_or_equal($quizzesarr);
 
         $fields = 'id, name, parent';
-        if ($subcats = $DB->get_records('question_categories', array('parent' => $categoryid), 'sortorder', $fields )) {
+        if ($subcats = $DB->get_records('question_categories', ['parent' => $categoryid], 'sortorder', $fields )) {
 
             // Prepare aggregators.
             foreach ($subcats as $subcatid => $subcat) {
@@ -255,23 +253,26 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                 $subcats[$subcatid]->ratio = 0; //
                 $subcats[$subcatid]->questiontypes = array();
 
-                $select = '
-                    category = ? AND
-                    defaultmark = 1000 AND
-                    qtype != "random" AND
-                    qtype != "randomconstrained"
-                ';
-                if ($DB->record_exists_select('question', $select, array($subcat->id))) {
+                $sql = "
+                    SELECT
+                        q.*,
+                        qbe.questioncategoryid as category
+                    FROM
+                        {question} q,
+                        {question_versions} qv,
+                        {question_bank_entries} qbe
+                    WHERE
+                        q.id = qv.questionid AND
+                        qbe.id = qv.questionbankentryid AND
+                        qbe.questioncategoryid = ? AND
+                        q.defaultmark = ? AND
+                        q.qtype NOT LIKE ?
+                ";
+                if ($DB->record_exists_sql($sql, [$subcat->id, 1000, 'random%'])) {
                     $subcats[$subcatid]->questiontypes['C'] = 1;
                 }
 
-                $select = '
-                    category = ? AND
-                    defaultmark = 1 AND
-                    qtype != "random" AND
-                    qtype != "randomconstrained"
-                ';
-                if ($DB->record_exists_select('question', $select, array($subcat->id))) {
+                if ($DB->record_exists_sql($sql, [$subcat->id, 1, 'random%'])) {
                     $subcats[$subcatid]->questiontypes['A'] = 1;
                 }
             }
@@ -297,20 +298,24 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                         qa.questionid as qid,
                         MAX(qas.fraction) as grade,
                         qua.quiz as quizid,
-                        q.category as qcat,
+                        qbe.questioncategoryid as qcat,
                         qua.id as uaid
                     FROM
                         {question_attempt_steps} qas,
                         {question_attempts} qa,
                         {quiz_attempts} qua,
                         {question} q,
+                        {question_versions} qv,
+                        {question_bank_entries} qbe,
                         {question_categories} qc
                     WHERE
                         qas.questionattemptid = qa.id AND
                         qa.questionusageid = qua.uniqueid AND
                         qa.questionid = q.id AND
                         qas.state != 'todo' AND
-                        q.category = qc.id AND
+                        qv.questionid = q.id AND
+                        qv.questionbankentryid = qbe.id AND
+                        qbe.questioncategoryid = qc.id AND
                         qas.userid = ? AND
                         qua.quiz $insql AND
                         qa.questionid = q.id AND
@@ -333,11 +338,10 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                 foreach ($catstates as $state) {
 
                     $select = '
-                        qtype != "random" AND
-                        qtype != "randomconstrained" AND
+                        qtype NOT LIKE ? AND
                         id = ?
                     ';
-                    if ($defaultmark = $DB->get_field_select('question', 'defaultmark', $select, array($state->qid))) {
+                    if ($defaultmark = $DB->get_field_select('question', 'defaultmark', $select, ['random%', $state->qid])) {
 
                         $subcats[$state->qcat]->cpt++;
                         if (round($defaultmark) == 1000) {
@@ -357,6 +361,8 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                     }
                     $i++;
                 }
+            } else {
+                if function_exists('debug_trace') debug_trace("No substates", TRACE_DEBUG);
             }
 
             // Post compute ratios.
@@ -413,13 +419,6 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                     $canceltpl = new StdClass;
                     $canceltpl->canceliconurl = $this->get_area_url('closesubsicon', $this->output->image_url('cancel', 'block_userquiz_monitor'));
                     $canceltpl->parentcatid = $categoryid;
-                    /*
-                    if ($mode == 'training') {
-                        $canceltpl->jshandler = 'closepr()';
-                    } else {
-                        $canceltpl->jshanlder = 'closeprexam()';
-                    }
-                    */
                     $canceltpl->cb = $cb;
                     $template->cancelrow = $this->output->render_from_template('block_userquiz_monitor/cancelrow', $canceltpl);
                 }
@@ -492,6 +491,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
 
                 $cpt++;
             }
+
             return $this->output->render_from_template('block_userquiz_monitor/subcategories', $template);
         }
     }
@@ -598,6 +598,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
          * $rows[0][] = new tabobject('schedule', "view.php?id=".$COURSE->id."&selectedview=schedule", $label);
          */
         $activated = null;
+        $inactives = null;
         $hasexamtabs = false;
         if (!empty($conf->trainingenabled)) {
 
@@ -616,8 +617,12 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
 
             $hasexamtabs = true;
             $examrow = 1;
-            if (in_array($selectedview, array('examination', 'examlaunch', 'examresults', 'examhistory'))) {
-                $activated = array('examination');
+            if (in_array($selectedview, ['examination', 'examlaunch', 'examresults', 'examdetails', 'examhistory'])) {
+                $activated = ['examination'];
+            }
+            if ($selectedview == 'training') {
+                // $inactives = ['examlaunch', 'examresults', 'examdetails', 'examhistory'];
+                $hasexamtabs = false;
             }
         } else {
             // If only exam enabled, print exam tabs at first level.
@@ -651,7 +656,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
             }
         }
 
-        return print_tabs($rows, $selectedview, $activated, $activated, true);
+        return print_tabs($rows, $selectedview, $inactives, $activated, true);
     }
 
     /**

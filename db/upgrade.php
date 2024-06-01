@@ -215,5 +215,26 @@ function xmldb_block_userquiz_monitor_upgrade($oldversion=0) {
         upgrade_block_savepoint(true, 2011042100, 'userquiz_monitor');
     }
 
+    if ($result && $oldversion < 2022092800) {
+
+        // Frempve all old stats table. Everything compiles in report_examtraining.
+        $table = new xmldb_table('userquiz_monitor_user_stats');
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        $table = new xmldb_table('userquiz_monitor_cat_stats');
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        $table = new xmldb_table('userquiz_monitor_coverage');
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        upgrade_block_savepoint(true, 2022092800, 'userquiz_monitor');
+    }
+
     return $result;
 }

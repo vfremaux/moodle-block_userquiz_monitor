@@ -113,3 +113,48 @@ function block_userquiz_monitor_attempt_buttons($attemptobj, $page) {
 function block_userquiz_monitor_check_has_quiz_ext($course, $quizid) {
     return block_userquiz_monitor_check_has_quiz($course, $quizid);
 }
+
+/**
+ * Get the block instance of the userquiz monitor (one per course)
+ * @param int $courseid the id of the surrounding course.
+ * @param string $mode 'training', 'exam' or ''. If mode is given will only return if the blovck candidate
+ * matches the required configuration mode.
+ */
+function block_userquiz_monitor_get_block($courseid, $mode = '') {
+    return _block_userquiz_monitor_get_block($courseid, $mode);
+}
+
+/**
+ * Get all courses having one instance of userquiz_monitor block in its context.
+ */
+function block_userquiz_monitor_get_block_courses() {
+    return _block_userquiz_monitor_get_block_courses();
+}
+
+/**
+ * Get the block instance top categories for training, from the block's configuration
+ * @param int $theblock a userquiz_monitor block instance.
+ */
+function block_userquiz_monitor_get_top_cats($theblock, $withqcount = false) {
+    return _block_userquiz_monitor_get_top_cats($theblock, $withqcount);
+}
+
+function block_userquiz_monitor_get_exam_grades($block, $userid, $serie) {
+
+    $rootcategory = @$this->theblock->config->rootcategory;
+    $overall = block_userquiz_monitor_init_overall();
+    block_userquiz_monitor_init_rootcats($rootcategory, $rootcats);
+
+    $errors = block_userquiz_monitor_compute_all_results($usedattemptarr, $rootcategory, $rootcats,
+                                                                       $attempts, $overall, 'exam');
+    switch($serie) {
+        case 'A' : {
+            return $overrall->ratioA;
+        }
+        case 'C' : {
+            return $overrall->ratioC;
+        }
+        default : 
+            return $overrall->ratio;
+    }
+}

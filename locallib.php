@@ -109,6 +109,13 @@ function block_userquiz_monitor_get_categories_for_root() {
     return $categories;
 }
 
+/**
+ * Get the set of finished attempts done y a user, in a userquiz_monitor block context,
+ * considering all quizzes qiven as imput.
+ * @param int $blockid
+ * @param array $quizzeslist a list of all the concerned quizzes.
+ * @param int $userid the user. If ommited, will calculate for the current user.
+ */
 function block_userquiz_monitor_get_user_attempts($blockid, $quizzesids, $userid = 0) {
     global $DB, $USER;
 
@@ -137,7 +144,7 @@ function block_userquiz_monitor_get_user_attempts($blockid, $quizzesids, $userid
             {quiz_attempts} ua
         WHERE
             ua.userid = ? AND
-            ua.timefinish <> 0 AND
+            ua.state = 'finished' AND
             ua.quiz $insql
             $timerangefilterclause
         ORDER BY
@@ -162,6 +169,16 @@ function block_userquiz_monitor_init_overall() {
     $overall->ratio = 0;
     $overall->ratioA = 0;
     $overall->ratioC = 0;
+
+    $overall->lastweekcpt = 0;
+    $overall->lastweekcptA = 0;
+    $overall->lastweekcptC = 0;
+    $overall->lastweekgood = 0;
+    $overall->lastweekgoodA = 0;
+    $overall->lastweekgoodC = 0;
+    $overall->lastweekratio = 0;
+    $overall->lastweekratioA = 0;
+    $overall->lastweekratioC = 0;
 
     return $overall;
 }
@@ -200,24 +217,80 @@ function block_userquiz_monitor_init_rootcats($rootcategory, &$rootcats) {
         $cattreelist = block_userquiz_monitor_get_cattreeids($cat->id, $catidarr);
         $cattreelist = implode("','", $catidarr);
 
-        $select = " category IN ('$cattreelist') AND defaultmark = 1000 AND qtype NOT LIKE 'random%' ";
-        if ($DB->record_exists_select('question', $select, array())) {
+        $sql = "
+            SELECT
+                *
+            FROM
+                {question} q,
+                {question_versions} qv,
+                {question_bank_entries} qbe
+            WHERE
+                q.id = qv.questionid AND
+                qv.questionbankentryid = qbe.id AND
+                qbe.questioncategoryid IN ('$cattreelist') AND
+                q.defaultmark = 1000 AND
+                q.qtype NOT LIKE ?
+        ";
+        if ($DB->record_exists_sql($sql, ['random%'])) {
             $rootcats[$catid]->questiontypes['C'] = 1;
         }
         if (optional_param('qdebug', false, PARAM_BOOL)) {
-            if ($questions = $DB->get_records_select('question', $select, array(), 'id', 'id,category')) {
+            $sql = "
+                SELECT
+                    q.id,
+                    qbe.questioncategoryid as category
+                FROM
+                    {question} q,
+                    {question_versions} qv,
+                    {question_bank_entries} qbe
+                WHERE
+                    q.id = qv.questionid AND
+                    qv.questionbankentryid = qbe.id AND
+                    qbe.questioncategoryid IN ('$cattreelist') AND
+                    q.defaultmark = 1000 AND
+                    q.qtype NOT LIKE ?
+            ";
+            if ($questions = $DB->get_records_sql($sql, ['random%'], 'q.id')) {
                 foreach ($questions as $q) {
                     $rootcats[$catid]->questions['C'][$q->category][] = $q->id;
                 }
             }
         }
 
-        $select = " category IN ('$cattreelist') AND defaultmark = 1 AND qtype NOT LIKE 'random%' ";
-        if ($DB->record_exists_select('question', $select, array())) {
+        $sql = "
+            SELECT
+                *
+            FROM
+                {question} q,
+                {question_versions} qv,
+                {question_bank_entries} qbe
+            WHERE
+                q.id = qv.questionid AND
+                qv.questionbankentryid = qbe.id AND
+                qbe.questioncategoryid IN ('$cattreelist') AND
+                q.defaultmark = 1 AND
+                q.qtype NOT LIKE ?
+        ";
+        if ($DB->record_exists_sql($sql, ['random%'])) {
             $rootcats[$catid]->questiontypes['A'] = 1;
         }
         if (optional_param('qdebug', false, PARAM_BOOL)) {
-            if ($questions = $DB->get_records_select('question', $select, array(), 'id', 'id,category')) {
+            $sql = "
+                SELECT
+                    q.id,
+                    qbe.questioncategoryid as category
+                FROM
+                    {question} q,
+                    {question_versions} qv,
+                    {question_bank_entries} qbe
+                WHERE
+                    q.id = qv.questionid AND
+                    qv.questionbankentryid = qbe.id AND
+                    qbe.questioncategoryid IN ('$cattreelist') AND
+                    q.defaultmark = 1 AND
+                    q.qtype NOT LIKE ?
+            ";
+            if ($questions = $DB->get_records_sql($sql, ['random%'], 'id')) {
                 foreach ($questions as $q) {
                     $rootcats[$catid]->questions['A'][$q->category][] = $q->id;
                 }
@@ -265,6 +338,7 @@ function block_userquiz_monitor_get_exam_attempts($quizid) {
 function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategory, &$rootcats, &$attempts, &$overall, $mode = 'training') {
     global $USER, $DB, $OUTPUT;
     static $qstates = array();
+    static $weekstart;
 
     $errormsg = false;
     $rootcatkeys = array_keys($rootcats);
@@ -274,8 +348,14 @@ function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategor
         $graded = 'answered';
     }
 
+    if (is_null($weekstart)) {
+        $weekstart = strtotime("last monday");
+        debug_trace($weekstart);
+    }
+
     if (!empty($userattempts)) {
         foreach ($userattempts as $ua) {
+            if (function_exists('debug_trace') debug_trace("compiling UAttemp {$ua->uniqueid} ", TRACE_DEBUG);
             if ($allstates = block_userquiz_monitor_get_all_user_records($ua->uniqueid, $USER->id, $graded, true)) {
 
                 if ($allstates->valid()) {
@@ -286,8 +366,9 @@ function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategor
                         }
 
                         // Get question informations.
-                        $fields = 'id, defaultmark, category';
-                        $question = $DB->get_record_select('question', " id = ? ", array($state->question), $fields);
+                        $question = $DB->get_record('question', ['id' => $state->question], 'id, defaultmark');
+                        $questionversion = $DB->get_record('question_versions', ['questionid' => $question->id]);
+                        $question->category = $DB->get_field('question_bank_entries', 'questioncategoryid', ['id' => $questionversion->questionbankentryid]);
                         $parent = $DB->get_field('question_categories', 'parent', array('id' => $question->category));
 
                         if (!array_key_exists($question->id, $qstates)) {
@@ -303,6 +384,7 @@ function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategor
                             }
 
                             if (!$parent) {
+                                if function_exists('debug_trace') debug_trace("Lost state : cat not in cat set. ", TRACE_DEBUG);
                                 // We could not find any candidate rootcat.
                                 // Discard  all results that fall outside the revision tree with error message.
                                 $errormsg = get_string('errorquestionoutsidescope', 'block_userquiz_monitor');
@@ -341,6 +423,9 @@ function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategor
                         @$attempts[$state->uaid][$rootcategory]->cpt++;
 
                         $overall->cpt++;
+                        if ($ua->timefinish > $weekstart) {
+                            $overall->lastweekcpt++;
+                        }
 
                         if ($question->defaultmark == '1000') {
                             $rootcats[$parent]->cptC++;
@@ -348,12 +433,18 @@ function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategor
                             @$attempts[$state->uaid][$parent]->cptC++;
                             @$attempts[$state->uaid][$rootcategory]->cptC++;
                             $overall->cptC++;
+                            if ($ua->timefinish > $weekstart) {
+                                $overall->lastweekcptC++;
+                            }
                             if ($state->grade > 0) {
                                 $rootcats[$parent]->goodC++;
                                 @$attempts[$state->uaid][$question->category]->goodC++;
                                 @$attempts[$state->uaid][$parent]->goodC++;
                                 @$attempts[$state->uaid][$rootcategory]->goodC++;
                                 $overall->goodC++;
+                                if ($ua->timefinish > $weekstart) {
+                                    $overall->lastweekgoodC++;
+                                }
                             }
                         } else {
                             $rootcats[$parent]->cptA++;
@@ -361,12 +452,18 @@ function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategor
                             @$attempts[$state->uaid][$parent]->cptA++;
                             @$attempts[$state->uaid][$rootcategory]->cptA++;
                             $overall->cptA++;
+                            if ($ua->timefinish > $weekstart) {
+                                $overall->lastweekcptA++;
+                            }
                             if ($state->grade > 0) {
                                 $rootcats[$parent]->goodA++;
                                 @$attempts[$state->uaid][$question->category]->goodA++;
                                 @$attempts[$state->uaid][$parent]->goodA++;
                                 @$attempts[$state->uaid][$rootcategory]->goodA++;
                                 $overall->goodA++;
+                                if ($ua->timefinish > $weekstart) {
+                                    $overall->lastweekgoodA++;
+                                }
                             }
                         }
                         if ($state->grade > 0) {
@@ -375,6 +472,9 @@ function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategor
                             @$attempts[$state->uaid][$parent]->good++;
                             @$attempts[$state->uaid][$rootcategory]->good++;
                             $overall->good++;
+                            if ($ua->timefinish > $weekstart) {
+                                $overall->lastweekgood++;
+                            }
                         }
                     }
                 }
@@ -388,6 +488,10 @@ function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategor
         $overall->ratioA = ($overall->cptA) ? round($overall->goodA / $overall->cptA * 100) : 0 ;
         $overall->ratioC = ($overall->cptC) ? round($overall->goodC / $overall->cptC * 100) : 0 ;
         $overall->ratio = ($overall->cpt) ? round($overall->good / $overall->cpt * 100) : 0 ;
+
+        $overall->lastweekratioA = ($overall->lastweekcptA) ? round($overall->lastweekgoodA / $overall->lastweekcptA * 100) : 0 ;
+        $overall->lastweekratioC = ($overall->lastweekcptC) ? round($overall->lastweekgoodC / $overall->lastweekcptC * 100) : 0 ;
+        $overall->lastweekratio = ($overall->lastweekcpt) ? round($overall->lastweekgood / $overall->lastweekcpt * 100) : 0 ;
 
         return $errormsg;
     }
@@ -403,6 +507,12 @@ function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategor
     return $errormsg;
 }
 
+/**
+ * Has the user passed the required conditions ? 
+ * @param object $block the associated block, to get some config elements from.
+ * @param object $attemptstats Object with stats from attemts.
+ * @return bool
+ */
 function block_userquiz_monitor_is_passing($block, $attemptstats) {
     $pass = $attemptstats->ratioA >= $block->config->rateAserie;
 
@@ -413,6 +523,12 @@ function block_userquiz_monitor_is_passing($block, $attemptstats) {
     return $pass;
 }
 
+/**
+ * Given a set of rootcats with computed scores, compute the ratios from the absolute 
+ * scores. Updates the $rootcat array
+ * @param arrayref &$rootcats
+ * @return int the max ratio reached by the highest category.
+ */
 function block_userquiz_monitor_compute_ratios(&$rootcats) {
 
     $maxratio = 0;
@@ -452,11 +568,11 @@ function block_userquiz_monitor_compute_ratios(&$rootcats) {
 }
 
 /**
- * Seeks for an instance of a userquiz_monitor block that would be attached to
- * this attempt.
+ * Checks if a quiz instance is part of a userquiz_monitor
+ * setup. Returns the type of quiz and the complete block configuration.
  *
- * @param int $quizid
- * @param string $mode
+ * @param int $course the course
+ * @param string $quizid the quiz to check.
  * @return object the matching block configuration, or false.
  */
 function block_userquiz_monitor_check_has_quiz($course, $quizid) {
@@ -529,21 +645,24 @@ function block_userquiz_monitor_get_all_user_records($attemptuniqueid, $userid, 
             qas.questionattemptid,
             qa.questionid as question,
             MAX(qas.fraction) as grade,
+            q.defaultmark as questiongrade,
             qa.questionusageid as uaid
         FROM
             {question_attempt_steps} qas,
-            {question_attempts} qa
+            {question_attempts} qa,
+            {question} q
         WHERE
             qas.questionattemptid = qa.id AND
             qa.questionusageid = ? AND
-            qas.state != 'todo'
+            qas.state != 'todo' AND
+            qa.questionid = q.id
             $gradeclause
         GROUP BY
             qas.questionattemptid
     ";
 
     if ($asrecordset) {
-        $rs = $DB->get_recordset_sql($sql, array($attemptuniqueid));
+        $rs = $DB->get_recordset_sql($sql, [$attemptuniqueid]);
         return $rs;
     }
 
@@ -634,7 +753,7 @@ function block_userquiz_monitor_get_quiz_by_numquestions($courseid, $theblock, $
 
     $sql = "
         SELECT
-            count(qs.questionid) as numquestions,
+            count(*) as numquestions,
             qs.quizid
            FROM
             {quiz} q,
@@ -691,7 +810,7 @@ function calcul_hist($categoryid, &$counters) {
  * On changes of the current selection, update the question amount choice list
  * @param int $courseid
  * @param string $catidlist
- * @param string $mode mode0 works for master categories digging in all subcats. mode1 works directly with given subcategories.
+ * @param string $mode mode0 works for master categories digging in all subcats. mode1 works directly within given subcategories.
  * @return the question amount selector
  */
 function block_userquiz_monitor_update_selector($courseid, $catidslist, $mode, $rootcat, $quizzeslist = '') {
@@ -708,6 +827,31 @@ function block_userquiz_monitor_update_selector($courseid, $catidslist, $mode, $
         $catids = $catidslist;
     }
     list($insql, $inparams) = $DB->get_in_or_equal($catids);
+
+    // First get the quiz list referenced by slots.
+    
+    list($quizinsql, $quizinparams) = $DB->get_in_or_equal(explode(',', $quizzeslist));
+    $sql = "
+        SELECT
+            q.id,
+            COUNT(*) as slots
+        FROM
+            {quiz} q,
+            {quiz_slots} qs
+        WHERE
+            q.id = qs.quizid AND
+            q.id $quizinsql
+        GROUP BY
+            q.id
+    ";
+    $quizlistbyslots = $DB->get_records_sql($sql, $quizinparams);
+    $quizbyslots = [];
+    // reverse the result by slots. this might overwrite if mistakes in quiz definition, but not so important here.
+    if (!empty($quizlistbyslots)) {
+        foreach ($quizlistbyslots as $q) {
+            $quizbyslots[$q->slots] = $q;
+        }
+    }
 
     if (!empty($catidslist) && ($catidslist != 'null')) {
         if ($mode == 'mode0') {
@@ -727,46 +871,31 @@ function block_userquiz_monitor_update_selector($courseid, $catidslist, $mode, $
 
                 // Init variables.
                 $nbquestions = 0;
-                $options = '';
-                $select = "
-                    category $insql AND
-                    qtype != 'random' AND
-                    qtype != 'randomconstrained'
+                $sql = "
+                    SELECT
+                        COUNT(*)
+                    FROM
+                        {question} q,
+                        {question_versions} qv,
+                        {question_bank_entries} qbe
+                    WHERE
+                        q.id = qv.questionid AND
+                        qv.questionbankentryid = qbe.id AND
+                        qbe.questioncategoryid $insql AND
+                        qtype NOT LIKE ? AND
+                        qv.status = 'ready'
                 ";
-                $recordsgetnbquestions = $DB->count_records_select('question', $select, $inparams);
+                $inparams[] = 'random%';
+                $recordsgetnbquestions = $DB->get_records_sql($sql, $inparams);
 
-                /*
-                foreach ($recordsgetnbquestions as $recordnbquestions) {
-                        $nbquestions = $recordnbquestions;
-                }
-                */
                 $nbquestions = $recordsgetnbquestions;
 
-                /*
-                if (strlen($nbquestions) > 1) {
-                    // Group nb questions per 10.
-                    $val = 10;
-                    $nbquestionstest = (substr($nbquestions, 0, -1)) * 10;
-
-                    while ($val <= $nbquestionstest) {
-                        if ($val <= 100) {
-                            $options .= '<option value="'.$val.'">'.$val.'</option>';
-                        }
-                        $val = $val + 10;
-                    }
-                } else {
-                    $nbquestionstest = $nbquestions;
-
-                    for ($i = 1; $i <= $nbquestionstest; $i++) {
-                        $options .= '<option value="'.$i.'">'.$i.'</option>';
-                    }
-                }
-                */
-
-                $optionnums = [1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,100];
+                $optionnums = [1,2,3,4,5,6,7,8,9,10,15,20,30,40,50,60,70,80,90,100];
                 foreach ($optionnums as $num) {
                     if ($num <= $nbquestions) {
-                        $options .= '<option value="'.$num.'">'.$num.'</option>';
+                        if (in_array($num, array_keys($quizbyslots))) {
+                            $options .= '<option value="'.$num.'">'.$num.'</option>';
+                        }
                     }
                 }
 
@@ -775,40 +904,32 @@ function block_userquiz_monitor_update_selector($courseid, $catidslist, $mode, $
         } else {
             // Processes update in given categories.
 
-            $select = "
-                category $insql AND
-                qtype != 'random' AND
-                qtype != 'randomconstrained'
+            $sql = "
+                SELECT
+                    COUNT(*)
+                FROM
+                    {question} q,
+                    {question_versions} qv,
+                    {question_bank_entries} qbe
+                WHERE
+                    q.id = qv.questionid AND
+                    qv.questionbankentryid = qbe.id AND
+                    qbe.questioncategoryid $insql AND
+                    qtype NOT LIKE 'random%' AND
+                    qv.status = 'ready'
             ";
-            $nbquestions = $DB->count_records_select('question', $select, $inparams);
+            $nbavailablequestions = $DB->count_records_sql($sql, $inparams);
 
-            $optionnums = [1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,100];
+            $optionnums = [1,2,3,4,5,6,7,8,9,10,15,20,30,40,50,60,70,80,90,100];
             foreach ($optionnums as $num) {
-                if ($num <= $nbquestions) {
-                    $options .= '<option value="'.$num.'">'.$num.'</option>';
+                if ($num <= $nbavailablequestions) {
+                    if (in_array($num, array_keys($quizbyslots))) {
+                        $options .= '<option value="'.$num.'">'.$num.'</option>';
+                    }
                 }
             }
 
             // Make question amount choice options.
-            /*
-            if (strlen($nbquestions) > 1) {
-                $nbquestionstest = (substr($nbquestions, 0, -1)) * 10;
-
-                $val = 10;
-                while ($val <= $nbquestionstest) {
-                    if ($val <= 100) {
-                        $options .= '<option value="'.$val.'">'.$val.'</option>';
-                    }
-                    $val = $val + 10;
-                }
-            } else {
-                $nbquestionstest = $nbquestions;
-
-                for ($i = 1; $i <= $nbquestionstest; $i++) {
-                    $options .= '<option value="'.$i.'">'.$i.'</option>';
-                }
-            }
-            */
 
             $response .= $renderer->launch_gui($options, $quizzeslist);
         }
@@ -817,4 +938,133 @@ function block_userquiz_monitor_update_selector($courseid, $catidslist, $mode, $
     }
 
     return $response;
+}
+
+/**
+ * Get the block instance of the userquiz monitor (one per course)
+ * @param int $courseid the id of the surrounding course.
+ * @param text $mode the working mode as "required" for the block. This will only check the mode is enabled, not it is correctly configured.
+ */
+function _block_userquiz_monitor_get_block($courseid, $mode = '') {
+    global $DB;
+
+    $coursecontext = context_course::instance($courseid);
+    $params = array('parentcontextid' => $coursecontext->id, 'blockname' => 'userquiz_monitor');
+    $blockinstance = $DB->get_record('block_instances', $params);
+
+    if (!$blockinstance) {
+        return false;
+        // throw new moodle_exception('No userquiz block in this course');
+    }
+
+    $theblock = block_instance('userquiz_monitor', $blockinstance);
+
+    if ($mode == 'training') {
+        if (!$theblock->config->trainingenabled) {
+            return false;
+        }
+    }
+
+    if ($mode == 'exam') {
+        if ($theblock->config->examenabled) {
+            return false;
+        }
+    }
+
+    if (!$theblock->config->trainingenabled && !$theblock->config->examenabled) {
+        return false;
+    }
+
+    return $theblock;
+}
+
+/**
+ * Get all course ids having a userquiz_monitor block in their context.
+ */
+function _block_userquiz_monitor_get_block_courses() {
+    global $DB;
+
+    $sql = "
+        SELECT DISTINCT
+            ctx.instanceid,
+            ctx.instanceid
+        FROM
+            {context} ctx,
+            {block_instances} bi
+        WHERE
+            ctx.id = bi.parentcontextid AND
+            bi.blockname = ? AND
+            ctx.contextlevel = 50
+    ";
+
+    $courselist = $DB->get_records_sql($sql, ['userquiz_monitor']);
+
+    if (!empty($courselist)) {
+        return array_keys($courselist);
+    }
+
+    return [];
+}
+
+/**
+ * Get the block instance top categories for training, from the block's configuration
+ * @param int $theblock a userquiz_monitor block instance.
+ */
+function _block_userquiz_monitor_get_top_cats($theblock, $withcatcount = false) {
+    global $DB;
+
+    if (empty($theblock->config->rootcategory)) {
+        return [];
+    }
+
+    $cats = $DB->get_records('question_categories', ['parent' => $theblock->config->rootcategory]);
+
+    if ($withcatcount) {
+        foreach ($cats as &$cat) {
+            $ret = block_userquiz_monitor_count_q_rec($cat);
+            $cat->qcount = $ret[0];
+            $cat->acount = $ret[1];
+            $cat->ccount = $ret[2];
+        }
+    }
+
+    return $cats;
+}
+
+/**
+ * counts recursively in cat and subcats.
+ * @param object $cat
+ */
+function block_userquiz_monitor_count_q_rec($cat) {
+    global $DB;
+
+    $sql = "
+        SELECT
+            COUNT(*)
+        FROM
+            {question} q,
+            {question_bank_entries} qbe,
+            {question_versions} qv
+        WHERE
+            q.id = qv.questionid AND
+            qv.questionbankentryid = qbe.id AND
+            qbe.questioncategoryid = ? AND
+            q.qtype NOT LIKE ? AND
+            qv.status = 'ready'
+    ";
+    $acount = $DB->count_records_sql($sql.' AND defaultmark < 50', [$cat->id, 'random%']);
+    $ccount = $DB->count_records_sql($sql.' AND defaultmark > 50', [$cat->id, 'random%']);
+    $qcount = $ccount + $acount;
+
+    $subs = $DB->get_records('question_categories', ['parent' => $cat->id], '', 'id,name');
+    if ($subs) {
+        foreach ($subs as $sub) {
+            $ret = block_userquiz_monitor_count_q_rec($sub);
+            $qcount += $ret[0];
+            $acount += $ret[1];
+            $ccount += $ret[2];
+        }
+    }
+
+    return [$qcount, $acount, $ccount];
 }

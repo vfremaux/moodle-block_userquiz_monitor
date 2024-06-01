@@ -30,7 +30,11 @@ $string['userquiz_monitor:import'] = 'Import questions into the userquiz monitor
 $string['privacy:metadata'] = "The User Quiz Monitor needs to be implemented to reflect user preferences.";
 
 $string['amfxslx'] = 'AMF format';
+$string['fdxslx'] = 'FD format (Sustainable financials)';
+$string['fdenxslx'] = 'FD format (Sustainable financials - English version)';
 $string['amfinfo'] = 'Base de questions AMF';
+$string['fdinfo'] = 'Base de question AMF Finance durable';
+$string['fdeninfo'] = 'Base de questions AMF Sustainable (EN)';
 $string['adminresethist'] = '(Admin only, or impersonated : Reset training results : )';
 $string['allexamsfilterinfo'] = 'Results are calculated over all attempts';
 $string['attempt'] = 'Attempt';
@@ -65,6 +69,8 @@ $string['configexaminstructions'] = 'Instructions for exams';
 $string['configexamtab'] = 'Title of the examination';
 $string['configgaugerenderer'] = 'Gauge renderer';
 $string['configinformationpageid'] = 'information course page identifier.<br/>';
+$string['confignameaserie'] = 'First serie name';
+$string['confignamecserie'] = 'Second serie name';
 $string['configprotectcopy'] = 'Protect against content copy';
 $string['configquizforceanswer'] = 'Force answer';
 $string['configquiznobackwards'] = 'Forbid going backwards on quiz';
@@ -72,6 +78,14 @@ $string['configrateaserie'] = 'First serie threshold (% on A type)';
 $string['configratecserie'] = 'Second serie threshold (% on C type)';
 $string['configrootcategory'] = 'Parent category for the whole training system';
 $string['configshowhistory'] = 'Show results history';
+$string['configinfopageid'] = 'Info page id';
+$string['configinfopageid_help'] = 'On a "page" format, you may use a separate page to give instructions to user. Defining the page id here will add a tab to the training interface to that page.';
+$string['confignameserie'] = 'Serie name';
+$string['confignameserie_help'] = 'This label is used in case of dual serie to labelize each serie result.';
+$string['configrateserie'] = 'Serie rate';
+$string['configrateserie_help'] = 'This is the "pass" rate of this question serie.';
+$string['configdualserie'] = 'Dual serie';
+$string['configdualserie_help'] = 'You may split your training system in two question series, each having a distinct pass rate. When using dualserie mode, rate your questions 1.000 for the first serie, and 1000.000 for the second serie.';
 $string['configshowdetailedresults'] = 'Show detailed results';
 $string['configtest'] = 'Add belonging quizzes tests';
 $string['configtrainingenabled'] = 'Enable training';
@@ -80,6 +94,7 @@ $string['configwarning'] = 'Beware if a quiz is selected in the test, then it ca
 $string['configwarningemptycats'] = 'The root cat you have choose seems not having subcats.';
 $string['configwarningmonitor'] = 'Warning, be sure to configure the block to separate the types of quizzes test and quiz-type examination.';
 $string['detailsicon'] = 'Icon for subcategory button';
+$string['emulatecommunity'] = 'Emulate community version';
 $string['error1'] = 'Unable to retrieve information from the user questions. <br/>';
 $string['error2'] = 'Actualy, you don\'t have finished test. <br/>';
 $string['error3'] = 'Impossible to get categories. <br/>';
@@ -111,7 +126,9 @@ $string['importformat'] = 'Import format';
 $string['questionimport'] = 'Question import';
 $string['hist'] = 'Histogram';
 $string['info1'] = '* Be sure to select at least one category or subcategory before releasing training. <br/>';
+$string['importcategory'] = 'Target question category for import';
 $string['jqw'] = 'JQWidget';
+$string['keyprefix'] = 'Question identifiers prefix';
 $string['launch'] = 'Launch the test';
 $string['level'] = '<b>Level<sup>{$a}</sup></b>';
 $string['level1'] = 'LEVEL';
@@ -218,3 +235,14 @@ $string['resultsdepth_help'] = 'Choose how long in the past you want results to 
 $string['configrootcategory_help'] = 'The choice of this category is very important for the training system. When training,
 it will be the start of the quiz area choice by the user. When making an exam, it will also be the root of the results analysis
 questionning space.';
+
+$string['importformat_help'] = '
+AMF Format : An Excel (better Excel 5 file .xls) with 1 first line as column names : 
+
+t	Thème	Sous-Thème	Catégorie	Libellé Question	Réponse A	Réponse B	Réponse C
+
+Subtopic must be filled, at least with 1 as default. Check this in file.
+Topic and subtopic node must be allowed in the imported format description. See __construct of the format class.
+';
+
+include(__DIR__.'/pro_additional_strings.php');

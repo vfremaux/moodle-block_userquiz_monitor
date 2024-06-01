@@ -29,24 +29,24 @@ $blockid = required_param('blockid', PARAM_INT); // Block id.
 
 $url = new moodle_url('/blocks/userquiz_monitor/import/import.php', ['id' => $id, 'blockid' => $blockid]);
 
-if (!$course = $DB->get_record('course', ['id' => $id])) {
-    print_error('coursemisconf');
-}
-
-if (!$instance = $DB->get_record('block_instances', array('id' => $blockid))) {
-    print_error('Invalidblockid');
-}
-
-$uqminstance = block_instance('userquiz_monitor', $instance);
+$course = $DB->get_record('course', ['id' => $id], '*', MUST_EXIST);
+$instance = $DB->get_record('block_instances', ['id' => $blockid], '*', MUST_EXIST);
 
 $context = context_course::instance($id);
 require_login($course);
 require_capability('moodle/course:manageactivities', $context);
 
+$uqminstance = block_instance('userquiz_monitor', $instance);
+if (empty($uqminstance->config->rootcategory)) {
+    throw new moodle_exception("Root category has not been setup for this Userquiz Monitor block instance. We cannot import.");
+}
+
+$rootcategory = $DB->get_record('question_categories', ['id' => $uqminstance->config->rootcategory], '*', MUST_EXIST);
+
 $PAGE->set_url($url);
 $PAGE->set_heading(get_string('questionimport', 'block_userquiz_monitor'));
 
-$mform = new ImportForm($url);
+$mform = new ImportForm($url, ['rootcategory' => $rootcategory]);
 
 $courseurl = new moodle_url('/course/view.php?', ['id' => $id]);
 
@@ -55,8 +55,14 @@ if ($mform->is_cancelled()) {
 }
 
 if ($data = $mform->get_data()) {
+
+    if (!in_array($data->importformat, ['fd', 'fden', 'amf'])) {
+        throw new moodle_exception("Not acceptable import format");
+    }
+
     // process data and imported file.
     $formatfile = $CFG->dirroot.'/blocks/userquiz_monitor/import/format/'.$data->importformat.'_format.class.php';
+
     if (!file_exists($formatfile)) {
         throw new coding_exception("Format file missing.");
     }

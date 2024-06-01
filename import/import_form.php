@@ -26,12 +26,7 @@ require_once($CFG->dirroot.'/lib/formslib.php');
 
 class ImportForm extends moodleform {
 
-    public $fileoptions;
-
-    public function __construct() {
-        parent::__construct();
-        $this->fileoptions = [];
-    }
+    protected $fileoptions = [];
 
     public function definition() {
         global $COURSE;
@@ -44,10 +39,23 @@ class ImportForm extends moodleform {
         $mform->addElement('hidden', 'blockid');
         $mform->setType('blockid', PARAM_INT);
 
-        $options = ['amf' => get_string('amfxslx', 'block_userquiz_monitor')];
+        $catname = '['.$this->_customdata['rootcategory']->idnumber.'] '.format_string($this->_customdata['rootcategory']->name);
+        $mform->addElement('static', 'importcategory', get_string('importcategory', 'block_userquiz_monitor'), $catname);
+
+        $options = [
+            'amf' => get_string('amfxslx', 'block_userquiz_monitor'),
+            'fd' => get_string('fdxslx', 'block_userquiz_monitor'),
+            'fden' => get_string('fdenxslx', 'block_userquiz_monitor')
+        ];
         $mform->addElement('select', 'importformat', get_string('importformat', 'block_userquiz_monitor'), $options);
+        $mform->addHelpButton('importformat', 'importformat', 'block_userquiz_monitor');
 
         $mform->addElement('filepicker', 'importfile', get_string('importfile', 'block_userquiz_monitor'), $this->fileoptions);
+
+        /**
+        $mform->addElement('text', 'keyprefix', get_string('keyprefix', 'block_userquiz_monitor'));
+        $mform->setType('keyprefix', PARAM_TEXT);
+        */
 
         $mform->addElement('advcheckbox', 'replaceall', get_string('replaceall', 'block_userquiz_monitor'));
         $mform->setDefault('replaceall', 0);

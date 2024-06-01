@@ -144,6 +144,9 @@ class training_renderer extends \block_userquiz_monitor_renderer {
         return $this->output->render_from_template('block_userquiz_monitor/trainingcategoryresult', $template);
     }
 
+    /**
+     * Renders the lauch button with number of questions selector.
+     */
     public function launch_gui($options, $quizzeslist) {
         global $COURSE;
 

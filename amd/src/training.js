@@ -146,13 +146,15 @@ define(['jquery', 'core/config', 'core/log'], function($, cfg, log) {
          */
         update_selector_detail: function () {
 
-            log.debug("update_selector_detail");
+            var that = $(this);
+
+            log.debug("update_selector_detail " + that.attr('id'));
 
             var categorieslist = '';
             var allchecked = true;
             var parentid = 0;
 
-            var currentclasses = this.className.split(' ');
+            var currentclasses = that.attr('class').split(' ');
 
             for (var i in currentclasses) {
                 // Find the parent related class
@@ -163,8 +165,7 @@ define(['jquery', 'core/config', 'core/log'], function($, cfg, log) {
 
             $('.cb-detail').each(function() {
 
-                var that = $(this);
-                var categoryid = that.attr('id').replace('id-cb-detail-', '');
+                var categoryid = $(this).attr('id').replace('id-cb-detail-', '');
 
                 if ($(this).prop('checked')) {
                     if (categorieslist === '') {

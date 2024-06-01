@@ -757,8 +757,8 @@ input.radio-hidden[type="radio"] + div.category-subpod {
 }
 
 .userquiz-monitor-cell.categorychoice {
-    width: 10px;
-    max-width: 10px;
+    width: 25px;
+    max-width: 25px;
 }
 
 #quiz-progress-indicator {
@@ -786,4 +786,8 @@ input.radio-hidden[type="radio"] + div.category-subpod {
 .userquiz-detail-cancel-icon {
     width: 20px;
     height: 20px;
+}
+
+.block.block_userquiz_monitor .formconfigure {
+    display: none;
 }
