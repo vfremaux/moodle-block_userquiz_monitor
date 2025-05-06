@@ -84,6 +84,9 @@ class training_renderer extends \block_userquiz_monitor_renderer {
         return $this->output->render_from_template('block_userquiz_monitor/trainingglobalmonitor', $template);
     }
 
+    /**
+     * renders a single category results.
+     */
     public function category_result($cat, $islast = false) {
 
         $template = new StdClass;
@@ -307,7 +310,7 @@ class training_renderer extends \block_userquiz_monitor_renderer {
             }
 
             if ($cpt == 0) {
-                $template->programheadline = $renderer->program_headline(@$block->config->trainingprogramname);
+                $template->programheadline = $renderer->program_headline($block->config->trainingprogramname ?? '');
             }
 
             if (!empty($block->config->trainingshowhistory)) {
@@ -381,7 +384,11 @@ class training_renderer extends \block_userquiz_monitor_renderer {
         return $this->output->render_from_template('block_userquiz_monitor/training', $template);
     }
 
-    function training_filter_form(&$block) {
+    /**
+     * This is a form to display a scope filter for examinating results.
+     * @param aobjectref $block 
+     */
+    function training_filter_form(& $block) {
         global $DB, $CFG, $USER;
 
         include($CFG->dirroot.'/blocks/userquiz_monitor/preferenceForm.php');
@@ -403,7 +410,7 @@ class training_renderer extends \block_userquiz_monitor_renderer {
                 $data->userid = $USER->id;
                 if (!empty($prefs)) {
                     if (!is_null($data->resultsdepth)) {
-                        $prefs->resultsdepth = 0 + @$data->resultsdepth;
+                        $prefs->resultsdepth = $data->resultsdepth ?? 0;
                     }
                     $DB->update_record('userquiz_monitor_prefs', $prefs);
                 } else {

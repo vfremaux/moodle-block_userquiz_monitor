@@ -385,7 +385,7 @@ class PHPExcel_Calculation_FormulaParser
             }
 
             // standard infix operators
-            if (strpos(PHPExcel_Calculation_FormulaParser::OPERATORS_INFIX, $this->formula{$index}) !== false) {
+            if (strpos(PHPExcel_Calculation_FormulaParser::OPERATORS_INFIX, $this->formula[$index]) !== false) {
                 if (strlen($value) > 0) {
                     $tokens1[] =new PHPExcel_Calculation_FormulaToken($value, PHPExcel_Calculation_FormulaToken::TOKEN_TYPE_OPERAND);
                     $value = "";

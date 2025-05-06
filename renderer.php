@@ -362,7 +362,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
                     $i++;
                 }
             } else {
-                if function_exists('debug_trace') debug_trace("No substates", TRACE_DEBUG);
+                if (function_exists('debug_trace')) debug_trace("No substates", TRACE_DEBUG);
             }
 
             // Post compute ratios.

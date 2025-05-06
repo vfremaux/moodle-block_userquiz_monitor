@@ -98,8 +98,28 @@ class block_userquiz_monitor_edit_form extends block_edit_form {
         $option = get_string('trainingisdefault', 'block_userquiz_monitor');
         $mform->addElement('radio', 'config_examdefault', $label, $option, 0);
 
+        $modtype = $DB->get_record('modules', ['name' => 'quiz']);
+
         // Get quizzes list.
-        $quizzeslist = $DB->get_records_menu('quiz', array('course' => $COURSE->id), 'name', 'id,name');
+        $sql = "
+            SELECT
+                q.id, q.name, cm.id as cmid, cm.instance
+            FROM
+                {quiz} q,
+                {course_modules} cm
+            WHERE
+                q.id = cm.instance AND
+                cm.module = ? AND
+                cm.deletioninprogress = 0 AND
+                q.course = ?
+            ORDER BY
+                q.name
+        ";
+        $quizzeslist = [];
+        $quizzeslistarr = $DB->get_records_sql($sql, [$modtype->id, $COURSE->id]);
+        foreach ($quizzeslistarr as $q) {
+            $quizzeslist[$q->id] = format_string($q->name);
+        }
 
         $label = get_string('configtest', 'block_userquiz_monitor');
         $select = $mform->addElement('select', 'config_trainingquizzes', $label, $quizzeslist);

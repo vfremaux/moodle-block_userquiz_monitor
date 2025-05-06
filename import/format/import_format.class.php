@@ -265,6 +265,9 @@ abstract class import_format {
                     // Find category mappings
                     // Update question bank reference
                     $qv = $DB->get_record('question_versions', ['questionid' => $qrecord->id, 'status' => 'ready']);
+                    if (!$qv) {
+                        continue;
+                    }
                     $qbe = $DB->get_record('question_bank_entries', ['id' => $qv->questionbankentryid]);
 
                     // Discard other records in the way.

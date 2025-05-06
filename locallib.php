@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->dirroot.'/blocks/userquiz_monitor/generators/history_chart.php');
 require_once($CFG->dirroot.'/blocks/userquiz_monitor/generators/attempts.php');
 require_once($CFG->dirroot.'/blocks/userquiz_monitor/generators/progress_bar.php');
+require_once($CFG->dirroot.'/lib/questionlib.php');
 
 /**
  * Identifies all possible categories for choosing a root category for the userquiz_monitor block.
@@ -37,8 +38,8 @@ function block_userquiz_monitor_get_categories_for_root() {
 
     $coursecontext = context_course::instance($COURSE->id);
 
-    $categories = array();
-    $currentcoursecats = $DB->get_records('question_categories', array('contextid' => $coursecontext->id), 'parent, sortorder', 'id,name,parent');
+    $categories = [];
+    $currentcoursecats = $DB->get_records('question_categories', ['contextid' => $coursecontext->id], 'parent, sortorder', 'id,name,parent');
     $currentcoursecatsmenu = [];
     foreach ($currentcoursecats as $catid => $cat) {
         $climbup = $cat;
@@ -337,7 +338,7 @@ function block_userquiz_monitor_get_exam_attempts($quizid) {
  */
 function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategory, &$rootcats, &$attempts, &$overall, $mode = 'training') {
     global $USER, $DB, $OUTPUT;
-    static $qstates = array();
+    static $qstates = [];
     static $weekstart;
 
     $errormsg = false;
@@ -350,18 +351,19 @@ function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategor
 
     if (is_null($weekstart)) {
         $weekstart = strtotime("last monday");
-        debug_trace($weekstart);
+        if (function_exists('debug_trace')) debug_trace($weekstart);
     }
 
     if (!empty($userattempts)) {
         foreach ($userattempts as $ua) {
-            if (function_exists('debug_trace') debug_trace("compiling UAttemp {$ua->uniqueid} ", TRACE_DEBUG);
+            if (function_exists('debug_trace')) debug_trace("compiling UAttemp {$ua->uniqueid} ", TRACE_DEBUG);
             if ($allstates = block_userquiz_monitor_get_all_user_records($ua->uniqueid, $USER->id, $graded, true)) {
 
                 if ($allstates->valid()) {
                     foreach ($allstates as $state) {
 
                         if (($mode == 'training') && is_null($state->grade)) {
+                            // Supposed not being possible @see block_userquiz_monitor_get_all_user_records()
                             continue;
                         }
 
@@ -380,11 +382,11 @@ function block_userquiz_monitor_compute_all_results(&$userattempts, $rootcategor
 
                             while (!in_array($parent, $rootcatkeys) && $parent != 0) {
                                 // Seek for parent in one of our rootcats.
-                                $parent = $DB->get_field('question_categories', 'parent', array('id' => $parent));
+                                $parent = $DB->get_field('question_categories', 'parent', ['id' => $parent]);
                             }
 
                             if (!$parent) {
-                                if function_exists('debug_trace') debug_trace("Lost state : cat not in cat set. ", TRACE_DEBUG);
+                                if (function_exists('debug_trace')) debug_trace("Lost state : cat not in cat set. ", TRACE_DEBUG);
                                 // We could not find any candidate rootcat.
                                 // Discard  all results that fall outside the revision tree with error message.
                                 $errormsg = get_string('errorquestionoutsidescope', 'block_userquiz_monitor');
@@ -666,8 +668,8 @@ function block_userquiz_monitor_get_all_user_records($attemptuniqueid, $userid, 
         return $rs;
     }
 
-    if (!$records = $DB->get_records_sql($sql, array($attemptuniqueid))) {
-        return array();
+    if (!$records = $DB->get_records_sql($sql, [$attemptuniqueid])) {
+        return [];
     }
 
     return $records;
@@ -809,7 +811,7 @@ function calcul_hist($categoryid, &$counters) {
 /**
  * On changes of the current selection, update the question amount choice list
  * @param int $courseid
- * @param string $catidlist
+ * @param string $catidlist The first level of categories (root categories of the question set)
  * @param string $mode mode0 works for master categories digging in all subcats. mode1 works directly within given subcategories.
  * @return the question amount selector
  */
@@ -820,13 +822,6 @@ function block_userquiz_monitor_update_selector($courseid, $catidslist, $mode, $
     $options = '';
 
     $renderer = $PAGE->get_renderer('block_userquiz_monitor', 'training');
-
-    if (!is_array($catidslist)) {
-        $catids = explode(',', $catidslist);
-    } else {
-        $catids = $catidslist;
-    }
-    list($insql, $inparams) = $DB->get_in_or_equal($catids);
 
     // First get the quiz list referenced by slots.
     
@@ -854,9 +849,18 @@ function block_userquiz_monitor_update_selector($courseid, $catidslist, $mode, $
     }
 
     if (!empty($catidslist) && ($catidslist != 'null')) {
+
+        if (!is_array($catidslist)) {
+            $catids = explode(',', $catidslist);
+        } else {
+            $catids = $catidslist;
+        }
+        list($insql, $inparams) = $DB->get_in_or_equal($catids);
+
         if ($mode == 'mode0') {
             // Processes update in subcategories from main categories.
             // Init variables.
+            /*
             $subcategorieslist = '';
             $cpt = 0;
 
@@ -864,6 +868,8 @@ function block_userquiz_monitor_update_selector($courseid, $catidslist, $mode, $
             if ($subcats = $DB->get_records_select_menu('question_categories', $select, $inparams, 'sortorder', 'id,name')) {
                 $subcategorieslist = array_keys($subcats);
             }
+            */
+            $subcategorieslist = question_categorylist($rootcat);
 
             if (!empty($subcategorieslist)) {
 
@@ -886,12 +892,13 @@ function block_userquiz_monitor_update_selector($courseid, $catidslist, $mode, $
                         qv.status = 'ready'
                 ";
                 $inparams[] = 'random%';
-                $recordsgetnbquestions = $DB->get_records_sql($sql, $inparams);
+                $recordsgetnbquestions = $DB->count_records_sql($sql, $inparams);
 
                 $nbquestions = $recordsgetnbquestions;
 
-                $optionnums = [1,2,3,4,5,6,7,8,9,10,15,20,30,40,50,60,70,80,90,100];
-                foreach ($optionnums as $num) {
+                $optionsnums = array_keys($quizbyslots);
+                sort($optionsnums);
+                foreach ($optionsnums as $num) {
                     if ($num <= $nbquestions) {
                         if (in_array($num, array_keys($quizbyslots))) {
                             $options .= '<option value="'.$num.'">'.$num.'</option>';
@@ -920,8 +927,9 @@ function block_userquiz_monitor_update_selector($courseid, $catidslist, $mode, $
             ";
             $nbavailablequestions = $DB->count_records_sql($sql, $inparams);
 
-            $optionnums = [1,2,3,4,5,6,7,8,9,10,15,20,30,40,50,60,70,80,90,100];
-            foreach ($optionnums as $num) {
+            $optionsnums = array_keys($quizbyslots);
+            sort($optionsnums);
+            foreach ($optionsnums as $num) {
                 if ($num <= $nbavailablequestions) {
                     if (in_array($num, array_keys($quizbyslots))) {
                         $options .= '<option value="'.$num.'">'.$num.'</option>';

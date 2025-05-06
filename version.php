@@ -26,16 +26,16 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2022092800; // The current plugin version (Date: YYYYMMDDXX).
+$plugin->version   = 2025043000; // The current plugin version (Date: YYYYMMDDXX).
 $plugin->requires  = 2022112801; // Requires this Moodle version.
 $plugin->component = 'block_userquiz_monitor'; // Full name of the plugin (used for diagnostics).
 $plugin->maturity = MATURITY_RC;
-$plugin->release = '4.1.0 (Build 2022092800)';
-$plugin->supported = [401, 402];
-if (function_exists('block_course_userquiz_monitor_feature') && block_userquiz_monitor_supports_feature() === 'pro') {
-    $plugin->dependencies = ['local_vfcore' => '*'];
+$plugin->release = '4.5.0 (Build 2025043000)';
+$plugin->supported = [403, 405];
+if (function_exists('block_userquiz_monitor_supports_feature') && block_userquiz_monitor_supports_feature() === 'pro') {
+    $plugin->dependencies = ['local_vfcore' => 2024053100];
 }
 
 // Non moodle attributes.
-$plugin->codeincrement = '4.1.0009';
+$plugin->codeincrement = '4.5.0009';
 $plugin->privacy = 'dualrelease';

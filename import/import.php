@@ -103,6 +103,9 @@ if ($data = $mform->get_data()) {
             echo $OUTPUT->tag('a', $importer->resultfile->get_filename(), $params);
         }
 
+        // Needed to purge old question texts.
+        purge_caches();
+
         echo $OUTPUT->continue_button($courseurl);
         echo $OUTPUT->footer();
         die;
@@ -115,7 +118,7 @@ if ($data = $mform->get_data()) {
     }
 }
 
-$formdata = new StdClass;
+$formdata = new StdClass();
 $formdata->blockid = $blockid;
 $formdata->id = $id;
 $mform->set_data($formdata);
