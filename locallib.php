@@ -824,7 +824,7 @@ function block_userquiz_monitor_update_selector($courseid, $catidslist, $mode, $
     $renderer = $PAGE->get_renderer('block_userquiz_monitor', 'training');
 
     // First get the quiz list referenced by slots.
-    
+
     list($quizinsql, $quizinparams) = $DB->get_in_or_equal(explode(',', $quizzeslist));
     $sql = "
         SELECT
@@ -858,18 +858,15 @@ function block_userquiz_monitor_update_selector($courseid, $catidslist, $mode, $
         list($insql, $inparams) = $DB->get_in_or_equal($catids);
 
         if ($mode == 'mode0') {
+            // Mode0 is triggered by selecting a master category.
             // Processes update in subcategories from main categories.
             // Init variables.
-            /*
-            $subcategorieslist = '';
-            $cpt = 0;
 
-            $select = " parent $insql ";
-            if ($subcats = $DB->get_records_select_menu('question_categories', $select, $inparams, 'sortorder', 'id,name')) {
-                $subcategorieslist = array_keys($subcats);
+            $subcategorieslist  = [];
+            foreach ($catids as $cid) {
+                // Collect all subcategories in selection.
+                $subcategorieslist = $subcategorieslist + question_categorylist($cid);
             }
-            */
-            $subcategorieslist = question_categorylist($rootcat);
 
             if (!empty($subcategorieslist)) {
 

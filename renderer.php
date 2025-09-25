@@ -37,7 +37,7 @@ class block_userquiz_monitor_renderer extends plugin_renderer_base {
     public function set_block($bi) {
         $this->theblock = $bi;
 
-        switch (@$this->theblock->config->gaugerenderer) {
+        switch ($this->theblock->config->gaugerenderer ?? '') {
             case 'html': {
                 $this->gaugerendererfunc = 'progress_bar_html';
                 break;
